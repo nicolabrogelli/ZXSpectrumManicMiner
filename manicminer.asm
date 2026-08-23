@@ -125,11 +125,8 @@ Main_loop:
 
     ; 3. Aggiorna animazione e rimozione dei pavimenti sgretolabili (Crumbling Floor)
     call Phys_UpdateCrumblingFloors
-
-    ; 4. Scorrimento dell'orologio di gioco (1 min di gioco = 40 sec reali)
-    call Time_UpdateClock
     
-    ; 5. Aggiornamento audio
+    ; 4. Aggiornamento audio
     IF ENABLE_EFFECTS != 0
     call Audio_UpdateJumpSound    ; Aggiorna l'effetto sonoro del salto
     ENDIF
@@ -457,24 +454,8 @@ TriggerGameOver:
     ld   a, INITIAL_LIVES
     ld   (willy_lives), a
 
-    ; - Se il Game Over era avvenuto per limite di tempo (12:00 AM), ripristina a 07:00 AM
-    ld   a, (time_period)
-    or   a
-    jr   nz, .keep_current_time
-    ld   a, (time_hours)
-    cp   12
-    jr   nz, .keep_current_time
-    ld   a, 7
-    ld   (time_hours), a
-    xor  a
-    ld   (time_minutes), a
-    ld   (time_period), a
-    ld   (game_objective_completed), a
-    call Gfx_UpdateTimeDisplay
-.keep_current_time:
     ; - Sincronizza i contatori temporali con counter hardware per evitare salti dopo la pausa a schermo
     ld   hl, (counter)
-    ld   (time_last_counter), hl
     ld   (last_frame_counter), hl
 
     ; - Reimposta la fisica e le variabili di stato di Willy
@@ -881,11 +862,12 @@ ResetFullGameState:
     ld   (a_prev), a
     ld   (on_ground), a
 
-    ; Ripristina la stringa di testo dello status line a schermo a "000"
-    ld   a, '0'
-    ld   (status_line + 16), a
-    ld   (status_line + 17), a
-    ld   (status_line + 18), a
+    ; Azzeramento punteggio partita corrente (Score = 000000)
+    ; Nota: High score viene mantenuto intatto tra le partite
+    xor  a
+    ld   (player_score + 0), a
+    ld   (player_score + 1), a
+    ld   (player_score + 2), a
 
     ; Ripristina tutti gli item in ItemsTable al valore 0 (non raccolti)
     call ResetItemsTable
@@ -893,105 +875,14 @@ ResetFullGameState:
     ; Inizializza la tabella dei punti di ingresso per tutte le stanze (0..60)
     call InitRoomEntryPositions
 
-    ; Ripristina l'orologio di gioco alle 07:00 AM ed azzera i tick hardware
-    ld   a, 7
-    ld   (time_hours), a
-    xor  a
-    ld   (time_minutes), a
-    ld   (time_period), a       ; 0 = AM
-    ld   (game_objective_completed), a
-    ld   hl, (counter)
-    ld   (time_last_counter), hl
-    call Gfx_UpdateTimeDisplay
+    ; Aggiorna la riga di stato con High score e Score azzerato
+    call Gfx_UpdateScoreDisplay
 
     ; Ripristina la stanza iniziale (Central Cavern)
     ld   hl, CentralCavernLayout
     ld   (room_ptr), hl
 
     ret
-
-; -------------------------------------------------------------------
-; Time_UpdateClock
-; Gestisce lo scorrimento del tempo durante il gioco.
-; 1 minuto di gioco corrisponde a 40.0 secondi reali esatti.
-; Utilizza il contatore hardware di interrupt a 50Hz (counter) per
-; garantire l'esattezza del tempo indipendentemente dalla velocità del loop.
-; (50 tick/sec * 40 sec = 2000 tick hardware a 50Hz).
-; Se l'orologio raggiunge le 12:00 AM (mezzanotte) senza che l'obiettivo
-; sia completato, scatena immediatamente il Game Over.
-; -------------------------------------------------------------------
-Time_UpdateClock:
-    ; Calcola la differenza tra il contatore IM2 a 50Hz ed il contatore dell'ultimo scatto
-    ld   hl, (counter)
-    ld   de, (time_last_counter)
-    or   a
-    sbc  hl, de                 ; HL = tick hardware a 50Hz trascorsi
-
-    ; Controlla se sono trascorsi i tick necessari per 1 minuto di gioco (CLOCK_TICKS_PER_MINUTE)
-    ld   de, CLOCK_TICKS_PER_MINUTE
-    or   a
-    sbc  hl, de
-    ret  c                      ; Se non sono trascorsi abbastanza tick, ritorna
-
-    ; Tick trascorsi: aggiorna time_last_counter aggiungendo CLOCK_TICKS_PER_MINUTE
-    ld   hl, (time_last_counter)
-    ld   de, CLOCK_TICKS_PER_MINUTE
-    add  hl, de
-    ld   (time_last_counter), hl
-
-    ; Incrementa di 1 minuto il tempo di gioco
-    ld   a, (time_minutes)
-    inc  a
-    cp   60
-    jr   c, .minutes_ok
-
-    ; 60 minuti trascorsi: azzera i minuti ed incrementa l'ora
-    xor  a
-    ld   (time_minutes), a
-    ld   a, (time_hours)
-    inc  a
-    cp   12
-    jr   z, .toggle_period      ; 11 -> 12: l'ora passa a 12 e il periodo (AM/PM) commuta
-    cp   13
-    jr   c, .hours_ok
-    ld   a, 1                   ; 12 -> 13: l'ora passa a 1 (es. 12:59 PM -> 01:00 PM)
-    jr   .hours_ok
-
-.toggle_period:
-    push af                     ; Salva A (valore 12)
-    ld   a, (time_period)
-    xor  1                       ; Commuta 0 (AM) <-> 1 (PM)
-    ld   (time_period), a
-    pop  af                     ; Ripristina A = 12
-
-.hours_ok:
-    ld   (time_hours), a
-
-.minutes_ok:
-    ld   (time_minutes), a
-
-    ; Aggiorna l'orologio sul display dell'HUD (riga 18)
-    call Gfx_UpdateTimeDisplay
-
-    ; Controlla se l'obiettivo di gioco è stato completato (priorità assoluta)
-    ld   a, (game_objective_completed)
-    or   a
-    ret  nz                     ; Obiettivo completato -> nessun Game Over temporale!
-
-    ; Controlla se l'orologio ha raggiunto le 12:00 AM (mezzanotte)
-    ld   a, (time_period)
-    or   a
-    ret  nz                     ; Se è PM (1), la partita continua sempre! (es. 12:00 PM è mezzogiorno)
-
-    ld   a, (time_hours)
-    cp   12
-    jr   z, .time_limit_reached ; 12:00 AM (mezzanotte) -> Game Over!
-    ret
-
-.time_limit_reached:
-    ; Limite di tempo raggiunto senza aver completato l'obiettivo!
-    ; Scatena immediatamente il Game Over temporale!
-    jp   TriggerGameOver
 
   
 

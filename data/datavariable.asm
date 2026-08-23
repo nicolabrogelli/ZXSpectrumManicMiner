@@ -81,12 +81,10 @@ crumbling_grid:         .512 db 0 ; Griglia 16x32 stadi di sgretolamento (0 = in
 crumbling_active_count: db 0      ; Numero di blocchi attualmente in fase di sgretolamento
 crumbling_anim_timer:   db 0      ; Timer per scandire la velocità di animazione dello sgretolamento
 
-; Gestione Tempo di Gioco (Orologio)
-time_hours:                 db 7     ; Ora iniziale: 07:00 AM
-time_minutes:               db 0     ; Minuti iniziali: 0
-time_period:                db 0     ; 0 = AM, 1 = PM
-time_last_counter:          dw 0     ; Tick hardware IM2 (50Hz) dell'ultimo scatto minuto
-game_objective_completed:   db 0     ; 1 = Obiettivo completato, 0 = Non completato
+; Gestione Punteggio (Score & High score - 3 byte BCD ciascuno: 6 cifre decimali)
+player_score:               db 0, 0, 0 ; Punteggio partita corrente (inizia a 000000)
+high_score:                 db 0, 0, 0 ; Punteggio record (mantenuto tra le partite)
+game_objective_completed:   db 0       ; 1 = Obiettivo completato, 0 = Non completato
 
 Audio_jump_sound_note:    db 18   ; 18 = inactive (0..17 are active notes)
 Audio_jump_sound_timer:   db 0

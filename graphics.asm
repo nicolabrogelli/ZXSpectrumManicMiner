@@ -745,23 +745,8 @@ Gfx_PrintRoomName:
     ld   b, 32             ; B = 32 caratteri
     call Gfx_PrintString
 
-    ; Posiziona il cursore a Y = 18, X = 0 usando i codici di controllo rst $10
-    ld   a, 22             ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 18             ; Riga 18
-    rst  $10
-    ld   a, 0              ; Colonna 0
-    rst  $10
-    
-    ld   hl, status_line   ; HL = indirizzo stringa di stato
-    ld   b, 32             ; B = 32 caratteri
-    call Gfx_PrintString
-
-    ; Applica i colori agli attributi di Riga 18 ($5A40)
-    ld   hl, status_line_attrs
-    ld   de, $5a40         ; Indirizzo attributi Riga 18
-    ld   bc, 32            ; 32 byte
-    ldir
+    ; Disegna la riga di stato (High score & Score) a Riga 18
+    call Gfx_UpdateScoreDisplay
 
     ; Disegna i 7 Willy in basso a sinistra (Row 19, 20)
     call Gfx_PrintWillyLives
@@ -1769,66 +1754,51 @@ Gfx_ClearPixelSprite8x8:
     pop  bc
     ret
 
-Gfx_UpdateItemsCollectedDisplay:
+; -------------------------------------------------------------------
+; Gfx_UpdateScoreDisplay
+; Formatta e visualizza High score e Score nella riga di stato (Riga 18).
+; Formato: "High score XXXXXX   Score YYYYYY" (32 caratteri esatti)
+; -------------------------------------------------------------------
+Gfx_UpdateScoreDisplay:
     push af
     push bc
     push de
     push hl
+    push ix
 
-    ld   a, (items_collected)
-    ld   c, 0              ; C = centinaia
-.loop100:
-    cp   100
-    jr   c, .done100
-    sub  100
-    inc  c
-    jr   .loop100
-.done100:
-    ld   e, a              ; Salva il resto in E
-    ld   a, c
-    add  a, '0'
-    ld   (status_line + 16), a ; Centinaia
-    
-    ld   a, e              ; Ripristina il resto
-    ld   c, 0              ; C = decine
-.loop10:
-    cp   10
-    jr   c, .done10
-    sub  10
-    inc  c
-    jr   .loop10
-.done10:
-    ld   e, a              ; E = unità
-    ld   a, c
-    add  a, '0'
-    ld   (status_line + 17), a ; Decine
-    
-    ld   a, e
-    add  a, '0'
-    ld   (status_line + 18), a ; Unità
+    ; 1. Formatta High Score (6 cifre a status_line + 11)
+    ld   ix, high_score
+    ld   hl, status_line + 11
+    call Gfx_FormatBCD6
 
-    ; Ora ristampa la riga di stato a riga 18
-    ld   a, 22             ; Codice di controllo AT (22)
+    ; 2. Formatta Score (6 cifre a status_line + 26)
+    ld   ix, player_score
+    ld   hl, status_line + 26
+    call Gfx_FormatBCD6
+
+    ; 3. Ristampa la riga di stato a riga 18
+    ld   a, 22                 ; Codice di controllo AT (22)
     rst  $10
-    ld   a, 18             ; Riga 18
+    ld   a, 18                 ; Riga 18
     rst  $10
-    ld   a, 0              ; Colonna 0
+    ld   a, 0                  ; Colonna 0
     rst  $10
     
-    ld   hl, status_line   ; HL = indirizzo stringa di stato
-    ld   b, 32             ; B = 32 caratteri
+    ld   hl, status_line       ; HL = indirizzo stringa di stato
+    ld   b, 32                 ; B = 32 caratteri
     call Gfx_PrintString
 
-    ; Ripristina i colori degli attributi di Riga 18 ($5A40)
+    ; 4. Ripristina i colori degli attributi di Riga 18 ($5A40)
     ld   hl, status_line_attrs
-    ld   de, $5a40         ; Indirizzo attributi Riga 18
-    ld   bc, 32            ; 32 byte
+    ld   de, $5a40             ; Indirizzo attributi Riga 18
+    ld   bc, 32                ; 32 byte
     ldir
 
     IF ENABLE_ROOM_NUMBER != 0
     call Gfx_UpdateRemainingItemsDisplay
     ENDIF
 
+    pop  ix
     pop  hl
     pop  de
     pop  bc
@@ -1836,101 +1806,70 @@ Gfx_UpdateItemsCollectedDisplay:
     ret
 
 ; -------------------------------------------------------------------
-; Gfx_UpdateTimeDisplay
-; Formatta e visualizza l'orologio di gioco ("Time  7:00am")
-; nella riga di stato (Riga 18)
+; Gfx_FormatBCD6
+; Converte 3 byte BCD (puntati da IX) in 6 caratteri ASCII (scritti in HL).
+; IX+2 = cifre alte (centinaia di migliaia, decine di migliaia)
+; IX+1 = cifre medie (migliaia, centinaia)
+; IX+0 = cifre basse (decine, unità)
 ; -------------------------------------------------------------------
-Gfx_UpdateTimeDisplay:
-    push af
-    push bc
-    push de
-    push hl
-
-    ; Formatta le ore (time_hours: 1..12)
-    ld   a, (time_hours)
-    cp   10
-    jr   c, .single_digit_hour
-    
-    ; Due cifre (10, 11, 12)
-    ld   a, '1'
-    ld   (status_line + 25), a
-    ld   a, (time_hours)
-    sub  10
+Gfx_FormatBCD6:
+    ; Cifra 0 (centinaia di migliaia)
+    ld   a, (ix+2)
+    rrca
+    rrca
+    rrca
+    rrca
+    and  $0f
     add  a, '0'
-    ld   (status_line + 26), a
-    jr   .hours_done
+    ld   (hl), a
+    inc  hl
 
-.single_digit_hour:
-    ld   a, ' '
-    ld   (status_line + 25), a
-    ld   a, (time_hours)
+    ; Cifra 1 (decine di migliaia)
+    ld   a, (ix+2)
+    and  $0f
     add  a, '0'
-    ld   (status_line + 26), a
+    ld   (hl), a
+    inc  hl
 
-.hours_done:
-    ; Due punti (:)
-    ld   a, ':'
-    ld   (status_line + 27), a
-
-    ; Formatta i minuti (time_minutes: 0..59)
-    ld   a, (time_minutes)
-    ld   c, 0
-.loop10_min:
-    cp   10
-    jr   c, .done10_min
-    sub  10
-    inc  c
-    jr   .loop10_min
-.done10_min:
-    ld   e, a                   ; E = unità dei minuti
-    ld   a, c
+    ; Cifra 2 (migliaia)
+    ld   a, (ix+1)
+    rrca
+    rrca
+    rrca
+    rrca
+    and  $0f
     add  a, '0'
-    ld   (status_line + 28), a  ; Decine dei minuti
-    ld   a, e
+    ld   (hl), a
+    inc  hl
+
+    ; Cifra 3 (centinaia)
+    ld   a, (ix+1)
+    and  $0f
     add  a, '0'
-    ld   (status_line + 29), a  ; Unità dei minuti
+    ld   (hl), a
+    inc  hl
 
-    ; Suffisso "am" / "pm"
-    ld   a, (time_period)
-    or   a
-    jr   nz, .is_pm
-    ld   a, 'a'
-    jr   .suffix_done
-.is_pm:
-    ld   a, 'p'
-.suffix_done:
-    ld   (status_line + 30), a
-    ld   a, 'm'
-    ld   (status_line + 31), a
+    ; Cifra 4 (decine)
+    ld   a, (ix+0)
+    rrca
+    rrca
+    rrca
+    rrca
+    and  $0f
+    add  a, '0'
+    ld   (hl), a
+    inc  hl
 
-    ; Ristampa la riga di stato a riga 18
-    ld   a, 22                  ; AT (22)
-    rst  $10
-    ld   a, 18                  ; Riga 18
-    rst  $10
-    ld   a, 0                   ; Colonna 0
-    rst  $10
-    
-    ld   hl, status_line
-    ld   b, 32
-    call Gfx_PrintString
-
-    ld   hl, status_line_attrs
-    ld   de, $5a40              ; Indirizzo attributi Riga 18
-    ld   bc, 32
-    ldir
-
-    pop  hl
-    pop  de
-    pop  bc
-    pop  af
+    ; Cifra 5 (unità)
+    ld   a, (ix+0)
+    and  $0f
+    add  a, '0'
+    ld   (hl), a
+    inc  hl
     ret
 
 status_line:
-    db "Items collected 000 "
-
-status_line_time:
-    db "Time  7:00am"
+    db "High score 000000   Score 000000"
 
 status_line_attrs:
     db 65, 66, 67, 68, 69, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 70, 69, 68, 67, 66, 65

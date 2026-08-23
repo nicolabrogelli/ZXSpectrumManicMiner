@@ -1,4 +1,4 @@
-﻿;===========================================================================
+;===========================================================================
 ; items.asm
 ;
 ; Gestione degli Oggetti (Items) per Manic Miner.
@@ -508,9 +508,8 @@ Items_CheckCollision:
     ld   (game_objective_completed), a
     pop  af
 .objective_not_yet:
-
-    ; 5. Aggiorna HUD
-    call Gfx_UpdateItemsCollectedDisplay
+    ; 5. Aggiungi 100 punti allo Score, aggiorna High Score e aggiorna la visualizzazione HUD
+    call Score_AddItemPoints
 
     ; 6. Ripristina il tile di sfondo
     call RestoreBackgroundCell
@@ -561,4 +560,79 @@ CheckActiveItemAtCell:
     pop  hl
     pop  de
     or   a
+    ret
+
+; -------------------------------------------------------------------
+; Score_AddItemPoints
+; Aggiunge 100 punti allo Score del giocatore quando raccoglie un item.
+; Aggiorna automaticamente l'High Score se Score > HighScore.
+; -------------------------------------------------------------------
+Score_AddItemPoints:
+    push af
+    push bc
+    push de
+    push hl
+
+    ; Aggiungi 100 punti (byte 1 in BCD rappresenta centinaia/migliaia)
+    ld   a, (player_score + 1)
+    add  a, $01
+    daa
+    ld   (player_score + 1), a
+
+    ; Riporto al byte 2 (decine di migliaia / centinaia di migliaia)
+    ld   a, (player_score + 2)
+    adc  a, 0
+    daa
+    ld   (player_score + 2), a
+
+    ; Controlla se player_score ha superato high_score
+    call Score_CheckAndUpdateHighScore
+
+    ; Aggiorna visualizzazione a schermo
+    call Gfx_UpdateScoreDisplay
+
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
+    ret
+
+; -------------------------------------------------------------------
+; Score_CheckAndUpdateHighScore
+; Se player_score > high_score, copia player_score in high_score.
+; -------------------------------------------------------------------
+Score_CheckAndUpdateHighScore:
+    ; Confronto BCD a 3 byte (big-endian: byte 2 -> byte 1 -> byte 0)
+    ; Byte 2:
+    ld   a, (player_score + 2)
+    ld   b, a
+    ld   a, (high_score + 2)
+    cp   b
+    jr   c, .new_high_score    ; se high_score+2 < player_score+2 -> nuovo high score
+    jr   nz, .done_check       ; se high_score+2 > player_score+2 -> nessun aggiornamento
+
+    ; Byte 1:
+    ld   a, (player_score + 1)
+    ld   b, a
+    ld   a, (high_score + 1)
+    cp   b
+    jr   c, .new_high_score
+    jr   nz, .done_check
+
+    ; Byte 0:
+    ld   a, (player_score + 0)
+    ld   b, a
+    ld   a, (high_score + 0)
+    cp   b
+    jr   nc, .done_check       ; se high_score+0 >= player_score+0 -> nessun aggiornamento
+
+.new_high_score:
+    ld   a, (player_score + 0)
+    ld   (high_score + 0), a
+    ld   a, (player_score + 1)
+    ld   (high_score + 1), a
+    ld   a, (player_score + 2)
+    ld   (high_score + 2), a
+
+.done_check:
     ret
