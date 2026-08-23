@@ -98,5 +98,36 @@ CLOCK_TICKS_PER_MINUTE EQU 2000  ; Normale: 40 secondi reali = 1 minuto di gioco
 ENABLE_VICTORY_SCREEN EQU 1
     ENDIF
 
+; ===========================================================================
+; CONFIGURAZIONI VELOCITÀ DI GIOCO E MOVIMENTO
+; ===========================================================================
+
+; --- Velocità globale del Game Loop (Frame Delay) ---
+; Numero di interrupt hardware a 50Hz (HALT) per ciascun ciclo di gioco:
+; 2 = Velocità normale originale (25 FPS, 50Hz / 2)
+; 3 = Velocità rallentata (~16.6 FPS, 50Hz / 3 - utile per test o facilitare il gioco)
+; 4 = Velocità molto lenta (12.5 FPS, 50Hz / 4)
+    IFNDEF GAME_SPEED_DELAY
+GAME_SPEED_DELAY EQU 2
+    ENDIF
+
+; --- Velocità di camminata di Willy a terra (Pixel per frame) ---
+; Spostamento orizzontale di Willy ad ogni frame di camminata a terra:
+; 3 = Velocità standard originale (3 pixel per frame)
+; 2 = Velocità ridotta e precisa (2 pixel per frame)
+; 1 = Velocità minima (1 pixel per frame)
+    IFNDEF WILLY_WALK_SPEED
+WILLY_WALK_SPEED EQU 2
+    ENDIF
+
+; --- Frequenza di aggiornamento dei Guardiani (Nemici) ---
+; Intervallo di frame per ogni passo di movimento e animazione dei guardiani:
+; 1 = Velocità normale originale (i guardiani si muovono ogni frame)
+; 2 = Velocità dimezzata (i guardiani si muovono ogni 2 frame)
+; 3 = Velocità ridotta ad 1/3 (i guardiani si muovono ogni 3 frame)
+    IFNDEF GUARDIAN_UPDATE_RATE
+GUARDIAN_UPDATE_RATE EQU 2
+    ENDIF
+
 
 

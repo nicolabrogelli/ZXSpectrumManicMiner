@@ -105,7 +105,7 @@ Main_loop:
     or   a
     sbc  hl, de
     ld   a, l
-    cp   2
+    cp   GAME_SPEED_DELAY
     jr   c, .sync_loop
     
     ld   hl, (counter)

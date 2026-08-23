@@ -58,9 +58,9 @@ ramp_col:       db 0
 current_room_items: .80 db 0
 num_room_items:     db 0
 room_ptr:           dw CentralCavernLayout
-enemy_update_rate:  db 1
+enemy_update_rate:  db GUARDIAN_UPDATE_RATE
 enemy_update_timer: db 0
-player_speed:       db 3
+player_speed:       db WILLY_WALK_SPEED
 player_air_speed:   db 2
 transition_active:  db 0
 room_entry_positions: .122 db 0 ; Tabella posizioni di ingresso per tutte le stanze (61 stanze * 2 byte: X, Y)

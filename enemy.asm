@@ -388,6 +388,21 @@ Enemy_DrawSingleSlot:
 ; Aggiorna le posizioni e le animazioni dei guardiani attivi.
 ; -------------------------------------------------------------------
 Enemy_Update:
+    ; 0. Controllo della frequenza di aggiornamento guardiani (enemy_update_rate)
+    ld   a, (enemy_update_rate)
+    cp   1
+    jr   z, .do_update             ; Se rate == 1 (standard), aggiorna sempre
+
+    ld   hl, enemy_update_timer
+    inc  (hl)
+    ld   a, (hl)
+    ld   hl, enemy_update_rate
+    cp   (hl)
+    ret  c                         ; Se il timer non ha ancora raggiunto la soglia, ritorna subito
+    xor  a
+    ld   (enemy_update_timer), a
+
+.do_update:
     push hl
     push de
     push bc
