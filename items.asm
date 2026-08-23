@@ -103,6 +103,38 @@ ResetItemsTable:
     ret
 
 ; -------------------------------------------------------------------
+; Items_ResetCurrentRoomItems
+; Ripristina il flag di raccolta (byte 4 di ciascun item) a $FF (non raccolto)
+; per tutti gli item della stanza corrente puntata da (room_ptr).
+; -------------------------------------------------------------------
+Items_ResetCurrentRoomItems:
+    push hl
+    push de
+    push af
+
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_ITEMS
+    add  hl, de
+
+.item_loop:
+    ld   a, (hl)
+    cp   $FF
+    jr   z, .done                  ; $FF = fine lista item della stanza
+    inc  hl                        ; +1 (Attr Address Low)
+    inc  hl                        ; +2 (Attr Address High)
+    inc  hl                        ; +3 (Anim mask)
+    inc  hl                        ; +4 (Collected flag)
+    ld   (hl), $FF                 ; $FF = non raccolto
+    inc  hl                        ; Avanza al prossimo item
+    jr   .item_loop
+
+.done:
+    pop  af
+    pop  de
+    pop  hl
+    ret
+
+; -------------------------------------------------------------------
 ; Items_DrawRoom
 ;
 ; Disegna tutti gli oggetti attivi appartenenti alla stanza corrente.
@@ -230,6 +262,17 @@ Items_DrawRoom:
     jr   .loop
 
 .done:
+    ; Se la stanza non ha item o sono già stati tutti raccolti, attiva subito il portale
+    ld   a, (num_room_items)
+    or   a
+    jr   nz, .room_has_items
+    ld   a, 1
+    ld   (game_objective_completed), a
+    jr   .pop_and_ret
+.room_has_items:
+    xor  a
+    ld   (game_objective_completed), a
+.pop_and_ret:
     pop  iy
     pop  ix
     pop  bc
@@ -496,18 +539,23 @@ Items_CheckCollision:
     ; 3. Disattiva lo slot nella cache
     ld   (iy+2), 0
 
-    ; 4. Incrementa il conteggio globale degli item raccolti
+    ; 4. Decrementa il numero di item rimanenti nella stanza corrente
+    ld   hl, num_room_items
+    ld   a, (hl)
+    or   a
+    jr   z, .no_dec_room
+    dec  (hl)
+    jr   nz, .no_dec_room
+    ; Ultimo item della stanza raccolto -> Attiva il portale!
+    ld   a, 1
+    ld   (game_objective_completed), a
+.no_dec_room:
+
+    ; Incrementa il conteggio globale degli item raccolti
     ld   a, (items_collected)
     inc  a
     ld   (items_collected), a
 
-    cp   TOTAL_ITEMS
-    jr   c, .objective_not_yet
-    push af
-    ld   a, 1
-    ld   (game_objective_completed), a
-    pop  af
-.objective_not_yet:
     ; 5. Aggiungi 100 punti allo Score, aggiorna High Score e aggiorna la visualizzazione HUD
     call Score_AddItemPoints
 

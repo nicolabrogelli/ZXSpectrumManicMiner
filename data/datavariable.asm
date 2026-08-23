@@ -84,7 +84,9 @@ crumbling_anim_timer:   db 0      ; Timer per scandire la velocità di animazion
 ; Gestione Punteggio (Score & High score - 3 byte BCD ciascuno: 6 cifre decimali)
 player_score:               db 0, 0, 0 ; Punteggio partita corrente (inizia a 000000)
 high_score:                 db 0, 0, 0 ; Punteggio record (mantenuto tra le partite)
-game_objective_completed:   db 0       ; 1 = Obiettivo completato, 0 = Non completato
+game_objective_completed:   db 0       ; 1 = Obiettivo completato (portale attivo), 0 = Non completato
+portal_anim_timer:          db 0       ; Timer velocità lampeggio portale attivo
+portal_anim_frame:          db 0       ; Frame ciclo colori portale attivo (0..7)
 
 Audio_jump_sound_note:    db 18   ; 18 = inactive (0..17 are active notes)
 Audio_jump_sound_timer:   db 0

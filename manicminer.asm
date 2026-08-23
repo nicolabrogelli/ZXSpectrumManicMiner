@@ -58,6 +58,8 @@ LoadRoomAndRestart:
     xor  a
     ld   (crumbling_active_count), a
     ld   (crumbling_anim_timer), a
+    ld   (portal_anim_timer), a
+    ld   (portal_anim_frame), a
 
     call Gfx_DrawRoom
     call Gfx_DrawConveyorsAndRamps
@@ -126,7 +128,10 @@ Main_loop:
     ; 3. Aggiorna animazione e rimozione dei pavimenti sgretolabili (Crumbling Floor)
     call Phys_UpdateCrumblingFloors
     
-    ; 4. Aggiornamento audio
+    ; 4. Aggiorna animazione lampeggio del portale (se attivo)
+    call Gfx_AnimatePortal
+    
+    ; 5. Aggiornamento audio
     IF ENABLE_EFFECTS != 0
     call Audio_UpdateJumpSound    ; Aggiorna l'effetto sonoro del salto
     ENDIF
@@ -211,6 +216,9 @@ Main_loop:
     ENDIF
 
 .normal_respawn:
+    ; 1b. Ripristina tutti gli item della stanza corrente (tutti tornano visibili e da raccogliere)
+    call Items_ResetCurrentRoomItems
+
     ; 2. Cancella lo schermo a nero (imposta bordo e schermo a nero)
     xor  a
     out  ($fe), a              ; Imposta colore bordo hardware a nero
@@ -450,6 +458,9 @@ TriggerGameOver:
     jr   z, .wait_continue_release
 
     ; 5b. Ripristina lo stato per continuare la partita:
+    ; - Ripristina tutti gli item della stanza corrente al valore $FF (tutti da raccogliere)
+    call Items_ResetCurrentRoomItems
+
     ; - Ripristina le vite di Willy al valore iniziale
     ld   a, INITIAL_LIVES
     ld   (willy_lives), a
@@ -713,14 +724,13 @@ CheckAllItemsCollected:
     ld   a, (game_objective_completed)
     or   a
     jr   nz, .all_collected
-    ld   a, (items_collected)
-    cp   TOTAL_ITEMS
-    jr   c, .not_all
+    ld   a, (num_room_items)
+    or   a
+    jr   z, .all_collected
+    or   a
+    ret
 .all_collected:
     scf
-    ret
-.not_all:
-    or   a
     ret
 
 ; -------------------------------------------------------------------

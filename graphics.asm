@@ -2236,6 +2236,107 @@ Gfx_DrawPortal:
     ret
 
 ; -------------------------------------------------------------------
+; Gfx_AnimatePortal
+; Esegue l'animazione di lampeggio continuo e fluido del portale quando
+; tutti gli item del livello sono stati raccolti (game_objective_completed != 0).
+; Riproduce l'effetto e il timing visivo dell'originale Manic Miner per ZX Spectrum.
+; -------------------------------------------------------------------
+Gfx_AnimatePortal:
+    ; 1. Verifica se il portale è attivo
+    ld   a, (game_objective_completed)
+    or   a
+    ret  z                      ; Se 0, gli item non sono ancora tutti raccolti -> nessun lampeggio
+
+    ; 2. Avanza il timer di animazione (ogni 2 cicli di game loop per un'animazione fluida)
+    ld   a, (portal_anim_timer)
+    inc  a
+    cp   2
+    jr   c, .skip_advance
+    xor  a
+    ld   (portal_anim_timer), a
+    ld   a, (portal_anim_frame)
+    inc  a
+    and  7                      ; Ciclo di 8 frame di colore
+    ld   (portal_anim_frame), a
+.skip_advance:
+
+    push hl
+    push de
+    push bc
+
+    ; 3. Calcola l'indirizzo degli attributi VRAM ($5800 + AttrOffset) del portale
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_PORTAL + 33
+    add  hl, de
+    ld   c, (hl)
+    inc  hl
+    ld   b, (hl)               ; BC = AttrAddr dai dati della stanza (base 23552)
+
+    ld   h, b
+    ld   l, c
+    ld   bc, -23552
+    add  hl, bc                ; HL = AttrOffset (0..767)
+    ld   bc, $5800
+    add  hl, bc                ; HL = Indirizzo VRAM attributo cella Top-Left
+
+    ; 4. Applica il pattern di colori sfalsati alle 4 celle 8x8 (blocco 16x16)
+    ld   a, (portal_anim_frame)
+    ld   e, a                  ; E = frame base (0..7)
+
+    ; Cella 0: Top-Left (frame + 0)
+    call .get_portal_color
+    ld   (hl), a
+
+    ; Cella 1: Top-Right (frame + 1)
+    inc  hl
+    inc  e
+    call .get_portal_color
+    ld   (hl), a
+
+    ; Cella 2: Bottom-Left (frame + 2)
+    ld   bc, 31                ; Da Top-Right a Bottom-Left (+31 colonne)
+    add  hl, bc
+    inc  e
+    call .get_portal_color
+    ld   (hl), a
+
+    ; Cella 3: Bottom-Right (frame + 3)
+    inc  hl
+    inc  e
+    call .get_portal_color
+    ld   (hl), a
+
+    pop  bc
+    pop  de
+    pop  hl
+    ret
+
+.get_portal_color:
+    push hl
+    push de
+    ld   a, e
+    and  7
+    ld   e, a
+    ld   d, 0
+    ld   hl, portal_color_table
+    add  hl, de
+    ld   a, (hl)
+    pop  de
+    pop  hl
+    ret
+
+; Tabella colori lampeggio portale (Tutti con BRIGHT $40 attivo)
+portal_color_table:
+    db (WHITE   | $40)         ; $47
+    db (YELLOW  | $40)         ; $46
+    db (CYAN    | $40)         ; $45
+    db (GREEN   | $40)         ; $44
+    db (MAGENTA | $40)         ; $43
+    db (RED     | $40)         ; $42
+    db (BLUE    | $40)         ; $41
+    db (WHITE   | $40)         ; $47
+
+; -------------------------------------------------------------------
 ; Ottiene l'attributo colore originale dello sfondo per una cella
 ; Input: H = Row (0..23), B = Col (0..31)
 ; Output: A = Attributo colore
