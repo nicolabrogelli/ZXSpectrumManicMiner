@@ -551,6 +551,11 @@ Gfx_PrintPlayer:
     ld   b, a              ; B = PlayerY + 8
     call Gfx_DrawPixelSprite8x8 ; Disegna corpo
 
+    ; 3. Imposta gli attributi colore di Willy (Bianco Brillante)
+    ld   bc, (PlayerPos)   ; C = PlayerX, B = PlayerY
+    ld   a, WHITE | $40    ; Bianco Brillante
+    call Gfx_SetEnemyColorAttributes
+
 .done_print:
     pop  bc
     pop  hl
@@ -610,6 +615,8 @@ Gfx_UpdatePlayer:
     add  a, 8
     ld   b, a
     call Gfx_ErasePixelSprite8x8    ; Cancella corpo
+    ld   bc, (player_drawn_pos)
+    call Gfx_RestoreEnemyColorAttributes ; Ripristina sfondo
 
 .redraw_overlay_only:
     ; Durante il timer di sicurezza, fa lampeggiare lo sprite
@@ -661,6 +668,8 @@ Gfx_DeleteCharAtOldPos:
     add  a, 8
     ld   b, a
     call Gfx_ErasePixelSprite8x8    ; Cancella corpo
+    ld   bc, (player_drawn_pos)
+    call Gfx_RestoreEnemyColorAttributes ; Ripristina sfondo
 
 .done_del:
     ld   a, $FF

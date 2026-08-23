@@ -296,7 +296,7 @@ LoadPositionPlayeinRoom:
     ; Byte 0: Y * 2
     ld   a, (hl)
     srl  a                         ; A = Pixel Y (es. 208 -> 104)
-    ld   b, a                      ; B = PlayerY
+    ld   d, a                      ; D = PlayerY
 
     ; Byte 2: Direction (0 = right, 1 = left in formato MM)
     inc  hl                        ; Byte 1 (Anim frame)
@@ -318,23 +318,21 @@ LoadPositionPlayeinRoom:
     inc  hl                        ; Byte 5 (AttrAddr High)
     ld   a, (hl)
 
-    ; Offset = AttrAddr - 23552
-    push bc
+    ; Col = (AttrAddr - 23552) & 31 -> Pixel X = Col * 8
     ld   h, a
     ld   l, c
     ld   bc, -23552
     add  hl, bc
     
-    ; Col = Offset & 31 -> Pixel X = Col * 8
     ld   a, l
     and  31
     add  a, a                      ; *2
     add  a, a                      ; *4
     add  a, a                      ; *8 -> Pixel X (es. 16)
     ld   c, a                      ; C = PlayerX
-    pop  af                        ; Ripristina stack
+    ld   b, d                      ; B = PlayerY
 
-    ; Salva coordinate
+    ; Salva coordinate (C = X, B = Y)
     ld   (PlayerPos), bc
     ld   (PlayerPosOld), bc
     ret
@@ -363,7 +361,7 @@ InitRoomEntryPositions:
     
     ld   a, (hl)                   ; Byte 0: Y * 2
     srl  a
-    ld   b, a                      ; B = PlayerY
+    push af                        ; Salva PlayerY sullo stack
     
     inc  hl                        ; Byte 1
     inc  hl                        ; Byte 2
@@ -373,7 +371,6 @@ InitRoomEntryPositions:
     inc  hl                        ; Byte 5 (AttrAddr High)
     ld   a, (hl)
     
-    push af
     ld   h, a
     ld   l, c
     ld   bc, -23552
@@ -384,7 +381,8 @@ InitRoomEntryPositions:
     add  a, a
     add  a, a                      ; Col * 8 = Pixel X
     ld   c, a                      ; C = PlayerX
-    pop  af
+    pop  af                        ; A = PlayerY
+    ld   b, a                      ; B = PlayerY
 
     pop  hl                        ; Ripristina puntatore RoomsListTable
     pop  de                        ; DE = room_entry_positions + (i * 2)
