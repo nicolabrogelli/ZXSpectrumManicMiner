@@ -1693,23 +1693,23 @@ Gfx_EraseWillyLifeIcon:
     ; Input: C = Colonna (0..31)
     ld   e, c              ; E = Colonna
     
-    ; 1. Cancella la testa a Row 20, Colonna E
+    ; 1. Cancella la testa a Row 21 (Y=168), Colonna E
     ld   a, e
     add  a, a              ; *2
     add  a, a              ; *4
     add  a, a              ; *8
     ld   c, a              ; C = X pixel
-    ld   b, 160            ; B = Y pixel (Row 20)
-    call Gfx_ClearPixelSprite8x8
-    
-    ; 2. Cancella il corpo a Row 21, Colonna E
     ld   b, 168            ; B = Y pixel (Row 21)
     call Gfx_ClearPixelSprite8x8
     
-    ; 3. Resetta gli attributi a Row 20 e Row 21 per Colonna E a nero (0)
-    ; AttrAddr = $5A80 + E
+    ; 2. Cancella il corpo a Row 22 (Y=176), Colonna E
+    ld   b, 176            ; B = Y pixel (Row 22)
+    call Gfx_ClearPixelSprite8x8
+    
+    ; 3. Resetta gli attributi a Row 21 e Row 22 per Colonna E a nero (0)
+    ; AttrAddr = $5AA0 + E (Row 21)
     ld   h, $5a
-    ld   a, $80
+    ld   a, $a0
     add  a, e
     ld   l, a
     jr   nc, .no_carry1
@@ -1717,9 +1717,9 @@ Gfx_EraseWillyLifeIcon:
 .no_carry1:
     ld   (hl), 0           ; Scrivi colore testa a 0 (nero)
     
-    ; AttrAddr = $5AA0 + E
+    ; AttrAddr = $5AC0 + E (Row 22)
     ld   h, $5a
-    ld   a, $a0
+    ld   a, $c0
     add  a, e
     ld   l, a
     jr   nc, .no_carry2
@@ -1869,7 +1869,7 @@ status_line_attrs:
 
 
 ; -------------------------------------------------------------------
-; Disegna riga/pavimento sotto i piedi degli sprite (Riga 18, Y = 144)
+; Disegna le icone delle vite di Willy (Row 21 per testa, Row 22 per corpo)
 ; -------------------------------------------------------------------
 Gfx_DrawWillyLifeIcon:
     ; Input: C = Colonna (0..31), A = Colore Gfx_Ink (1..7 / bright color)
@@ -1885,26 +1885,26 @@ Gfx_DrawWillyLifeIcon:
     add  a, a              ; *4
     add  a, a              ; *8
     ld   c, a              ; C = X pixel
-    ld   b, 160            ; B = Y pixel (Row 20 / head)
+    ld   b, 168            ; B = Y pixel (Row 21 / head)
     call Gfx_ClearPixelSprite8x8
-    ld   b, 168            ; B = Y pixel (Row 21 / body)
+    ld   b, 176            ; B = Y pixel (Row 22 / body)
     call Gfx_ClearPixelSprite8x8
     pop  de
     pop  bc
     
-    ; 1. Disegna la testa a Row 20, Colonna E
+    ; 1. Disegna la testa a Row 21 (Y=168), Colonna E
     ; X pixel = E * 8
     ld   a, e
     add  a, a              ; *2
     add  a, a              ; *4
     add  a, a              ; *8
     ld   c, a              ; C = X pixel
-    ld   b, 160            ; B = Y pixel (Row 20)
+    ld   b, 168            ; B = Y pixel (Row 21)
     ld   ix, Willy + 0*8   ; IX = head facing right
     call Gfx_DrawPixelSprite8x8
     
-    ; 2. Disegna il corpo a Row 21, Colonna E
-    ld   b, 168            ; B = Y pixel (Row 21)
+    ; 2. Disegna il corpo a Row 22 (Y=176), Colonna E
+    ld   b, 176            ; B = Y pixel (Row 22)
     
     push de                ; SALVA D = Colore, E = Colonna
     
@@ -1939,10 +1939,10 @@ Gfx_DrawWillyLifeIcon:
     
     pop  de                ; RIPRISTINA D = Colore, E = Colonna
     
-    ; 3. Imposta l'attributo colore per la testa (Row 20, Colonna E)
-    ; AttrAddr = $5A80 + E
+    ; 3. Imposta l'attributo colore per la testa (Row 21, Colonna E)
+    ; AttrAddr = $5AA0 + E (Row 21)
     ld   h, $5a
-    ld   a, $80
+    ld   a, $A0
     add  a, e
     ld   l, a
     jr   nc, .no_carry1
@@ -1950,10 +1950,10 @@ Gfx_DrawWillyLifeIcon:
 .no_carry1:
     ld   (hl), d           ; Scrivi colore testa
     
-    ; 4. Imposta l'attributo colore per il corpo (Row 21, Colonna E)
-    ; AttrAddr = $5AA0 + E
+    ; 4. Imposta l'attributo colore per il corpo (Row 22, Colonna E)
+    ; AttrAddr = $5AC0 + E (Row 22)
     ld   h, $5a
-    ld   a, $A0
+    ld   a, $C0
     add  a, e
     ld   l, a
     jr   nc, .no_carry2

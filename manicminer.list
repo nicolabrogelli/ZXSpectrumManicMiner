@@ -2211,23 +2211,23 @@
 1693+ 6726                  ; Input: C = Colonna (0..31)
 1694+ 6726 59               ld   e, c              ; E = Colonna
 1695+ 6727
-1696+ 6727                  ; 1. Cancella la testa a Row 20, Colonna E
+1696+ 6727                  ; 1. Cancella la testa a Row 21 (Y=168), Colonna E
 1697+ 6727 7B               ld   a, e
 1698+ 6728 87               add  a, a              ; *2
 1699+ 6729 87               add  a, a              ; *4
 1700+ 672A 87               add  a, a              ; *8
 1701+ 672B 4F               ld   c, a              ; C = X pixel
-1702+ 672C 06 A0            ld   b, 160            ; B = Y pixel (Row 20)
+1702+ 672C 06 A8            ld   b, 168            ; B = Y pixel (Row 21)
 1703+ 672E CD 4D 67         call Gfx_ClearPixelSprite8x8
 1704+ 6731
-1705+ 6731                  ; 2. Cancella il corpo a Row 21, Colonna E
-1706+ 6731 06 A8            ld   b, 168            ; B = Y pixel (Row 21)
+1705+ 6731                  ; 2. Cancella il corpo a Row 22 (Y=176), Colonna E
+1706+ 6731 06 B0            ld   b, 176            ; B = Y pixel (Row 22)
 1707+ 6733 CD 4D 67         call Gfx_ClearPixelSprite8x8
 1708+ 6736
-1709+ 6736                  ; 3. Resetta gli attributi a Row 20 e Row 21 per Colonna E a nero (0)
-1710+ 6736                  ; AttrAddr = $5A80 + E
+1709+ 6736                  ; 3. Resetta gli attributi a Row 21 e Row 22 per Colonna E a nero (0)
+1710+ 6736                  ; AttrAddr = $5AA0 + E (Row 21)
 1711+ 6736 26 5A            ld   h, $5a
-1712+ 6738 3E 80            ld   a, $80
+1712+ 6738 3E A0            ld   a, $a0
 1713+ 673A 83               add  a, e
 1714+ 673B 6F               ld   l, a
 1715+ 673C 30 01            jr   nc, .no_carry1
@@ -2235,9 +2235,9 @@
 1717+ 673F              .no_carry1:
 1718+ 673F 36 00            ld   (hl), 0           ; Scrivi colore testa a 0 (nero)
 1719+ 6741
-1720+ 6741                  ; AttrAddr = $5AA0 + E
+1720+ 6741                  ; AttrAddr = $5AC0 + E (Row 22)
 1721+ 6741 26 5A            ld   h, $5a
-1722+ 6743 3E A0            ld   a, $a0
+1722+ 6743 3E C0            ld   a, $c0
 1723+ 6745 83               add  a, e
 1724+ 6746 6F               ld   l, a
 1725+ 6747 30 01            jr   nc, .no_carry2
@@ -2425,7 +2425,7 @@
 1869+ 6823
 1870+ 6823
 1871+ 6823              ; -------------------------------------------------------------------
-1872+ 6823              ; Disegna riga/pavimento sotto i piedi degli sprite (Riga 18, Y = 144)
+1872+ 6823              ; Disegna le icone delle vite di Willy (Row 21 per testa, Row 22 per corpo)
 1873+ 6823              ; -------------------------------------------------------------------
 1874+ 6823              Gfx_DrawWillyLifeIcon:
 1875+ 6823                  ; Input: C = Colonna (0..31), A = Colore Gfx_Ink (1..7 / bright color)
@@ -2441,26 +2441,26 @@
 1885+ 6829 87               add  a, a              ; *4
 1886+ 682A 87               add  a, a              ; *8
 1887+ 682B 4F               ld   c, a              ; C = X pixel
-1888+ 682C 06 A0            ld   b, 160            ; B = Y pixel (Row 20 / head)
+1888+ 682C 06 A8            ld   b, 168            ; B = Y pixel (Row 21 / head)
 1889+ 682E CD 4D 67         call Gfx_ClearPixelSprite8x8
-1890+ 6831 06 A8            ld   b, 168            ; B = Y pixel (Row 21 / body)
+1890+ 6831 06 B0            ld   b, 176            ; B = Y pixel (Row 22 / body)
 1891+ 6833 CD 4D 67         call Gfx_ClearPixelSprite8x8
 1892+ 6836 D1               pop  de
 1893+ 6837 C1               pop  bc
 1894+ 6838
-1895+ 6838                  ; 1. Disegna la testa a Row 20, Colonna E
+1895+ 6838                  ; 1. Disegna la testa a Row 21 (Y=168), Colonna E
 1896+ 6838                  ; X pixel = E * 8
 1897+ 6838 7B               ld   a, e
 1898+ 6839 87               add  a, a              ; *2
 1899+ 683A 87               add  a, a              ; *4
 1900+ 683B 87               add  a, a              ; *8
 1901+ 683C 4F               ld   c, a              ; C = X pixel
-1902+ 683D 06 A0            ld   b, 160            ; B = Y pixel (Row 20)
+1902+ 683D 06 A8            ld   b, 168            ; B = Y pixel (Row 21)
 1903+ 683F DD 21 25 88      ld   ix, Willy + 0*8   ; IX = head facing right
 1904+ 6843 CD 3F 5E         call Gfx_DrawPixelSprite8x8
 1905+ 6846
-1906+ 6846                  ; 2. Disegna il corpo a Row 21, Colonna E
-1907+ 6846 06 A8            ld   b, 168            ; B = Y pixel (Row 21)
+1906+ 6846                  ; 2. Disegna il corpo a Row 22 (Y=176), Colonna E
+1907+ 6846 06 B0            ld   b, 176            ; B = Y pixel (Row 22)
 1908+ 6848
 1909+ 6848 D5               push de                ; SALVA D = Colore, E = Colonna
 1910+ 6849
@@ -2495,10 +2495,10 @@
 1939+ 685A
 1940+ 685A D1               pop  de                ; RIPRISTINA D = Colore, E = Colonna
 1941+ 685B
-1942+ 685B                  ; 3. Imposta l'attributo colore per la testa (Row 20, Colonna E)
-1943+ 685B                  ; AttrAddr = $5A80 + E
+1942+ 685B                  ; 3. Imposta l'attributo colore per la testa (Row 21, Colonna E)
+1943+ 685B                  ; AttrAddr = $5AA0 + E (Row 21)
 1944+ 685B 26 5A            ld   h, $5a
-1945+ 685D 3E 80            ld   a, $80
+1945+ 685D 3E A0            ld   a, $A0
 1946+ 685F 83               add  a, e
 1947+ 6860 6F               ld   l, a
 1948+ 6861 30 01            jr   nc, .no_carry1
@@ -2506,10 +2506,10 @@
 1950+ 6864              .no_carry1:
 1951+ 6864 72               ld   (hl), d           ; Scrivi colore testa
 1952+ 6865
-1953+ 6865                  ; 4. Imposta l'attributo colore per il corpo (Row 21, Colonna E)
-1954+ 6865                  ; AttrAddr = $5AA0 + E
+1953+ 6865                  ; 4. Imposta l'attributo colore per il corpo (Row 22, Colonna E)
+1954+ 6865                  ; AttrAddr = $5AC0 + E (Row 22)
 1955+ 6865 26 5A            ld   h, $5a
-1956+ 6867 3E A0            ld   a, $A0
+1956+ 6867 3E C0            ld   a, $C0
 1957+ 6869 83               add  a, e
 1958+ 686A 6F               ld   l, a
 1959+ 686B 30 01            jr   nc, .no_carry2
