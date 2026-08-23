@@ -1872,7 +1872,7 @@ status_line:
     db "High score 000000   Score 000000"
 
 status_line_attrs:
-    db 65, 66, 67, 68, 69, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 70, 69, 68, 67, 66, 65
+    .32 db (YELLOW | $40)     ; 32 colonne colore Giallo Brillante (Bright Yellow on Black Paper)
 
 ; -------------------------------------------------------------------
 ; Disegna la riga di stato inferiore ("Room: XX  Remaining items: YY") nell'ultima riga (Riga 23)
