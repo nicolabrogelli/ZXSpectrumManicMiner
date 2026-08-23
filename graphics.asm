@@ -175,91 +175,95 @@ Gfx_DrawPixelSprite8x8:
 ; Ripristina un byte dello sfondo statico.
 ; Input: A = X del byte schermo in pixel (0, 8, 16...), D = Y pixel
 ; Output: A = byte di sfondo
-; ---------------------------------------------------------------
+; -------------------------------------------------------------------
 Gfx_GetBackgroundByte:
     push hl
     push de
     push bc
 
-    ld   b, a              ; B = X (pixel)
+    ld   c, a                  ; C = X pixel (0, 8, 16...)
     
     ; 1. Controlla se Y (in D) è fuori dalla griglia di layout (Y >= 128)
     ld   a, d
     cp   128
-    jp   nc, .blank
-    
-    ; Converti Y (in D) e X (in B) a cella
-    srl  a
-    srl  a
-    srl  a                 ; A = layout row r (0..15)
-    ld   e, a              ; E = r (Row)
-    
-    ld   a, b
-    srl  a
-    srl  a
-    srl  a                 ; A = column c (0..31)
-    ld   c, a              ; C = c (Col)
+    jr   nc, .blank
 
-    ; --- Controlla se c'è un Item Attivo in questa cella ---
+    ; 2. Calcola Col = X / 8
+    ld   a, c
+    srl  a
+    srl  a
+    srl  a
+    ld   c, a                  ; C = Col (0..31)
+
+    ; 3. Calcola Row = Y / 8
+    ld   a, d
+    srl  a
+    srl  a
+    srl  a
+    ld   e, a                  ; E = Row (0..15)
+
+    ; 4. Calcola Scanline offset = (Y & 7) + 1 (byte 0 nel tile da 9 byte è l'attributo)
+    ld   a, d
+    and  7
+    inc  a
+    ld   b, a                  ; B = Scanline offset (1..8)
+
+    ; 5. Controlla se c'è un Item Attivo in questa cella (Row E, Col C)
     push de
     push bc
-    ld   b, c              ; B = Col
-    ld   c, e              ; C = Row
+    ld   b, c                  ; B = Col
+    ld   c, e                  ; C = Row
     call CheckActiveItemAtCell
     jr   nc, .no_item
+
+    ; --- ITEM ATTIVO PRESENTE ---
+    pop  bc                    ; B = Scanline offset (1..8), C = Col
+    pop  de                    ; D = Y, E = Row
     
-    pop  bc
-    pop  de
-    
-    ld   a, d
-    and  7                 ; A = scanline (0..7)
+    ld   a, b                  ; A = 1..8
+    dec  a                     ; A = 0..7 (scanline per item da 8 byte)
     ld   e, a
-    ld   d, 0              ; DE = scanline offset
+    ld   d, 0
     ld   hl, (room_ptr)
-    push bc
     ld   bc, OFFSET_ITEM_GRAPHIC
     add  hl, bc
-    pop  bc
-    add  hl, de            ; HL = indirizzo del byte dello sprite
-    ld   a, (hl)           ; A = byte dello sprite dell'item
-    
+    add  hl, de                ; HL = indirizzo scanline item
+    ld   a, (hl)               ; A = byte bitmap item
+
     pop  bc
     pop  de
     pop  hl
     ret
 
 .no_item:
-    pop  bc
-    pop  de
+    pop  bc                    ; B = Scanline offset (1..8), C = Col
+    pop  de                    ; D = Y, E = Row
 
-    ld   a, e                  ; A = Row
-    ; C = Col
+    ; 6. Ottieni il tipo di cella da unpacked_layout
+    ld   a, e                  ; A = Row (0..15)
+    ; C = Col (0..31)
     call GetCellFromUnpacked   ; A = tile index (0..7)
 
-    ; HL = room_ptr + OFFSET_TILES + A * 9
+    ; 7. Calcola puntatore alla scanline del tile:
+    ; HL = (room_ptr + OFFSET_TILES) + (A * 9) + ScanlineOffset (in B)
     ld   l, a
     ld   h, 0
-    ld   de, 0
     ld   e, a
+    ld   d, 0
     add  hl, hl                ; *2
     add  hl, hl                ; *4
     add  hl, hl                ; *8
-    add  hl, de                ; *9
-    ld   de, OFFSET_TILES
+    add  hl, de                ; *9 (HL = A * 9)
+
+    ld   de, OFFSET_TILES      ; 544
     add  hl, de
     ld   de, (room_ptr)
-    add  hl, de                ; HL = tile pointer
+    add  hl, de                ; HL = room_ptr + OFFSET_TILES + A * 9 (byte 0 = attributo)
 
-    ; Calcola offset scanline: s = (Y % 8) + 1 (byte 0 è attributo)
-    ld   a, d
-    and  7
-    inc  a
-    add  a, l
-    ld   l, a
-    jr   nc, .no_carry
-    inc  h
-.no_carry:
-    ld   a, (hl)               ; A = byte dello sfondo
+    ld   e, b                  ; E = Scanline offset (1..8)
+    ld   d, 0
+    add  hl, de                ; HL = puntatore alla scanline bitmap richiesta
+    ld   a, (hl)               ; A = byte bitmap originale del tile
 
     pop  bc
     pop  de
@@ -267,10 +271,10 @@ Gfx_GetBackgroundByte:
     ret
 
 .blank:
-    xor  a
     pop  bc
     pop  de
     pop  hl
+    xor  a
     ret
 
 ; -------------------------------------------------------------------
