@@ -63,12 +63,6 @@ ENABLE_ROOM_SKIP_KEYS EQU 1
 ENABLE_RAMP_DEBUG_BARS EQU 0
     ENDIF
 
-; --- Visualizzazione della riga di stato inferiore (Room e Remaining items) ---
-; 1 = Abilita la visualizzazione di "Room: XX" e "Remaining items: YY" nell'ultima riga (Riga 23)
-; 0 = Disabilita la visualizzazione
-    IFNDEF ENABLE_ROOM_NUMBER
-ENABLE_ROOM_NUMBER EQU 1
-    ENDIF
 
 ; --- Riavvio del gioco al Game Over quando Willy esaurisce tutte le vite ---
 ; 1 = Abilita la schermata di Game Over e il riavvio completo dal primo livello quando le vite finiscono

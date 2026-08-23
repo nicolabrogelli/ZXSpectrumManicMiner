@@ -62,7 +62,7 @@ COLLISION_THRESHOLD_X: EQU (23 - (4 * COLLISION_INSET_X))
 COLLISION_OFFSET_Y:    EQU (15 - (2 * COLLISION_INSET_Y))
 COLLISION_THRESHOLD_Y: EQU (31 - (4 * COLLISION_INSET_Y))
 
-; --- Tempo di Sicurezza (Invulnerabilità) al Respawn dopo la Morte ---
+; --- Tempo di Sicurezza (Invulnerabilità) al Respawn dopo la Morte --
 ; Numero di frame (50Hz) di invulnerabilità ai guardiani dopo il respawn di Willy.
 ;   0  = Disabilitato (nessuna sicurezza)
 ;  50  = 1 secondo di invulnerabilità (default consigliato)
