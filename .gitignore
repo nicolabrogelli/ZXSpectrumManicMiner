@@ -1,0 +1,5 @@
+
+# Ignora una cartella specifica
+.tmp/
+.antigravitycli/
+.devcontainer/

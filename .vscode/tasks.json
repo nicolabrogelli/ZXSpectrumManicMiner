@@ -1,0 +1,88 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "buildZXSpectrum",
+        "type": "shell",
+        "command":"\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        //"command":"\"C:\\Users\\87003101\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        "args": [
+          //"--inc=./includes",
+          "--sld=${workspaceFolder}/maincminer.sld",
+          "--fullpath",
+          "--lst=${workspaceFolder}/maincminer.list",
+          "maincminer.asm"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "buildZXSpectrum (No Music)",
+        "type": "shell",
+        "command":"\"C:\\Users\\87003101\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        "args": [
+          "-DENABLE_MUSIC=0",
+          "--sld=${workspaceFolder}/maincminer.sld",
+          "--fullpath",
+          "--lst=${workspaceFolder}/maincminer.list",
+          "maincminer.asm"
+        ],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "start zesarux",
+        "type": "shell",
+        "command": "${config:zesarux_dir}\\zesarux.exe",
+        "args": [
+            "--noconfigfile",           // Do not load configuration file
+            "--machine", "tbblue",      // Emulate ZX Next
+            "--tbblue-fast-boot-mode",  // Boots tbblue directly to a 48 rom but with all the Next features enabled
+            "--snap-no-change-machine", // Do not change machine when loading sna or z80 snapshots. Just load it on memory
+            "--enable-esxdos-handler",  // Enable ESXDOS traps handler
+            "--enable-remoteprotocol",  // Enable ZRCP remote protocol
+            "--disable-autoframeskip",  // Dissable auto skip
+            "--esxdos-root-dir", ".",    // Set ESXDOS root directory
+            "--ignoremouseclickopenmenu" // Prevent left-click from pausing/opening the menu
+        ],
+        "options": {
+           "cwd": "${config:zesarux_dir}",
+        },
+        "detail": "zesarux --noconfigfile --machine tbblue --tbblue-fast-boot-mode --snap-no-change-machine --enable-esxdos-handler --enable-remoteprotocol --disable-autoframeskip --esxdos-root-dir .",
+        "problemMatcher": []
+    },
+    {
+      "label": "start cspect",
+      "type": "shell",
+      //"command": "mono", // For windows users: Remove 'mono' and add 'CSpect.exe' instead
+      "command": "${config:cspect_dir}\\CSpect.exe",
+      "args": [
+          //"CSpect.exe", // For windows users: remove this entry
+          "-w4", // Window size
+          "-zxnext", // Use zxnext HW registers
+          "-mmc=./", // Enable RST 8, emulate SW card at director ./  (the trailing slash is important)
+          "-tv", // Disable TV shader
+          "-r", // Remember window settings
+          "-debug" // Start up in (CSpect) debugger
+      ],
+      "options": {
+          "cwd": "${config:cspect_dir}",
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "start fuse",
+      "type": "shell",
+      "command": "C:\\Users\\nicol\\Documents\\BACKUP\\DOC - RETROCOMPUTER\\COMPUTER\\SINCLAIR\\EMULATORI\\ZX SPECTRUM\\fuse-1.6.0-win32\\fuse.exe",
+      "args": [
+        "${workspaceFolder}/maincminer.sna"
+      ],
+      "dependsOn": "buildZXSpectrum",
+      "problemMatcher": []
+    }
+  ]
+}
+  
