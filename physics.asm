@@ -1208,6 +1208,8 @@ UnpackRoomLayout:
     inc  hl
 
     ; Confronta con le 8 definizioni di tile:
+    cp   (ix + 0*9)            ; Background (Tile 0)?
+    jr   z, .is_bg
     cp   (ix + 3*9)            ; Wall (Tile 3)?
     jr   z, .is_wall
     cp   (ix + 1*9)            ; Floor (Tile 1)?
@@ -1223,6 +1225,7 @@ UnpackRoomLayout:
     cp   (ix + 7*9)            ; Extra (Tile 7)?
     jr   z, .is_extra
 
+.is_bg:
     ; Default: Tile 0 (Background)
     xor  a
     jr   .store_cell
@@ -1851,6 +1854,11 @@ CheckNastyCell:
 ; Output: Carry flag impostato se c'è collisione, altrimenti resettato
 ; -------------------------------------------------------------------
 Phys_CheckNastyCollision:
+    ; Se il timer di sicurezza (post-respawn) è attivo, Willy è invulnerabile
+    ld   a, (willy_safety_timer)
+    or   a
+    ret  nz                     ; Nessuna collisione (Carry = 0)
+
     push bc
     
     ld   bc, (PlayerPos)   ; B = Y, C = X

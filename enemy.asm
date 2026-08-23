@@ -526,6 +526,8 @@ CheckCollision:
     and  $80                       ; Active?
     jr   z, .next_enemy
 
+    push bc                        ; Salva B (contatore ciclo 8 slot)
+
     ; 1. Controllo Bounding Box X: |WillyX - EnemyX| < 12 (tolleranza collisione)
     ld   bc, (PlayerPos)           ; C = WillyX, B = WillyY
     ld   a, (ix+2)                 ; A = EnemyX
@@ -536,7 +538,7 @@ CheckCollision:
     neg                            ; A = |EnemyX - WillyX|
 .x_diff_pos:
     cp   12                        ; Sovrapposizione orizzontale?
-    jr   nc, .next_enemy           ; Se distanza >= 12 px, nessun contatto
+    jr   nc, .no_x_hit             ; Se distanza >= 12 px, nessun contatto
 
     ; 2. Controllo Bounding Box Y: |WillyY - EnemyY| < 14
     ld   a, (ix+3)                 ; A = EnemyY
@@ -545,15 +547,19 @@ CheckCollision:
     neg                            ; A = |EnemyY - WillyY|
 .y_diff_pos:
     cp   14                        ; Sovrapposizione verticale?
-    jr   nc, .next_enemy           ; Se distanza >= 14 px, nessun contatto
+    jr   nc, .no_x_hit             ; Se distanza >= 14 px, nessun contatto
 
     ; Collisione trovata!
+    pop  bc                        ; Ripristina stack
     pop  hl
     pop  de
     pop  bc
     pop  ix
     scf
     ret
+
+.no_x_hit:
+    pop  bc                        ; Ripristina B (contatore ciclo)
 
 .next_enemy:
     ld   de, 11
