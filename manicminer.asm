@@ -48,6 +48,17 @@ LoadRoomAndRestart:
     ld   sp, $fdf0             ; Ripristina lo stack pointer per evitare stack drift/reset
     call DetermineCurrentRoomID
     call Phys_LoadRoomSettings
+    
+    ; Azzera la griglia dei pavimenti sgretolabili per la nuova stanza
+    ld   hl, crumbling_grid
+    ld   de, crumbling_grid + 1
+    ld   (hl), 0
+    ld   bc, 511
+    ldir
+    xor  a
+    ld   (crumbling_active_count), a
+    ld   (crumbling_anim_timer), a
+
     call Gfx_DrawRoom
     call Gfx_DrawConveyorsAndRamps
     call Gfx_PrintRoomName
@@ -112,10 +123,13 @@ Main_loop:
     ; 2. Rendering del giocatore (ridisegna Willy in primo piano se mosso o se coperto da un guardiano)
     call Gfx_UpdatePlayer
 
-    ; 3. Scorrimento dell'orologio di gioco (1 min di gioco = 40 sec reali)
+    ; 3. Aggiorna animazione e rimozione dei pavimenti sgretolabili (Crumbling Floor)
+    call Phys_UpdateCrumblingFloors
+
+    ; 4. Scorrimento dell'orologio di gioco (1 min di gioco = 40 sec reali)
     call Time_UpdateClock
     
-    ; 2. Aggiornamento audio
+    ; 5. Aggiornamento audio
     IF ENABLE_EFFECTS != 0
     call Audio_UpdateJumpSound    ; Aggiorna l'effetto sonoro del salto
     ENDIF
@@ -130,11 +144,11 @@ Main_loop:
     ENDIF
 
 
-    ; 3. Salva le posizioni correnti del player per il prossimo frame
+    ; 6. Salva le posizioni correnti del player per il prossimo frame
     ld   bc, (PlayerPos)
     ld   (PlayerPosOld), bc
     
-    ; 4. Aggiorna le posizioni dei personaggi per il prossimo frame
+    ; 7. Aggiorna le posizioni dei personaggi per il prossimo frame
     call Input_CheckCtrl
     call MovePlayer
     call Phys_ApplyGravity

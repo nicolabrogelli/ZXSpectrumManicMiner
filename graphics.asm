@@ -244,6 +244,35 @@ Gfx_GetBackgroundByte:
     ; C = Col (0..31)
     call GetCellFromUnpacked   ; A = tile index (0..7)
 
+    ; Controlla se è un Crumbling Floor (Tile 2)
+    cp   2
+    jr   nz, .not_crumbling_bg
+
+    ; Calcola offset in crumbling_grid: Row * 32 + Col
+    push hl
+    push de
+    ld   l, e
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
+    ld   e, c
+    ld   d, 0
+    add  hl, de
+    ld   de, crumbling_grid
+    add  hl, de
+    ld   a, (hl)               ; A = crumbling stage (0..8)
+    pop  de
+    pop  hl
+
+    ; Se stage > 0 e ScanlineOffset <= stage, la scanline è già sgretolata!
+    or   a
+    jr   z, .crumble_intact
+    cp   b
+    jr   nc, .blank            ; Se stage >= scanline_offset (1..8), linea cancellata!
+
+.crumble_intact:
+    ld   a, 2                  ; Tile 2
+
+.not_crumbling_bg:
     ; 7. Calcola puntatore alla scanline del tile:
     ; HL = (room_ptr + OFFSET_TILES) + (A * 9) + ScanlineOffset (in B)
     ld   l, a
@@ -2258,6 +2287,90 @@ Gfx_DrawTile:
     ld   a, (ix+0)         ; A = attribute byte
     ld   (hl), a           ; Scrivi in memoria attributi
     
+    pop  hl
+    pop  de
+    pop  bc
+    ret
+
+; -------------------------------------------------------------------
+; Gfx_DrawCrumblingTile
+; Disegna una tile di tipo Crumbling Floor a (Row B, Col C) nello stadio E (0..8).
+; Input: B = Row (0..15), C = Col (0..31), E = Stage (0..8)
+; -------------------------------------------------------------------
+Gfx_DrawCrumblingTile:
+    push bc
+    push de
+    push hl
+    push ix
+
+    ; 1. Calcola indirizzo bitmap per Row B, Col C, scanline 0
+    ld   a, b
+    and  $18
+    add  a, $40
+    ld   h, a                  ; H = High byte
+    
+    ld   a, b
+    and  7
+    add  a, a                  ; *2
+    add  a, a                  ; *4
+    add  a, a                  ; *8
+    add  a, a                  ; *16
+    add  a, a                  ; *32
+    add  a, c                  ; + Col C
+    ld   l, a                  ; HL = indirizzo schermo scanline 0
+
+    ; 2. IX = room_ptr + OFFSET_CRUMBLING + 1 (inizio bitmap 8 byte)
+    push hl
+    ld   hl, (room_ptr)
+    ld   bc, OFFSET_CRUMBLING + 1
+    add  hl, bc
+    push hl
+    pop  ix                    ; IX = puntatore alle 8 scanline bitmap
+    pop  hl                    ; HL = indirizzo schermo
+
+    ; 3. Loop su 8 scanline (line = 0..7)
+    ld   d, 0                  ; D = line index (0..7)
+.line_loop:
+    ld   a, d                  ; A = current line
+    cp   e                     ; Confronta current line con Stage (in E)
+    jr   c, .erase_line        ; Se line < Stage, scrivi 0 (cancellata)
+    
+    ; Linea visibile: scrivi byte bitmap dal tile
+    ld   a, (ix+0)
+    ld   (hl), a
+    jr   .next_scanline
+
+.erase_line:
+    xor  a
+    ld   (hl), a
+
+.next_scanline:
+    inc  h                     ; Prossima scanline sullo schermo
+    inc  ix                    ; Prossima scanline nel tile
+    inc  d                     ; line++
+    ld   a, d
+    cp   8
+    jr   c, .line_loop
+
+    ; 4. Gestione Attributo Colore
+    ; Se Stage >= 8, azzera l'attributo a 0 (Background)
+    ld   a, e
+    cp   8
+    jr   c, .done_draw_crumble
+    
+    ld   h, 0
+    ld   l, b                  ; HL = Row
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
+    ld   e, c
+    ld   d, 0
+    add  hl, de
+    ld   de, $5800
+    add  hl, de                ; HL = AttrAddr
+    xor  a
+    ld   (hl), a
+
+.done_draw_crumble:
+    pop  ix
     pop  hl
     pop  de
     pop  bc

@@ -698,9 +698,10 @@ Phys_ApplyGravity:
     or   a
     jr   z, .in_air_decay
     
-    ; Se a terra (on_ground == 1), azzera il coyote timer
+    ; Se a terra (on_ground == 1), azzera il coyote timer e controlla se la tile è un Crumbling Floor
     xor  a
     ld   (coyote_timer), a
+    call Phys_CheckCrumblingTrigger
     ret
 
 .in_air_decay:
@@ -1911,4 +1912,200 @@ Phys_CheckNastyCollision:
 .collision:
     pop  bc
     scf                    ; Set carry
+    ret
+
+; -------------------------------------------------------------------
+; Phys_CheckCrumblingTrigger
+; Controlla se Willy è sopra una tile Crumbling Floor (Tile 2) e innesca
+; lo sgretolamento progressivo.
+; -------------------------------------------------------------------
+Phys_CheckCrumblingTrigger:
+    push bc
+    push de
+    push hl
+    
+    ld   bc, (PlayerPos)       ; C = PlayerX, B = PlayerY
+    
+    ; I piedi di Willy toccano la superficie della cella sottostante (Y + 16)
+    ld   a, b
+    add  a, 16
+    cp   128
+    jr   nc, .done_trigger     ; Fuori dallo schermo
+    
+    srl  a : srl  a : srl  a   ; A = Row (0..15)
+    ld   b, a                  ; B = Row
+    
+    ; Piede sinistro: Col1 = PlayerX / 8
+    ld   a, c
+    srl  a : srl  a : srl  a   ; A = Col1 (0..31)
+    ld   c, a                  ; C = Col1
+    
+    ; Controlla se (Row B, Col1 C) è Crumbling Floor (Tile 2)
+    ld   a, b
+    call GetCellFromUnpacked
+    cp   2
+    jr   nz, .check_col2
+    
+    ; Attiva sgretolamento per Col1
+    call .activate_crumble_cell
+    
+.check_col2:
+    ; Piede destro: Col2 = (PlayerX + 7) / 8
+    ld   bc, (PlayerPos)
+    ld   a, b
+    add  a, 16
+    srl  a : srl  a : srl  a
+    ld   b, a                  ; B = Row
+    
+    ld   a, c
+    add  a, 7
+    srl  a : srl  a : srl  a   ; A = Col2 (0..31)
+    ld   c, a                  ; C = Col2
+    
+    ld   a, b
+    call GetCellFromUnpacked
+    cp   2
+    jr   nz, .done_trigger
+    
+    ; Attiva sgretolamento per Col2
+    call .activate_crumble_cell
+    
+.done_trigger:
+    pop  hl
+    pop  de
+    pop  bc
+    ret
+
+.activate_crumble_cell:
+    ; Input: B = Row, C = Col
+    push bc
+    push de
+    push hl
+    
+    ld   l, b                  ; HL = Row
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
+    ld   e, c
+    ld   d, 0
+    add  hl, de                ; HL = Row * 32 + Col
+    ld   de, crumbling_grid
+    add  hl, de
+    
+    ld   a, (hl)               ; Controlla se già attivo
+    or   a
+    jr   nz, .already_active
+    
+    ld   (hl), 1               ; Inizia dallo stadio 1
+    ld   hl, crumbling_active_count
+    inc  (hl)
+    
+.already_active:
+    pop  hl
+    pop  de
+    pop  bc
+    ret
+
+; -------------------------------------------------------------------
+; Phys_UpdateCrumblingFloors
+; Aggiorna l'animazione di tutti i blocchi sgretolabili attivi.
+; Quando un blocco completa lo sgretolamento (stadio > 8), viene
+; definitivamente rimosso dalla fisica (unpacked_layout) e dallo schermo.
+; -------------------------------------------------------------------
+Phys_UpdateCrumblingFloors:
+    ld   a, (crumbling_active_count)
+    or   a
+    ret  z                     ; Nessun blocco attivo -> uscita immediata
+    
+    ; Avanza l'animazione ogni 2 frame (approx 25Hz per 8 stadi = ~0.32s)
+    ld   hl, crumbling_anim_timer
+    inc  (hl)
+    ld   a, (hl)
+    and  1
+    ret  nz
+    
+    push hl
+    push de
+    push bc
+    push ix
+    
+    ld   ix, crumbling_grid
+    ld   bc, 512               ; 512 celle
+    ld   d, 0                  ; D = Row (0..15)
+    ld   e, 0                  ; E = Col (0..31)
+    
+.loop:
+    ld   a, (ix+0)             ; A = Stage (0..8)
+    or   a
+    jr   z, .next
+    
+    inc  a                     ; Avanza di 1 stadio
+    ld   (ix+0), a
+    
+    cp   9
+    jr   nc, .finish_crumble
+    
+    ; Stadio 1..8: ridisegna la tile nello stadio corrente
+    push bc
+    push de
+    ld   b, d                  ; B = Row
+    ld   c, e                  ; C = Col
+    ld   e, a                  ; E = Stage (1..8)
+    call Gfx_DrawCrumblingTile
+    pop  de
+    pop  bc
+    jr   .next
+    
+.finish_crumble:
+    ; Blocco completamente sgretolato (stadio > 8)
+    ld   (ix+0), 0             ; Reset in crumbling_grid
+    
+    ; 1. Rimuovi definitivamente da unpacked_layout (imposta a 0 = Background)
+    push bc
+    push de
+    push hl
+    ld   l, d                  ; L = Row
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
+    ld   c, e
+    ld   b, 0
+    add  hl, bc
+    ld   bc, unpacked_layout
+    add  hl, bc
+    ld   (hl), 0               ; 0 = non più solido
+    pop  hl
+    pop  de
+    pop  bc
+    
+    ; 2. Cancella la tile a schermo (Stage 8 = 0 su tutte le linee e attributo di sfondo)
+    push bc
+    push de
+    ld   b, d                  ; B = Row
+    ld   c, e                  ; C = Col
+    ld   e, 8                  ; Stage 8
+    call Gfx_DrawCrumblingTile
+    pop  de
+    pop  bc
+    
+    ; 3. Decrementa contatore blocchi attivi
+    ld   hl, crumbling_active_count
+    dec  (hl)
+    
+.next:
+    inc  ix
+    inc  e
+    ld   a, e
+    cp   32
+    jr   c, .col_ok
+    ld   e, 0
+    inc  d
+.col_ok:
+    dec  bc
+    ld   a, b
+    or   c
+    jr   nz, .loop
+    
+    pop  ix
+    pop  bc
+    pop  de
+    pop  hl
     ret

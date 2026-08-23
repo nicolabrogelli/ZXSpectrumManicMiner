@@ -76,6 +76,11 @@ willy_safety_timer:    db 0
 willy_needs_redraw:    db 0
 willy_on_ramp:         db 0 ; 1 = Willy posizionato su rampa (debug)
 
+; Gestione Pavimenti Sgretolabili (Crumbling Floor)
+crumbling_grid:         .512 db 0 ; Griglia 16x32 stadi di sgretolamento (0 = intatto, 1..8 = stadi)
+crumbling_active_count: db 0      ; Numero di blocchi attualmente in fase di sgretolamento
+crumbling_anim_timer:   db 0      ; Timer per scandire la velocità di animazione dello sgretolamento
+
 ; Gestione Tempo di Gioco (Orologio)
 time_hours:                 db 7     ; Ora iniziale: 07:00 AM
 time_minutes:               db 0     ; Minuti iniziali: 0
