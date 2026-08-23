@@ -1,4 +1,4 @@
-﻿;===========================================================================
+;===========================================================================
 ; enemy.asm
 ;
 ; Gestione dei Guardiani (Nemici) per Manic Miner.
@@ -326,22 +326,25 @@ Enemy_DrawSingleSlot:
     push ix
 
     ; 1. Determina il frame di animazione (0..7)
-    ; Direction: 1 = Left (Frame 0..3), 2 = Right (Frame 4..7)
+    ; Nei dati di Manic Miner:
+    ;   Frame 0..3 = Movimento verso DESTRA
+    ;   Frame 4..7 = Movimento verso SINISTRA
     ld   a, (ix+7)                 ; Anim subframe (0..3)
     and  3
     ld   b, a                      ; B = Anim subframe
 
     ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
-    cp   1
+    cp   1                         ; Sinistra?
     jr   z, .left_frames
-    ; Right frames: 4..7
-    ld   a, 4
-    add  a, b
+
+    ; Movimento a Destra: Frame 0..3
+    ld   a, b
     jr   .got_frame_idx
 
 .left_frames:
-    ; Left frames: 0..3
-    ld   a, b
+    ; Movimento a Sinistra: Frame 4..7
+    ld   a, 4
+    add  a, b
 
 .got_frame_idx:
     ; Frame index in A (0..7). Calcola Offset = Frame * 32
