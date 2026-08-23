@@ -237,29 +237,14 @@ Main_loop:
     ld   (coyote_timer), a
     ld   (jump_frame), a
     ld   (jump_dir), a
+    ld   (transition_active), a    ; 0 = Posiziona Willy nel punto definito nella stanza (OFFSET_POS_WILLY)
     ld   a, 1
     ld   (on_ground), a
     
     ld   a, RESPAWN_SAFETY_TIME
     ld   (willy_safety_timer), a
 
-    ; 5. Riposiziona Willy nel punto di ingresso dell'ultima stanza raggiunta
-    call DetermineCurrentRoomID    ; A = ID stanza corrente (0..60)
-    ld   hl, room_entry_positions
-    ld   e, a
-    ld   d, 0
-    add  hl, de
-    add  hl, de                    ; HL = room_entry_positions + (current_room * 2)
-    ld   c, (hl)                   ; C = X ingresso
-    inc  hl
-    ld   b, (hl)                   ; B = Y ingresso
-    ld   (PlayerPos), bc           ; Imposta le coordinate di respawn al punto di ingresso
-    ld   (PlayerPosOld), bc
-
-    ld   a, 1
-    ld   (transition_active), a    ; Evita sovrascrittura con OFFSET_POS_WILLY in LoadRoomAndRestart
-
-    ; 6. Ridisegna completamente la stanza e riposiziona Willy nel punto di ingresso
+    ; 5. Ricarica la stanza e riposiziona Willy al punto di spawn definito nella stanza
     jp   LoadRoomAndRestart
 
 .draw_raster_bars:
@@ -534,21 +519,9 @@ TriggerGameOver:
     ld   (Audio_music_frame_counter), a
     ENDIF
 
-    ; - Riposiziona Willy nel punto di ingresso dell'ultima stanza raggiunta
-    call DetermineCurrentRoomID    ; A = ID stanza corrente (0..60)
-    ld   hl, room_entry_positions
-    ld   e, a
-    ld   d, 0
-    add  hl, de
-    add  hl, de                    ; HL = room_entry_positions + (current_room * 2)
-    ld   c, (hl)                   ; C = X ingresso
-    inc  hl
-    ld   b, (hl)                   ; B = Y ingresso
-    ld   (PlayerPos), bc           ; Imposta le coordinate al punto di ingresso
-    ld   (PlayerPosOld), bc
-
-    ld   a, 1
-    ld   (transition_active), a    ; Evita sovrascrittura con OFFSET_POS_WILLY in LoadRoomAndRestart
+    ; - Riposiziona Willy nel punto di default definito nella stanza
+    xor  a
+    ld   (transition_active), a
 
     ; - Cancella lo schermo a nero prima del caricamento
     xor  a

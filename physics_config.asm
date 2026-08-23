@@ -69,7 +69,7 @@ COLLISION_THRESHOLD_Y: EQU (31 - (4 * COLLISION_INSET_Y))
 ;  75  = 1.5 secondi
 ; 100  = 2 secondi
     IFNDEF RESPAWN_SAFETY_TIME
-RESPAWN_SAFETY_TIME EQU 50
+RESPAWN_SAFETY_TIME EQU 0
     ENDIF
 
 ; --- Coyote Time (Tempo Coyote per Salto da Bordo) ---
