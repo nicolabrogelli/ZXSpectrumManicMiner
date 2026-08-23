@@ -14,10 +14,10 @@
           },
           "startAutomatically": true,
           "preLaunchTask": "buildZXSpectrum",
-          "load":"${workspaceFolder}/maincminer.sna",
+          "load":"${workspaceFolder}/manicminer.sna",
           "sjasmplus": [
           {
-            "path": "${workspaceFolder}/maincminer.sld"
+            "path": "${workspaceFolder}/manicminer.sld"
           }],
         },
         {
@@ -27,7 +27,7 @@
           "remoteType": "zrcp",
           "sjasmplus": [
               {
-                  "path": "${workspaceFolder}/maincminer.sld"
+                  "path": "${workspaceFolder}/manicminer.sld"
               }
           ],
           "history": {
@@ -38,7 +38,7 @@
           "commandsAfterLaunch": [
           ],
           "rootFolder": "${workspaceFolder}",
-          "load": "${workspaceFolder}/maincminer.sna",
+          "load": "${workspaceFolder}/manicminer.sna",
           "smallValuesMaximum": 513,
           "tmpDir": ".tmp"
       },        
@@ -49,7 +49,7 @@
         "remoteType": "cspect",
         "sjasmplus": [
             {
-                "path": "${workspaceFolder}/maincminer.sld"
+                "path": "${workspaceFolder}/manicminer.sld"
             }
         ],
         "history": {
@@ -60,7 +60,7 @@
         "commandsAfterLaunch": [
         ],
         "rootFolder": "${workspaceFolder}",
-        "load": "${workspaceFolder}/maincminer.sna",
+        "load": "${workspaceFolder}/manicminer.sna",
         "smallValuesMaximum": 513,
         "tmpDir": ".tmp"
     }     

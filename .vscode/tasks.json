@@ -4,14 +4,13 @@
       {
         "label": "buildZXSpectrum",
         "type": "shell",
-        "command":"\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
-        //"command":"\"C:\\Users\\87003101\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        "command": "\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
         "args": [
-          //"--inc=./includes",
-          "--sld=${workspaceFolder}/maincminer.sld",
+          "-Wno-sna48",
+          "--sld=${workspaceFolder}/manicminer.sld",
           "--fullpath",
-          "--lst=${workspaceFolder}/maincminer.list",
-          "maincminer.asm"
+          "--lst=${workspaceFolder}/manicminer.list",
+          "manicminer.asm"
         ],
         "group": {
           "kind": "build",
@@ -22,13 +21,14 @@
       {
         "label": "buildZXSpectrum (No Music)",
         "type": "shell",
-        "command":"\"C:\\Users\\87003101\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        "command": "\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
         "args": [
+          "-Wno-sna48",
           "-DENABLE_MUSIC=0",
-          "--sld=${workspaceFolder}/maincminer.sld",
+          "--sld=${workspaceFolder}/manicminer.sld",
           "--fullpath",
-          "--lst=${workspaceFolder}/maincminer.list",
-          "maincminer.asm"
+          "--lst=${workspaceFolder}/manicminer.list",
+          "manicminer.asm"
         ],
         "group": "build",
         "problemMatcher": []
@@ -49,7 +49,7 @@
             "--ignoremouseclickopenmenu" // Prevent left-click from pausing/opening the menu
         ],
         "options": {
-           "cwd": "${config:zesarux_dir}",
+           "cwd": "${config:zesarux_dir}"
         },
         "detail": "zesarux --noconfigfile --machine tbblue --tbblue-fast-boot-mode --snap-no-change-machine --enable-esxdos-handler --enable-remoteprotocol --disable-autoframeskip --esxdos-root-dir .",
         "problemMatcher": []
@@ -57,10 +57,8 @@
     {
       "label": "start cspect",
       "type": "shell",
-      //"command": "mono", // For windows users: Remove 'mono' and add 'CSpect.exe' instead
       "command": "${config:cspect_dir}\\CSpect.exe",
       "args": [
-          //"CSpect.exe", // For windows users: remove this entry
           "-w4", // Window size
           "-zxnext", // Use zxnext HW registers
           "-mmc=./", // Enable RST 8, emulate SW card at director ./  (the trailing slash is important)
@@ -69,7 +67,7 @@
           "-debug" // Start up in (CSpect) debugger
       ],
       "options": {
-          "cwd": "${config:cspect_dir}",
+          "cwd": "${config:cspect_dir}"
       },
       "problemMatcher": []
     },
@@ -78,7 +76,7 @@
       "type": "shell",
       "command": "C:\\Users\\nicol\\Documents\\BACKUP\\DOC - RETROCOMPUTER\\COMPUTER\\SINCLAIR\\EMULATORI\\ZX SPECTRUM\\fuse-1.6.0-win32\\fuse.exe",
       "args": [
-        "${workspaceFolder}/maincminer.sna"
+        "${workspaceFolder}/manicminer.sna"
       ],
       "dependsOn": "buildZXSpectrum",
       "problemMatcher": []

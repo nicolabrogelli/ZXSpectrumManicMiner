@@ -1011,5 +1011,4 @@ Time_UpdateClock:
     include "resources.asm"
     include "data/datavariable.asm"
     
-    SAVESNA "manic miner.sna", start
-    SAVESNA "jet set willy.sna", start
+    SAVESNA "manicminer.sna", start ; sna48-ok
