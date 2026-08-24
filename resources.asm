@@ -9,6 +9,7 @@ RoomsStart:
     include "rooms/CentralCavern.asm"               ; ID 00
     include "rooms/TheColdRoom.asm"                 ; ID 01
     include "rooms/TheMenagerie.asm"                ; ID 02
+    include "rooms/AbandonedUraniumWorkings.asm"        ; ID 03
     
 
     include "data/datasprite.asm"

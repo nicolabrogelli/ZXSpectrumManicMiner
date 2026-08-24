@@ -640,6 +640,7 @@ RoomsListTable:
 .CentralCavernLayout:              dw CentralCavernLayout              ; 00
 .TheColdRoomLayout:                dw TheColdRoomLayout                ; 01
 .TheMenagerieLayout:               dw TheMenagerieLayout               ; 02
+.AbandonedUraniumWorkingsLayout:   dw AbandonedUraniumWorkingsLayout   ; 03
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2
 
