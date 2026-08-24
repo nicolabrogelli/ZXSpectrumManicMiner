@@ -657,16 +657,227 @@ Gfx_PrintPlayer:
     ld   b, a              ; B = PlayerY + 8
     call Gfx_DrawPixelSprite8x8 ; Disegna corpo
 
-    ; 3. Imposta gli attributi colore di Willy (Bianco Brillante)
+    ; 3. Imposta gli attributi colore di Willy e gestisce il secondo piano rispetto alle tiles
     ld   bc, (PlayerPos)   ; C = PlayerX, B = PlayerY
-    ld   a, WHITE | $40    ; Bianco Brillante
-    call Gfx_SetEnemyColorAttributes
+    call Gfx_ApplyPlayerTileLayers
 
 .done_print:
     pop  bc
     pop  hl
     pop  de
     pop  ix
+    ret
+
+; -------------------------------------------------------------------
+; Gfx_ApplyPlayerTileLayers
+; Gestisce la colorazione e il livello di Willy rispetto alle tiles della stanza:
+; - Scansiona tutte le celle 8x8 sovrapposte dallo sprite 16x16 di Willy (PlayerPos).
+; - Se la cella è spazio vuoto (tile 0): applica il colore bianco brillante di Willy.
+; - Se la cella contiene un tile della stanza (Floor, Wall, Crumbling, Conveyor, Nasty, Portal, Item):
+;   la cella mantiene l'attributo originale del tile, così la parte di Willy sovrapposta
+;   prende il colore del tile, esattamente come nel gioco originale per ZX Spectrum!
+; Input: C = PlayerX, B = PlayerY
+; -------------------------------------------------------------------
+Gfx_ApplyPlayerTileLayers:
+    push hl
+    push de
+    push bc
+
+    ; Se Y >= 128, esci
+    ld   a, b
+    cp   128
+    jp   nc, .done_layers
+
+    ; Calcola ColStart (E) e ColEnd (C)
+    ld   a, c
+    srl  a : srl a : srl a
+    ld   e, a                  ; E = ColStart (0..31)
+
+    ld   a, c
+    add  a, 15
+    srl  a : srl a : srl a
+    ld   c, a                  ; C = ColEnd (0..31)
+
+    ; Calcola RowStart (H) e RowEnd (L)
+    ld   a, b
+    srl  a : srl a : srl a
+    ld   h, a                  ; H = RowStart (0..15)
+
+    ld   a, b
+    add  a, 15
+    srl  a : srl a : srl a
+    ld   l, a                  ; L = RowEnd (0..15)
+
+.row_loop:
+    ld   a, h
+    cp   l
+    jr   z, .ok_row
+    jp   nc, .done_layers
+.ok_row:
+    push bc
+    push de
+
+    ld   b, e                  ; B = Col corrente
+.col_loop:
+    ld   a, b
+    cp   c
+    jr   z, .ok_col
+    jr   nc, .col_done
+.ok_col:
+    ; Processa la cella a Row H, Col B
+    call IsCellEmptyBackground
+    jr   c, .cell_is_empty
+
+    ; --- LA CELLA CONTIENE UN TILE DELLA STANZA ---
+    ; La parte di Willy sovrapposta al tile prende il colore (attributo) del tile!
+    push hl
+    push bc
+    call Gfx_GetCellAttribute  ; Input: H = Row, B = Col -> Output: A = colore tile
+    pop  bc
+    pop  hl
+
+    push hl
+    ld   e, a                  ; E = attributo originale del tile
+    ld   l, h
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
+    ld   a, b
+    add  a, l
+    ld   l, a
+    jr   nc, .no_c_tile
+    inc  h
+.no_c_tile:
+    ld   a, h
+    add  a, $58
+    ld   h, a                  ; HL = AttrAddr ($5800 + Row * 32 + Col)
+    ld   (hl), e               ; Applica l'attributo del tile alla cella
+    pop  hl
+    jr   .next_col
+
+.cell_is_empty:
+    ; --- LA CELLA È SPAZIO VUOTO ---
+    ; Applica il colore bianco brillante di Willy
+    push hl
+    ld   l, h
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
+    ld   a, b
+    add  a, l
+    ld   l, a
+    jr   nc, .no_c
+    inc  h
+.no_c:
+    ld   a, h
+    add  a, $58
+    ld   h, a                  ; HL = AttrAddr ($5800 + Row * 32 + Col)
+
+    ld   a, (hl)
+    and  $f8
+    or   (WHITE | $40)         ; Bianco brillante
+    ld   (hl), a
+    pop  hl
+
+.next_col:
+    inc  b                     ; Prossima colonna
+    jr   .col_loop
+
+.col_done:
+    pop  de
+    pop  bc
+    inc  h                     ; Prossima riga
+    jr   .row_loop
+
+.done_layers:
+    pop  bc
+    pop  de
+    pop  hl
+    ret
+
+; -------------------------------------------------------------------
+; IsCellEmptyBackground
+; Verifica se la cella (H = Row 0..15, B = Col 0..31) è spazio vuoto (tile 0).
+; Output:
+;   Carry Set   = Cella vuota (nessun tile, nessun item, nessun portale)
+;   Carry Clear = Cella occupata da un tile della stanza, item o portale
+; -------------------------------------------------------------------
+IsCellEmptyBackground:
+    push hl
+    push de
+    push bc
+
+    ; 1. Se Row >= 16, fuori dal layout di gioco
+    ld   a, h
+    cp   16
+    jr   nc, .not_empty
+
+    ; 2. Controlla se c'è un Item attivo
+    push bc
+    ld   c, h                  ; C = Row
+    call CheckActiveItemAtCell
+    pop  bc
+    jr   c, .not_empty
+
+    ; 3. Controlla se appartiene al Portale (16x16)
+    push hl
+    push de
+    push bc
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_PORTAL + 33
+    add  hl, de
+    ld   a, (hl)
+    inc  hl
+    ld   h, (hl)
+    ld   l, a                  ; HL = AttrAddr
+    ld   de, -23552
+    add  hl, de                ; HL = AttrOffset
+
+    ld   a, l
+    and  31
+    ld   d, a                  ; D = PortalCol
+
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    ld   a, l                  ; A = PortalRow
+
+    pop  bc                    ; B = Col
+    pop  de
+    pop  hl                    ; H = Row
+
+    ; DeltaRow = H - PortalRow (in A)
+    sub  h
+    neg
+    cp   2
+    jr   nc, .check_layout_tile
+
+    ; DeltaCol = B - PortalCol (in D)
+    ld   a, b
+    sub  d
+    cp   2
+    jr   c, .not_empty         ; Se DeltaRow < 2 E DeltaCol < 2 -> È nel portale!
+
+.check_layout_tile:
+    ; 4. Controlla il tipo di tile in unpacked_layout
+    ld   a, h                  ; A = Row
+    ld   c, b                  ; C = Col
+    call GetCellFromUnpacked   ; A = tile index (0..7)
+    or   a
+    jr   nz, .not_empty        ; Se != 0, contiene un tile (Floor, Wall, Crumbling, Conveyor, Nasty...)
+
+    ; La cella è completamente vuota!
+    pop  bc
+    pop  de
+    pop  hl
+    scf                        ; Carry Set = Vuota
+    ret
+
+.not_empty:
+    pop  bc
+    pop  de
+    pop  hl
+    or   a                     ; Carry Clear = Occupata da tile/elemento stanza
     ret
 
 ; -------------------------------------------------------------------
