@@ -2930,9 +2930,9 @@
 2279+ 6A0F FE 04            cp   4
 2280+ 6A11 38 C8            jr   c, .air_label_loop
 2281+ 6A13
-2282+ 6A13                  ; Imposta attributi colore "AIR " (Verde Brillante su sfondo nero)
+2282+ 6A13                  ; Imposta attributi colore "AIR " (Sfondo Rosso Brillante, Testo Bianco Brillante)
 2283+ 6A13 21 20 5A         ld   hl, $5a20
-2284+ 6A16 36 44            ld   (hl), (GREEN | $40)
+2284+ 6A16 36 57            ld   (hl), (RED * 8) | WHITE | $40
 2285+ 6A18 11 21 5A         ld   de, $5a21
 2286+ 6A1B 01 03 00         ld   bc, 3
 2287+ 6A1E ED B0            ldir
@@ -3088,1046 +3088,1047 @@
 2423+ 6AA7 FF               db %11111111 ; 8 pixels (full)
 2424+ 6AA8
 2425+ 6AA8              air_bar_attrs:
-2426+ 6AA8                  ; 7 segmenti da 4 colonne ciascuno (Cols 4..31)
-2427+ 6AA8 42          > db (RED | $40)         ; Cols 4..7   - Rosso
-2427+ 6AA9 42          > db (RED | $40)
-2427+ 6AAA 42          > db (RED | $40)
-2427+ 6AAB 42          > db (RED | $40)
-2428+ 6AAC 46          > db (YELLOW | $40)      ; Cols 8..11  - Giallo
-2428+ 6AAD 46          > db (YELLOW | $40)
-2428+ 6AAE 46          > db (YELLOW | $40)
-2428+ 6AAF 46          > db (YELLOW | $40)
-2429+ 6AB0 44          > db (GREEN | $40)       ; Cols 12..15 - Verde
-2429+ 6AB1 44          > db (GREEN | $40)
-2429+ 6AB2 44          > db (GREEN | $40)
-2429+ 6AB3 44          > db (GREEN | $40)
-2430+ 6AB4 45          > db (CYAN | $40)        ; Cols 16..19 - Ciano
-2430+ 6AB5 45          > db (CYAN | $40)
-2430+ 6AB6 45          > db (CYAN | $40)
-2430+ 6AB7 45          > db (CYAN | $40)
-2431+ 6AB8 43          > db (MAGENTA | $40)     ; Cols 20..23 - Magenta
-2431+ 6AB9 43          > db (MAGENTA | $40)
-2431+ 6ABA 43          > db (MAGENTA | $40)
-2431+ 6ABB 43          > db (MAGENTA | $40)
-2432+ 6ABC 41          > db (BLUE | $40)        ; Cols 24..27 - Blu
-2432+ 6ABD 41          > db (BLUE | $40)
-2432+ 6ABE 41          > db (BLUE | $40)
-2432+ 6ABF 41          > db (BLUE | $40)
-2433+ 6AC0 47          > db (WHITE | $40)       ; Cols 28..31 - Bianco
-2433+ 6AC1 47          > db (WHITE | $40)
-2433+ 6AC2 47          > db (WHITE | $40)
-2433+ 6AC3 47          > db (WHITE | $40)
-2434+ 6AC4
-2435+ 6AC4
-2436+ 6AC4
-2437+ 6AC4
-2438+ 6AC4              ; -------------------------------------------------------------------
-2439+ 6AC4              ; Disegna le icone delle vite di Willy (Row 21 per testa, Row 22 per corpo)
-2440+ 6AC4              ; -------------------------------------------------------------------
-2441+ 6AC4              Gfx_DrawWillyLifeIcon:
-2442+ 6AC4                  ; Input: C = Colonna (0..31), A = Colore Gfx_Ink (1..7 / bright color)
-2443+ 6AC4                  ; D = Colore, E = Colonna
-2444+ 6AC4 57               ld   d, a              ; D = Colore
-2445+ 6AC5 59               ld   e, c              ; E = Colonna
-2446+ 6AC6
-2447+ 6AC6                  ; 0. Cancella la testa e il corpo per evitare artefatti da OR
-2448+ 6AC6 C5               push bc
-2449+ 6AC7 D5               push de
-2450+ 6AC8 7B               ld   a, e
-2451+ 6AC9 87               add  a, a              ; *2
-2452+ 6ACA 87               add  a, a              ; *4
-2453+ 6ACB 87               add  a, a              ; *8
-2454+ 6ACC 4F               ld   c, a              ; C = X pixel
-2455+ 6ACD 06 A8            ld   b, 168            ; B = Y pixel (Row 21 / head)
-2456+ 6ACF CD C6 68         call Gfx_ClearPixelSprite8x8
-2457+ 6AD2 06 B0            ld   b, 176            ; B = Y pixel (Row 22 / body)
-2458+ 6AD4 CD C6 68         call Gfx_ClearPixelSprite8x8
-2459+ 6AD7 D1               pop  de
-2460+ 6AD8 C1               pop  bc
-2461+ 6AD9
-2462+ 6AD9                  ; 1. Disegna la testa a Row 21 (Y=168), Colonna E
-2463+ 6AD9                  ; X pixel = E * 8
-2464+ 6AD9 7B               ld   a, e
-2465+ 6ADA 87               add  a, a              ; *2
-2466+ 6ADB 87               add  a, a              ; *4
-2467+ 6ADC 87               add  a, a              ; *8
-2468+ 6ADD 4F               ld   c, a              ; C = X pixel
-2469+ 6ADE 06 A8            ld   b, 168            ; B = Y pixel (Row 21)
-2470+ 6AE0 DD 21 C0 8F      ld   ix, Willy + 0*8   ; IX = head facing right
-2471+ 6AE4 CD 3F 5E         call Gfx_DrawPixelSprite8x8
-2472+ 6AE7
-2473+ 6AE7                  ; 2. Disegna il corpo a Row 22 (Y=176), Colonna E
-2474+ 6AE7 06 B0            ld   b, 176            ; B = Y pixel (Row 22)
-2475+ 6AE9
-2476+ 6AE9 D5               push de                ; SALVA D = Colore, E = Colonna
-2477+ 6AEA
-2478+ 6AEA                  ; Determina il frame del corpo per le icone delle vite
-2479+ 6AEA                  IF ENABLE_ANIMATE_LIVES != 0
-2480+ 6AEA ~                ; Calcola il frame animato dal contatore
-2481+ 6AEA ~                ld   a, (counter)
-2482+ 6AEA ~                rrca
-2483+ 6AEA ~                rrca
-2484+ 6AEA ~                rrca
-2485+ 6AEA ~                and  %00000011         ; A = 0..3
-2486+ 6AEA ~                cp   3
-2487+ 6AEA ~                jr   nz, .not_3
-2488+ 6AEA ~                ld   a, 1              ; map 3 to 1 -> cycle is 0, 1, 2, 1
-2489+ 6AEA ~            .not_3:
-2490+ 6AEA ~                inc  a
-2491+ 6AEA ~                jr   .calc_ix
-2492+ 6AEA                  ELSE
-2493+ 6AEA 3E 01            ld   a, 1              ; frame statico 1
-2494+ 6AEC                  ENDIF
-2495+ 6AEC
-2496+ 6AEC              .calc_ix:
-2497+ 6AEC                  ; calcola IX = Willy + A * 8
-2498+ 6AEC 87               add  a, a              ; *2
-2499+ 6AED 87               add  a, a              ; *4
-2500+ 6AEE 87               add  a, a              ; *8
-2501+ 6AEF 5F               ld   e, a
-2502+ 6AF0 16 00            ld   d, 0
-2503+ 6AF2 DD 21 C0 8F      ld   ix, Willy
-2504+ 6AF6 DD 19            add  ix, de
-2505+ 6AF8 CD 3F 5E         call Gfx_DrawPixelSprite8x8
-2506+ 6AFB
-2507+ 6AFB D1               pop  de                ; RIPRISTINA D = Colore, E = Colonna
-2508+ 6AFC
-2509+ 6AFC                  ; 3. Imposta l'attributo colore per la testa (Row 21, Colonna E)
-2510+ 6AFC                  ; AttrAddr = $5AA0 + E (Row 21)
-2511+ 6AFC 26 5A            ld   h, $5a
-2512+ 6AFE 3E A0            ld   a, $A0
-2513+ 6B00 83               add  a, e
-2514+ 6B01 6F               ld   l, a
-2515+ 6B02 30 01            jr   nc, .no_carry1
-2516+ 6B04 24               inc  h
-2517+ 6B05              .no_carry1:
-2518+ 6B05 72               ld   (hl), d           ; Scrivi colore testa
-2519+ 6B06
-2520+ 6B06                  ; 4. Imposta l'attributo colore per il corpo (Row 22, Colonna E)
-2521+ 6B06                  ; AttrAddr = $5AC0 + E (Row 22)
-2522+ 6B06 26 5A            ld   h, $5a
-2523+ 6B08 3E C0            ld   a, $C0
-2524+ 6B0A 83               add  a, e
-2525+ 6B0B 6F               ld   l, a
-2526+ 6B0C 30 01            jr   nc, .no_carry2
-2527+ 6B0E 24               inc  h
-2528+ 6B0F              .no_carry2:
-2529+ 6B0F 72               ld   (hl), d           ; Scrivi colore corpo
-2530+ 6B10 C9               ret
-2531+ 6B11
-2532+ 6B11              ; -------------------------------------------------------------------
-2533+ 6B11              ; Disegna un tile 8x8 sullo schermo
-2534+ 6B11              ; Input: B = Row (0..23), C = Col (0..31), IX = Puntatore al Tile (9 byte: 1 attr + 8 bitmap)
-2535+ 6B11              ; -------------------------------------------------------------------
-2536+ 6B11              Gfx_DrawTile:
-2537+ 6B11 C5               push bc
-2538+ 6B12 D5               push de
-2539+ 6B13 E5               push hl
-2540+ 6B14
-2541+ 6B14                  ; 1. Calcola indirizzo dello schermo (bitmap) per Row B, Col C, scanline 0
-2542+ 6B14                  ; HighByte = $40 + (B & $18)
-2543+ 6B14 78               ld   a, b
-2544+ 6B15 E6 18            and  $18
-2545+ 6B17 C6 40            add  a, $40
-2546+ 6B19 67               ld   h, a              ; H = High byte
-2547+ 6B1A
-2548+ 6B1A                  ; LowByte = ((B & 7) * 32) + C
-2549+ 6B1A 78               ld   a, b
-2550+ 6B1B E6 07            and  7
-2551+ 6B1D 87               add  a, a              ; *2
-2552+ 6B1E 87               add  a, a              ; *4
-2553+ 6B1F 87               add  a, a              ; *8
-2554+ 6B20 87               add  a, a              ; *16
-2555+ 6B21 87               add  a, a              ; *32
-2556+ 6B22 81               add  a, c              ; + Col C
-2557+ 6B23 6F               ld   l, a              ; L = Low byte
-2558+ 6B24
-2559+ 6B24                  ; 2. Copia gli 8 byte del bitmap
-2560+ 6B24 16 08            ld   d, 8              ; 8 scanline
-2561+ 6B26 DD E5            push ix
-2562+ 6B28 DD 23            inc  ix                ; Salta l'attributo, vai al bitmap
-2563+ 6B2A              .line_loop:
-2564+ 6B2A DD 7E 00         ld   a, (ix+0)
-2565+ 6B2D 77               ld   (hl), a
-2566+ 6B2E 24               inc  h                 ; Prossima scanline (stessa riga di caratteri)
-2567+ 6B2F DD 23            inc  ix
-2568+ 6B31 15               dec  d
-2569+ 6B32 20 F6            jr   nz, .line_loop
-2570+ 6B34 DD E1            pop  ix
-2571+ 6B36
-2572+ 6B36                  ; 3. Scrivi l'attributo
-2573+ 6B36                  ; AttrAddr = $5800 + B * 32 + C
-2574+ 6B36 26 00            ld   h, 0
-2575+ 6B38 68               ld   l, b              ; HL = B (Row)
-2576+ 6B39 29               add  hl, hl            ; *2
-2577+ 6B3A 29               add  hl, hl            ; *4
-2578+ 6B3B 29               add  hl, hl            ; *8
-2579+ 6B3C 29               add  hl, hl            ; *16
-2580+ 6B3D 29               add  hl, hl            ; *32
-2581+ 6B3E 16 00            ld   d, 0
-2582+ 6B40 59               ld   e, c              ; DE = C (Col)
-2583+ 6B41 19               add  hl, de            ; HL = B * 32 + C
-2584+ 6B42 11 00 58         ld   de, $5800
-2585+ 6B45 19               add  hl, de            ; HL = AttrAddr
-2586+ 6B46
-2587+ 6B46 DD 7E 00         ld   a, (ix+0)         ; A = attribute byte
-2588+ 6B49 77               ld   (hl), a           ; Scrivi in memoria attributi
-2589+ 6B4A
-2590+ 6B4A E1               pop  hl
-2591+ 6B4B D1               pop  de
-2592+ 6B4C C1               pop  bc
-2593+ 6B4D C9               ret
-2594+ 6B4E
+2426+ 6AA8                  ; Prime 10 caselle della barra (Cols 4..13): Sfondo Rosso (Paper Red), Barra Bianca (Ink White)
+2427+ 6AA8 57          > db (RED * 8) | WHITE | $40
+2427+ 6AA9 57          > db (RED * 8) | WHITE | $40
+2427+ 6AAA 57          > db (RED * 8) | WHITE | $40
+2427+ 6AAB 57          > db (RED * 8) | WHITE | $40
+2427+ 6AAC 57          > db (RED * 8) | WHITE | $40
+2427+ 6AAD 57          > db (RED * 8) | WHITE | $40
+2427+ 6AAE 57          > db (RED * 8) | WHITE | $40
+2427+ 6AAF 57          > db (RED * 8) | WHITE | $40
+2427+ 6AB0 57          > db (RED * 8) | WHITE | $40
+2427+ 6AB1 57          > db (RED * 8) | WHITE | $40
+2428+ 6AB2                  ; Rimanenti 18 caselle della barra (Cols 14..31): Sfondo Verde (Paper Green), Barra Bianca (Ink White)
+2429+ 6AB2 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB3 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB4 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB5 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB6 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB7 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB8 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AB9 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6ABA 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6ABB 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6ABC 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6ABD 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6ABE 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6ABF 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AC0 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AC1 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AC2 67          > db (GREEN * 8) | WHITE | $40
+2429+ 6AC3 67          > db (GREEN * 8) | WHITE | $40
+2430+ 6AC4
+2431+ 6AC4
+2432+ 6AC4
+2433+ 6AC4
+2434+ 6AC4              ; -------------------------------------------------------------------
+2435+ 6AC4              ; Disegna le icone delle vite di Willy (Row 21 per testa, Row 22 per corpo)
+2436+ 6AC4              ; -------------------------------------------------------------------
+2437+ 6AC4              Gfx_DrawWillyLifeIcon:
+2438+ 6AC4                  ; Input: C = Colonna (0..31), A = Colore Gfx_Ink (1..7 / bright color)
+2439+ 6AC4                  ; D = Colore, E = Colonna
+2440+ 6AC4 57               ld   d, a              ; D = Colore
+2441+ 6AC5 59               ld   e, c              ; E = Colonna
+2442+ 6AC6
+2443+ 6AC6                  ; 0. Cancella la testa e il corpo per evitare artefatti da OR
+2444+ 6AC6 C5               push bc
+2445+ 6AC7 D5               push de
+2446+ 6AC8 7B               ld   a, e
+2447+ 6AC9 87               add  a, a              ; *2
+2448+ 6ACA 87               add  a, a              ; *4
+2449+ 6ACB 87               add  a, a              ; *8
+2450+ 6ACC 4F               ld   c, a              ; C = X pixel
+2451+ 6ACD 06 A8            ld   b, 168            ; B = Y pixel (Row 21 / head)
+2452+ 6ACF CD C6 68         call Gfx_ClearPixelSprite8x8
+2453+ 6AD2 06 B0            ld   b, 176            ; B = Y pixel (Row 22 / body)
+2454+ 6AD4 CD C6 68         call Gfx_ClearPixelSprite8x8
+2455+ 6AD7 D1               pop  de
+2456+ 6AD8 C1               pop  bc
+2457+ 6AD9
+2458+ 6AD9                  ; 1. Disegna la testa a Row 21 (Y=168), Colonna E
+2459+ 6AD9                  ; X pixel = E * 8
+2460+ 6AD9 7B               ld   a, e
+2461+ 6ADA 87               add  a, a              ; *2
+2462+ 6ADB 87               add  a, a              ; *4
+2463+ 6ADC 87               add  a, a              ; *8
+2464+ 6ADD 4F               ld   c, a              ; C = X pixel
+2465+ 6ADE 06 A8            ld   b, 168            ; B = Y pixel (Row 21)
+2466+ 6AE0 DD 21 C0 8F      ld   ix, Willy + 0*8   ; IX = head facing right
+2467+ 6AE4 CD 3F 5E         call Gfx_DrawPixelSprite8x8
+2468+ 6AE7
+2469+ 6AE7                  ; 2. Disegna il corpo a Row 22 (Y=176), Colonna E
+2470+ 6AE7 06 B0            ld   b, 176            ; B = Y pixel (Row 22)
+2471+ 6AE9
+2472+ 6AE9 D5               push de                ; SALVA D = Colore, E = Colonna
+2473+ 6AEA
+2474+ 6AEA                  ; Determina il frame del corpo per le icone delle vite
+2475+ 6AEA                  IF ENABLE_ANIMATE_LIVES != 0
+2476+ 6AEA ~                ; Calcola il frame animato dal contatore
+2477+ 6AEA ~                ld   a, (counter)
+2478+ 6AEA ~                rrca
+2479+ 6AEA ~                rrca
+2480+ 6AEA ~                rrca
+2481+ 6AEA ~                and  %00000011         ; A = 0..3
+2482+ 6AEA ~                cp   3
+2483+ 6AEA ~                jr   nz, .not_3
+2484+ 6AEA ~                ld   a, 1              ; map 3 to 1 -> cycle is 0, 1, 2, 1
+2485+ 6AEA ~            .not_3:
+2486+ 6AEA ~                inc  a
+2487+ 6AEA ~                jr   .calc_ix
+2488+ 6AEA                  ELSE
+2489+ 6AEA 3E 01            ld   a, 1              ; frame statico 1
+2490+ 6AEC                  ENDIF
+2491+ 6AEC
+2492+ 6AEC              .calc_ix:
+2493+ 6AEC                  ; calcola IX = Willy + A * 8
+2494+ 6AEC 87               add  a, a              ; *2
+2495+ 6AED 87               add  a, a              ; *4
+2496+ 6AEE 87               add  a, a              ; *8
+2497+ 6AEF 5F               ld   e, a
+2498+ 6AF0 16 00            ld   d, 0
+2499+ 6AF2 DD 21 C0 8F      ld   ix, Willy
+2500+ 6AF6 DD 19            add  ix, de
+2501+ 6AF8 CD 3F 5E         call Gfx_DrawPixelSprite8x8
+2502+ 6AFB
+2503+ 6AFB D1               pop  de                ; RIPRISTINA D = Colore, E = Colonna
+2504+ 6AFC
+2505+ 6AFC                  ; 3. Imposta l'attributo colore per la testa (Row 21, Colonna E)
+2506+ 6AFC                  ; AttrAddr = $5AA0 + E (Row 21)
+2507+ 6AFC 26 5A            ld   h, $5a
+2508+ 6AFE 3E A0            ld   a, $A0
+2509+ 6B00 83               add  a, e
+2510+ 6B01 6F               ld   l, a
+2511+ 6B02 30 01            jr   nc, .no_carry1
+2512+ 6B04 24               inc  h
+2513+ 6B05              .no_carry1:
+2514+ 6B05 72               ld   (hl), d           ; Scrivi colore testa
+2515+ 6B06
+2516+ 6B06                  ; 4. Imposta l'attributo colore per il corpo (Row 22, Colonna E)
+2517+ 6B06                  ; AttrAddr = $5AC0 + E (Row 22)
+2518+ 6B06 26 5A            ld   h, $5a
+2519+ 6B08 3E C0            ld   a, $C0
+2520+ 6B0A 83               add  a, e
+2521+ 6B0B 6F               ld   l, a
+2522+ 6B0C 30 01            jr   nc, .no_carry2
+2523+ 6B0E 24               inc  h
+2524+ 6B0F              .no_carry2:
+2525+ 6B0F 72               ld   (hl), d           ; Scrivi colore corpo
+2526+ 6B10 C9               ret
+2527+ 6B11
+2528+ 6B11              ; -------------------------------------------------------------------
+2529+ 6B11              ; Disegna un tile 8x8 sullo schermo
+2530+ 6B11              ; Input: B = Row (0..23), C = Col (0..31), IX = Puntatore al Tile (9 byte: 1 attr + 8 bitmap)
+2531+ 6B11              ; -------------------------------------------------------------------
+2532+ 6B11              Gfx_DrawTile:
+2533+ 6B11 C5               push bc
+2534+ 6B12 D5               push de
+2535+ 6B13 E5               push hl
+2536+ 6B14
+2537+ 6B14                  ; 1. Calcola indirizzo dello schermo (bitmap) per Row B, Col C, scanline 0
+2538+ 6B14                  ; HighByte = $40 + (B & $18)
+2539+ 6B14 78               ld   a, b
+2540+ 6B15 E6 18            and  $18
+2541+ 6B17 C6 40            add  a, $40
+2542+ 6B19 67               ld   h, a              ; H = High byte
+2543+ 6B1A
+2544+ 6B1A                  ; LowByte = ((B & 7) * 32) + C
+2545+ 6B1A 78               ld   a, b
+2546+ 6B1B E6 07            and  7
+2547+ 6B1D 87               add  a, a              ; *2
+2548+ 6B1E 87               add  a, a              ; *4
+2549+ 6B1F 87               add  a, a              ; *8
+2550+ 6B20 87               add  a, a              ; *16
+2551+ 6B21 87               add  a, a              ; *32
+2552+ 6B22 81               add  a, c              ; + Col C
+2553+ 6B23 6F               ld   l, a              ; L = Low byte
+2554+ 6B24
+2555+ 6B24                  ; 2. Copia gli 8 byte del bitmap
+2556+ 6B24 16 08            ld   d, 8              ; 8 scanline
+2557+ 6B26 DD E5            push ix
+2558+ 6B28 DD 23            inc  ix                ; Salta l'attributo, vai al bitmap
+2559+ 6B2A              .line_loop:
+2560+ 6B2A DD 7E 00         ld   a, (ix+0)
+2561+ 6B2D 77               ld   (hl), a
+2562+ 6B2E 24               inc  h                 ; Prossima scanline (stessa riga di caratteri)
+2563+ 6B2F DD 23            inc  ix
+2564+ 6B31 15               dec  d
+2565+ 6B32 20 F6            jr   nz, .line_loop
+2566+ 6B34 DD E1            pop  ix
+2567+ 6B36
+2568+ 6B36                  ; 3. Scrivi l'attributo
+2569+ 6B36                  ; AttrAddr = $5800 + B * 32 + C
+2570+ 6B36 26 00            ld   h, 0
+2571+ 6B38 68               ld   l, b              ; HL = B (Row)
+2572+ 6B39 29               add  hl, hl            ; *2
+2573+ 6B3A 29               add  hl, hl            ; *4
+2574+ 6B3B 29               add  hl, hl            ; *8
+2575+ 6B3C 29               add  hl, hl            ; *16
+2576+ 6B3D 29               add  hl, hl            ; *32
+2577+ 6B3E 16 00            ld   d, 0
+2578+ 6B40 59               ld   e, c              ; DE = C (Col)
+2579+ 6B41 19               add  hl, de            ; HL = B * 32 + C
+2580+ 6B42 11 00 58         ld   de, $5800
+2581+ 6B45 19               add  hl, de            ; HL = AttrAddr
+2582+ 6B46
+2583+ 6B46 DD 7E 00         ld   a, (ix+0)         ; A = attribute byte
+2584+ 6B49 77               ld   (hl), a           ; Scrivi in memoria attributi
+2585+ 6B4A
+2586+ 6B4A E1               pop  hl
+2587+ 6B4B D1               pop  de
+2588+ 6B4C C1               pop  bc
+2589+ 6B4D C9               ret
+2590+ 6B4E
+2591+ 6B4E              ; -------------------------------------------------------------------
+2592+ 6B4E              ; Gfx_DrawCrumblingTile
+2593+ 6B4E              ; Disegna una tile di tipo Crumbling Floor a (Row B, Col C) nello stadio E (0..8).
+2594+ 6B4E              ; Input: B = Row (0..15), C = Col (0..31), E = Stage (0..8)
 2595+ 6B4E              ; -------------------------------------------------------------------
-2596+ 6B4E              ; Gfx_DrawCrumblingTile
-2597+ 6B4E              ; Disegna una tile di tipo Crumbling Floor a (Row B, Col C) nello stadio E (0..8).
-2598+ 6B4E              ; Input: B = Row (0..15), C = Col (0..31), E = Stage (0..8)
-2599+ 6B4E              ; -------------------------------------------------------------------
-2600+ 6B4E              Gfx_DrawCrumblingTile:
-2601+ 6B4E C5               push bc
-2602+ 6B4F D5               push de
-2603+ 6B50 E5               push hl
-2604+ 6B51 DD E5            push ix
-2605+ 6B53
-2606+ 6B53                  ; 1. Calcola indirizzo bitmap per Row B, Col C, scanline 0
-2607+ 6B53 78               ld   a, b
-2608+ 6B54 E6 18            and  $18
-2609+ 6B56 C6 40            add  a, $40
-2610+ 6B58 67               ld   h, a                  ; H = High byte
-2611+ 6B59
-2612+ 6B59 78               ld   a, b
-2613+ 6B5A E6 07            and  7
-2614+ 6B5C 87               add  a, a                  ; *2
-2615+ 6B5D 87               add  a, a                  ; *4
-2616+ 6B5E 87               add  a, a                  ; *8
-2617+ 6B5F 87               add  a, a                  ; *16
-2618+ 6B60 87               add  a, a                  ; *32
-2619+ 6B61 81               add  a, c                  ; + Col C
-2620+ 6B62 6F               ld   l, a                  ; HL = indirizzo schermo scanline 0
-2621+ 6B63
-2622+ 6B63                  ; 2. IX = room_ptr + OFFSET_CRUMBLING + 1 (inizio bitmap 8 byte)
-2623+ 6B63 E5               push hl
-2624+ 6B64 2A 80 99         ld   hl, (room_ptr)
-2625+ 6B67 01 33 02         ld   bc, OFFSET_CRUMBLING + 1
-2626+ 6B6A 09               add  hl, bc
-2627+ 6B6B E5               push hl
-2628+ 6B6C DD E1            pop  ix                    ; IX = puntatore alle 8 scanline bitmap
-2629+ 6B6E E1               pop  hl                    ; HL = indirizzo schermo
-2630+ 6B6F
-2631+ 6B6F                  ; 3. Loop su 8 scanline (line = 0..7)
-2632+ 6B6F 16 00            ld   d, 0                  ; D = line index (0..7)
-2633+ 6B71              .line_loop:
-2634+ 6B71 7A               ld   a, d                  ; A = current line
-2635+ 6B72 BB               cp   e                     ; Confronta current line con Stage (in E)
-2636+ 6B73 38 06            jr   c, .erase_line        ; Se line < Stage, scrivi 0 (cancellata)
-2637+ 6B75
-2638+ 6B75                  ; Linea visibile: scrivi byte bitmap dal tile
-2639+ 6B75 DD 7E 00         ld   a, (ix+0)
-2640+ 6B78 77               ld   (hl), a
-2641+ 6B79 18 02            jr   .next_scanline
-2642+ 6B7B
-2643+ 6B7B              .erase_line:
-2644+ 6B7B AF               xor  a
-2645+ 6B7C 77               ld   (hl), a
-2646+ 6B7D
-2647+ 6B7D              .next_scanline:
-2648+ 6B7D 24               inc  h                     ; Prossima scanline sullo schermo
-2649+ 6B7E DD 23            inc  ix                    ; Prossima scanline nel tile
-2650+ 6B80 14               inc  d                     ; line++
-2651+ 6B81 7A               ld   a, d
-2652+ 6B82 FE 08            cp   8
-2653+ 6B84 38 EB            jr   c, .line_loop
-2654+ 6B86
-2655+ 6B86                  ; 4. Gestione Attributo Colore
-2656+ 6B86                  ; Se Stage >= 8, azzera l'attributo a 0 (Background)
-2657+ 6B86 7B               ld   a, e
-2658+ 6B87 FE 08            cp   8
-2659+ 6B89 38 12            jr   c, .done_draw_crumble
-2660+ 6B8B
-2661+ 6B8B 26 00            ld   h, 0
-2662+ 6B8D 68               ld   l, b                  ; HL = Row
-2663+ 6B8E 29               add  hl, hl
-2663+ 6B8F 29             add hl, hl
-2663+ 6B90 29             add hl, hl
-2663+ 6B91 29             add hl, hl
-2663+ 6B92 29             add hl, hl
-2664+ 6B93 59               ld   e, c
-2665+ 6B94 16 00            ld   d, 0
-2666+ 6B96 19               add  hl, de
-2667+ 6B97 11 00 58         ld   de, $5800
-2668+ 6B9A 19               add  hl, de                ; HL = AttrAddr
-2669+ 6B9B AF               xor  a
-2670+ 6B9C 77               ld   (hl), a
-2671+ 6B9D
-2672+ 6B9D              .done_draw_crumble:
-2673+ 6B9D DD E1            pop  ix
-2674+ 6B9F E1               pop  hl
-2675+ 6BA0 D1               pop  de
-2676+ 6BA1 C1               pop  bc
-2677+ 6BA2 C9               ret
-2678+ 6BA3
-2679+ 6BA3              ; -------------------------------------------------------------------
-2680+ 6BA3              ; Disegna la stanza corrente leggendola dalla struttura dati
-2681+ 6BA3              ; -------------------------------------------------------------------
-2682+ 6BA3              ; -------------------------------------------------------------------
-2683+ 6BA3              ; Disegna la stanza corrente leggendola dalla struttura dati
-2684+ 6BA3              ; -------------------------------------------------------------------
-2685+ 6BA3              Gfx_DrawRoom:
-2686+ 6BA3 C5               push bc
-2687+ 6BA4 D5               push de
-2688+ 6BA5 E5               push hl
-2689+ 6BA6 DD E5            push ix
-2690+ 6BA8
-2691+ 6BA8 CD 7F 78         call UnpackRoomLayout      ; Decodifica le 512 celle in unpacked_layout (0..7)
-2692+ 6BAB
-2693+ 6BAB 21 26 97         ld   hl, unpacked_layout   ; HL punta a unpacked_layout
-2694+ 6BAE 06 00            ld   b, 0                  ; B = Row (0..15)
-2695+ 6BB0              .row_loop:
-2696+ 6BB0 0E 00            ld   c, 0                  ; C = Col (0..31)
-2697+ 6BB2              .col_loop:
-2698+ 6BB2 7E               ld   a, (hl)               ; A = tile index (0..7)
-2699+ 6BB3 23               inc  hl
-2700+ 6BB4
-2701+ 6BB4                  ; IX = room_ptr + OFFSET_TILES + A * 9
-2702+ 6BB4 E5               push hl
-2703+ 6BB5 6F               ld   l, a
-2704+ 6BB6 26 00            ld   h, 0
-2705+ 6BB8 5F               ld   e, a
-2706+ 6BB9 16 00            ld   d, 0
-2707+ 6BBB 29               add  hl, hl                ; *2
-2708+ 6BBC 29               add  hl, hl                ; *4
-2709+ 6BBD 29               add  hl, hl                ; *8
-2710+ 6BBE 19               add  hl, de                ; *9
-2711+ 6BBF 11 20 02         ld   de, OFFSET_TILES
-2712+ 6BC2 19               add  hl, de
-2713+ 6BC3 ED 5B 80 99      ld   de, (room_ptr)
-2714+ 6BC7 19               add  hl, de
-2715+ 6BC8 E5               push hl
-2716+ 6BC9 DD E1            pop  ix                    ; IX = puntatore al tile (9 byte)
-2717+ 6BCB
-2718+ 6BCB CD 11 6B         call Gfx_DrawTile          ; Disegna il tile a (Row B, Col C)
-2719+ 6BCE E1               pop  hl
-2720+ 6BCF
-2721+ 6BCF 0C               inc  c
-2722+ 6BD0 79               ld   a, c
-2723+ 6BD1 FE 20            cp   32
-2724+ 6BD3 20 DD            jr   nz, .col_loop
-2725+ 6BD5
-2726+ 6BD5 04               inc  b
-2727+ 6BD6 78               ld   a, b
-2728+ 6BD7 FE 10            cp   16
-2729+ 6BD9 20 D5            jr   nz, .row_loop
-2730+ 6BDB
-2731+ 6BDB                  ; Disegna anche il portale se presente
-2732+ 6BDB CD E4 6B         call Gfx_DrawPortal
-2733+ 6BDE
-2734+ 6BDE DD E1            pop  ix
-2735+ 6BE0 E1               pop  hl
-2736+ 6BE1 D1               pop  de
-2737+ 6BE2 C1               pop  bc
-2738+ 6BE3 C9               ret
-2739+ 6BE4
-2740+ 6BE4              ; -------------------------------------------------------------------
-2741+ 6BE4              ; Gfx_DrawPortal
-2742+ 6BE4              ; Disegna il portale di uscita della stanza corrente (16x16 pixel)
-2743+ 6BE4              ; -------------------------------------------------------------------
-2744+ 6BE4              Gfx_DrawPortal:
-2745+ 6BE4              ; -------------------------------------------------------------------
-2746+ 6BE4              ; Gfx_DrawPortalForeground / Gfx_AnimatePortal
-2747+ 6BE4              ; Disegna il Portale della stanza corrente (definito a partire da OFFSET_PORTAL = 655)
-2748+ 6BE4              ; sempre in PRIMO PIANO (foreground) rispetto a Willy e ai Guardiani.
-2749+ 6BE4              ; - Scrive direttamente i 32 byte della bitmap 16x16 in VRAM.
-2750+ 6BE4              ; - Imposta i 4 attributi colore (2x2 celle):
-2751+ 6BE4              ;   * Se tutti gli item sono raccolti (game_objective_completed != 0): esegue il ciclo di colori lampeggianti.
-2752+ 6BE4              ;   * Se gli item non sono ancora tutti raccolti: imposta il colore statico originale del portale.
-2753+ 6BE4              ; -------------------------------------------------------------------
-2754+ 6BE4              Gfx_DrawPortalForeground:
-2755+ 6BE4              Gfx_AnimatePortal:
-2756+ 6BE4 E5               push hl
-2757+ 6BE5 D5               push de
-2758+ 6BE6 C5               push bc
-2759+ 6BE7 DD E5            push ix
-2760+ 6BE9
-2761+ 6BE9                  ; 1. Leggi i dati del portale da room_ptr + OFFSET_PORTAL (byte 655)
-2762+ 6BE9 2A 80 99         ld   hl, (room_ptr)
-2763+ 6BEC 11 8F 02         ld   de, OFFSET_PORTAL
-2764+ 6BEF 19               add  hl, de
-2765+ 6BF0 7E               ld   a, (hl)               ; A = Attribute originale (byte 0)
-2766+ 6BF1 32 18 9C         ld   (portal_static_color), a
-2767+ 6BF4 23               inc  hl
-2768+ 6BF5 E5               push hl
-2769+ 6BF6 DD E1            pop  ix                    ; IX = inizio bitmap 32 byte del portale
-2770+ 6BF8
-2771+ 6BF8                  ; Salta 32 byte bitmap per leggere AttrAddr (offset 688)
-2772+ 6BF8 11 20 00         ld   de, 32
-2773+ 6BFB 19               add  hl, de
-2774+ 6BFC 4E               ld   c, (hl)
-2775+ 6BFD 23               inc  hl
-2776+ 6BFE 46               ld   b, (hl)               ; BC = AttrAddr (es. 23997)
-2777+ 6BFF
-2778+ 6BFF                  ; Calcola AttrOffset = BC - 23552
-2779+ 6BFF 60               ld   h, b
-2780+ 6C00 69               ld   l, c
-2781+ 6C01 01 00 A4         ld   bc, -23552
-2782+ 6C04 09               add  hl, bc                ; HL = AttrOffset
-2783+ 6C05
-2784+ 6C05                  ; Col = AttrOffset & 31
-2785+ 6C05 7D               ld   a, l
-2786+ 6C06 E6 1F            and  31
-2787+ 6C08 4F               ld   c, a                  ; C = Col (0..31)
-2788+ 6C09
-2789+ 6C09                  ; Row = AttrOffset / 32
-2790+ 6C09 CB 3C            srl  h
-2790+ 6C0B CB 1D          rr l
-2791+ 6C0D CB 3C            srl  h
-2791+ 6C0F CB 1D          rr l
-2792+ 6C11 CB 3C            srl  h
-2792+ 6C13 CB 1D          rr l
-2793+ 6C15 CB 3C            srl  h
-2793+ 6C17 CB 1D          rr l
-2794+ 6C19 CB 3C            srl  h
-2794+ 6C1B CB 1D          rr l
-2795+ 6C1D 7D               ld   a, l
-2796+ 6C1E 47               ld   b, a                  ; B = Row (0..15)
-2797+ 6C1F
-2798+ 6C1F                  ; Converti in coordinate pixel (C = Pixel X, B = Pixel Y)
-2799+ 6C1F 79               ld   a, c
-2800+ 6C20 87               add  a, a
-2800+ 6C21 87             add a, a
-2800+ 6C22 87             add a, a
-2801+ 6C23 4F               ld   c, a                  ; C = Pixel X (Col * 8)
-2802+ 6C24 78               ld   a, b
-2803+ 6C25 87               add  a, a
-2803+ 6C26 87             add a, a
-2803+ 6C27 87             add a, a
-2804+ 6C28 47               ld   b, a                  ; B = Pixel Y (Row * 8)
-2805+ 6C29
-2806+ 6C29                  ; 2. Disegna la bitmap 16x16 del portale direttamente in VRAM (16 linee, 2 byte per linea)
-2807+ 6C29 60               ld   h, b
-2808+ 6C2A 69               ld   l, c
-2809+ 6C2B CD 10 5E         call Gfx_GetScreenAddr     ; HL = Indirizzo VRAM Top-Left del portale
-2810+ 6C2E
-2811+ 6C2E 06 10            ld   b, 16                 ; 16 scanlines
-2812+ 6C30              .portal_bitmap_loop:
-2813+ 6C30 DD 7E 00         ld   a, (ix+0)
-2814+ 6C33 77               ld   (hl), a               ; Scrivi byte sinistro
-2815+ 6C34 23               inc  hl
-2816+ 6C35 DD 7E 01         ld   a, (ix+1)
-2817+ 6C38 77               ld   (hl), a               ; Scrivi byte destro
-2818+ 6C39 2B               dec  hl                    ; Ripristina HL alla colonna sinistra
-2819+ 6C3A CD 30 5E         call Gfx_IncScreenLine     ; Prossima scanline
-2820+ 6C3D DD 23            inc  ix
-2821+ 6C3F DD 23            inc  ix                    ; Prossimi 2 byte della bitmap
-2822+ 6C41 10 ED            djnz .portal_bitmap_loop
-2823+ 6C43
-2824+ 6C43                  ; 3. Gestione Attributi Colore (4 celle 8x8)
-2825+ 6C43                  ; Calcola indirizzo VRAM attributi Top-Left: $5800 + AttrOffset
-2826+ 6C43 2A 80 99         ld   hl, (room_ptr)
-2827+ 6C46 11 B0 02         ld   de, OFFSET_PORTAL + 33
-2828+ 6C49 19               add  hl, de
-2829+ 6C4A 4E               ld   c, (hl)
-2830+ 6C4B 23               inc  hl
-2831+ 6C4C 46               ld   b, (hl)
-2832+ 6C4D 60               ld   h, b
-2833+ 6C4E 69               ld   l, c
-2834+ 6C4F 01 00 A4         ld   bc, -23552
-2835+ 6C52 09               add  hl, bc
-2836+ 6C53 01 00 58         ld   bc, $5800
-2837+ 6C56 09               add  hl, bc                ; HL = Indirizzo VRAM attributo Top-Left
-2838+ 6C57
-2839+ 6C57                  ; Controlla se il portale è attivo (tutti gli item raccolti)
-2840+ 6C57 3A 15 9C         ld   a, (game_objective_completed)
-2841+ 6C5A B7               or   a
-2842+ 6C5B 28 34            jr   z, .apply_static_portal_color
-2843+ 6C5D
-2844+ 6C5D                  ; --- PORTALE ATTIVO: ANIMAZIONE COLORI LAMPEGGIANTI ---
-2845+ 6C5D                  ; Avanza il timer animazione
-2846+ 6C5D 3A 16 9C         ld   a, (portal_anim_timer)
-2847+ 6C60 3C               inc  a
-2848+ 6C61 FE 02            cp   2
-2849+ 6C63 38 0D            jr   c, .skip_portal_anim_inc
-2850+ 6C65 AF               xor  a
-2851+ 6C66 32 16 9C         ld   (portal_anim_timer), a
-2852+ 6C69 3A 17 9C         ld   a, (portal_anim_frame)
-2853+ 6C6C 3C               inc  a
-2854+ 6C6D E6 07            and  7
-2855+ 6C6F 32 17 9C         ld   (portal_anim_frame), a
-2856+ 6C72              .skip_portal_anim_inc:
-2857+ 6C72
-2858+ 6C72 3A 17 9C         ld   a, (portal_anim_frame)
-2859+ 6C75 5F               ld   e, a                  ; E = frame base (0..7)
-2860+ 6C76
-2861+ 6C76                  ; Cella 0: Top-Left (frame + 0)
-2862+ 6C76 CD A4 6C         call .get_portal_color_hl
-2863+ 6C79 77               ld   (hl), a
-2864+ 6C7A
-2865+ 6C7A                  ; Cella 1: Top-Right (frame + 1)
-2866+ 6C7A 23               inc  hl
-2867+ 6C7B 1C               inc  e
-2868+ 6C7C CD A4 6C         call .get_portal_color_hl
-2869+ 6C7F 77               ld   (hl), a
-2870+ 6C80
-2871+ 6C80                  ; Cella 2: Bottom-Left (frame + 2)
-2872+ 6C80 01 1F 00         ld   bc, 31
-2873+ 6C83 09               add  hl, bc
-2874+ 6C84 1C               inc  e
-2875+ 6C85 CD A4 6C         call .get_portal_color_hl
-2876+ 6C88 77               ld   (hl), a
-2877+ 6C89
-2878+ 6C89                  ; Cella 3: Bottom-Right (frame + 3)
-2879+ 6C89 23               inc  hl
-2880+ 6C8A 1C               inc  e
-2881+ 6C8B CD A4 6C         call .get_portal_color_hl
-2882+ 6C8E 77               ld   (hl), a
-2883+ 6C8F 18 0D            jr   .portal_done
-2884+ 6C91
-2885+ 6C91              .apply_static_portal_color:
-2886+ 6C91                  ; --- PORTALE INATTIVO: COLORE STATICO ORIGINALE ---
-2887+ 6C91 3A 18 9C         ld   a, (portal_static_color)
-2888+ 6C94 77               ld   (hl), a               ; Top-Left
-2889+ 6C95 23               inc  hl
-2890+ 6C96 77               ld   (hl), a               ; Top-Right
-2891+ 6C97 01 1F 00         ld   bc, 31
-2892+ 6C9A 09               add  hl, bc
-2893+ 6C9B 77               ld   (hl), a               ; Bottom-Left
-2894+ 6C9C 23               inc  hl
-2895+ 6C9D 77               ld   (hl), a               ; Bottom-Right
-2896+ 6C9E
-2897+ 6C9E              .portal_done:
-2898+ 6C9E DD E1            pop  ix
-2899+ 6CA0 C1               pop  bc
-2900+ 6CA1 D1               pop  de
-2901+ 6CA2 E1               pop  hl
-2902+ 6CA3 C9               ret
-2903+ 6CA4
-2904+ 6CA4              .get_portal_color_hl:
-2905+ 6CA4 E5               push hl
-2906+ 6CA5 D5               push de
-2907+ 6CA6 7B               ld   a, e
-2908+ 6CA7 E6 07            and  7
-2909+ 6CA9 5F               ld   e, a
-2910+ 6CAA 16 00            ld   d, 0
-2911+ 6CAC 21 B4 6C         ld   hl, portal_color_table
-2912+ 6CAF 19               add  hl, de
-2913+ 6CB0 7E               ld   a, (hl)
-2914+ 6CB1 D1               pop  de
-2915+ 6CB2 E1               pop  hl
-2916+ 6CB3 C9               ret
-2917+ 6CB4
-2918+ 6CB4              ; Tabella colori lampeggio portale (Tutti con BRIGHT $40 attivo)
-2919+ 6CB4              portal_color_table:
-2920+ 6CB4 47               db (WHITE   | $40)         ; $47
-2921+ 6CB5 46               db (YELLOW  | $40)         ; $46
-2922+ 6CB6 45               db (CYAN    | $40)         ; $45
-2923+ 6CB7 44               db (GREEN   | $40)         ; $44
-2924+ 6CB8 43               db (MAGENTA | $40)         ; $43
-2925+ 6CB9 42               db (RED     | $40)         ; $42
-2926+ 6CBA 41               db (BLUE    | $40)         ; $41
-2927+ 6CBB 47               db (WHITE   | $40)         ; $47
-2928+ 6CBC
+2596+ 6B4E              Gfx_DrawCrumblingTile:
+2597+ 6B4E C5               push bc
+2598+ 6B4F D5               push de
+2599+ 6B50 E5               push hl
+2600+ 6B51 DD E5            push ix
+2601+ 6B53
+2602+ 6B53                  ; 1. Calcola indirizzo bitmap per Row B, Col C, scanline 0
+2603+ 6B53 78               ld   a, b
+2604+ 6B54 E6 18            and  $18
+2605+ 6B56 C6 40            add  a, $40
+2606+ 6B58 67               ld   h, a                  ; H = High byte
+2607+ 6B59
+2608+ 6B59 78               ld   a, b
+2609+ 6B5A E6 07            and  7
+2610+ 6B5C 87               add  a, a                  ; *2
+2611+ 6B5D 87               add  a, a                  ; *4
+2612+ 6B5E 87               add  a, a                  ; *8
+2613+ 6B5F 87               add  a, a                  ; *16
+2614+ 6B60 87               add  a, a                  ; *32
+2615+ 6B61 81               add  a, c                  ; + Col C
+2616+ 6B62 6F               ld   l, a                  ; HL = indirizzo schermo scanline 0
+2617+ 6B63
+2618+ 6B63                  ; 2. IX = room_ptr + OFFSET_CRUMBLING + 1 (inizio bitmap 8 byte)
+2619+ 6B63 E5               push hl
+2620+ 6B64 2A 80 99         ld   hl, (room_ptr)
+2621+ 6B67 01 33 02         ld   bc, OFFSET_CRUMBLING + 1
+2622+ 6B6A 09               add  hl, bc
+2623+ 6B6B E5               push hl
+2624+ 6B6C DD E1            pop  ix                    ; IX = puntatore alle 8 scanline bitmap
+2625+ 6B6E E1               pop  hl                    ; HL = indirizzo schermo
+2626+ 6B6F
+2627+ 6B6F                  ; 3. Loop su 8 scanline (line = 0..7)
+2628+ 6B6F 16 00            ld   d, 0                  ; D = line index (0..7)
+2629+ 6B71              .line_loop:
+2630+ 6B71 7A               ld   a, d                  ; A = current line
+2631+ 6B72 BB               cp   e                     ; Confronta current line con Stage (in E)
+2632+ 6B73 38 06            jr   c, .erase_line        ; Se line < Stage, scrivi 0 (cancellata)
+2633+ 6B75
+2634+ 6B75                  ; Linea visibile: scrivi byte bitmap dal tile
+2635+ 6B75 DD 7E 00         ld   a, (ix+0)
+2636+ 6B78 77               ld   (hl), a
+2637+ 6B79 18 02            jr   .next_scanline
+2638+ 6B7B
+2639+ 6B7B              .erase_line:
+2640+ 6B7B AF               xor  a
+2641+ 6B7C 77               ld   (hl), a
+2642+ 6B7D
+2643+ 6B7D              .next_scanline:
+2644+ 6B7D 24               inc  h                     ; Prossima scanline sullo schermo
+2645+ 6B7E DD 23            inc  ix                    ; Prossima scanline nel tile
+2646+ 6B80 14               inc  d                     ; line++
+2647+ 6B81 7A               ld   a, d
+2648+ 6B82 FE 08            cp   8
+2649+ 6B84 38 EB            jr   c, .line_loop
+2650+ 6B86
+2651+ 6B86                  ; 4. Gestione Attributo Colore
+2652+ 6B86                  ; Se Stage >= 8, azzera l'attributo a 0 (Background)
+2653+ 6B86 7B               ld   a, e
+2654+ 6B87 FE 08            cp   8
+2655+ 6B89 38 12            jr   c, .done_draw_crumble
+2656+ 6B8B
+2657+ 6B8B 26 00            ld   h, 0
+2658+ 6B8D 68               ld   l, b                  ; HL = Row
+2659+ 6B8E 29               add  hl, hl
+2659+ 6B8F 29             add hl, hl
+2659+ 6B90 29             add hl, hl
+2659+ 6B91 29             add hl, hl
+2659+ 6B92 29             add hl, hl
+2660+ 6B93 59               ld   e, c
+2661+ 6B94 16 00            ld   d, 0
+2662+ 6B96 19               add  hl, de
+2663+ 6B97 11 00 58         ld   de, $5800
+2664+ 6B9A 19               add  hl, de                ; HL = AttrAddr
+2665+ 6B9B AF               xor  a
+2666+ 6B9C 77               ld   (hl), a
+2667+ 6B9D
+2668+ 6B9D              .done_draw_crumble:
+2669+ 6B9D DD E1            pop  ix
+2670+ 6B9F E1               pop  hl
+2671+ 6BA0 D1               pop  de
+2672+ 6BA1 C1               pop  bc
+2673+ 6BA2 C9               ret
+2674+ 6BA3
+2675+ 6BA3              ; -------------------------------------------------------------------
+2676+ 6BA3              ; Disegna la stanza corrente leggendola dalla struttura dati
+2677+ 6BA3              ; -------------------------------------------------------------------
+2678+ 6BA3              ; -------------------------------------------------------------------
+2679+ 6BA3              ; Disegna la stanza corrente leggendola dalla struttura dati
+2680+ 6BA3              ; -------------------------------------------------------------------
+2681+ 6BA3              Gfx_DrawRoom:
+2682+ 6BA3 C5               push bc
+2683+ 6BA4 D5               push de
+2684+ 6BA5 E5               push hl
+2685+ 6BA6 DD E5            push ix
+2686+ 6BA8
+2687+ 6BA8 CD 7F 78         call UnpackRoomLayout      ; Decodifica le 512 celle in unpacked_layout (0..7)
+2688+ 6BAB
+2689+ 6BAB 21 26 97         ld   hl, unpacked_layout   ; HL punta a unpacked_layout
+2690+ 6BAE 06 00            ld   b, 0                  ; B = Row (0..15)
+2691+ 6BB0              .row_loop:
+2692+ 6BB0 0E 00            ld   c, 0                  ; C = Col (0..31)
+2693+ 6BB2              .col_loop:
+2694+ 6BB2 7E               ld   a, (hl)               ; A = tile index (0..7)
+2695+ 6BB3 23               inc  hl
+2696+ 6BB4
+2697+ 6BB4                  ; IX = room_ptr + OFFSET_TILES + A * 9
+2698+ 6BB4 E5               push hl
+2699+ 6BB5 6F               ld   l, a
+2700+ 6BB6 26 00            ld   h, 0
+2701+ 6BB8 5F               ld   e, a
+2702+ 6BB9 16 00            ld   d, 0
+2703+ 6BBB 29               add  hl, hl                ; *2
+2704+ 6BBC 29               add  hl, hl                ; *4
+2705+ 6BBD 29               add  hl, hl                ; *8
+2706+ 6BBE 19               add  hl, de                ; *9
+2707+ 6BBF 11 20 02         ld   de, OFFSET_TILES
+2708+ 6BC2 19               add  hl, de
+2709+ 6BC3 ED 5B 80 99      ld   de, (room_ptr)
+2710+ 6BC7 19               add  hl, de
+2711+ 6BC8 E5               push hl
+2712+ 6BC9 DD E1            pop  ix                    ; IX = puntatore al tile (9 byte)
+2713+ 6BCB
+2714+ 6BCB CD 11 6B         call Gfx_DrawTile          ; Disegna il tile a (Row B, Col C)
+2715+ 6BCE E1               pop  hl
+2716+ 6BCF
+2717+ 6BCF 0C               inc  c
+2718+ 6BD0 79               ld   a, c
+2719+ 6BD1 FE 20            cp   32
+2720+ 6BD3 20 DD            jr   nz, .col_loop
+2721+ 6BD5
+2722+ 6BD5 04               inc  b
+2723+ 6BD6 78               ld   a, b
+2724+ 6BD7 FE 10            cp   16
+2725+ 6BD9 20 D5            jr   nz, .row_loop
+2726+ 6BDB
+2727+ 6BDB                  ; Disegna anche il portale se presente
+2728+ 6BDB CD E4 6B         call Gfx_DrawPortal
+2729+ 6BDE
+2730+ 6BDE DD E1            pop  ix
+2731+ 6BE0 E1               pop  hl
+2732+ 6BE1 D1               pop  de
+2733+ 6BE2 C1               pop  bc
+2734+ 6BE3 C9               ret
+2735+ 6BE4
+2736+ 6BE4              ; -------------------------------------------------------------------
+2737+ 6BE4              ; Gfx_DrawPortal
+2738+ 6BE4              ; Disegna il portale di uscita della stanza corrente (16x16 pixel)
+2739+ 6BE4              ; -------------------------------------------------------------------
+2740+ 6BE4              Gfx_DrawPortal:
+2741+ 6BE4              ; -------------------------------------------------------------------
+2742+ 6BE4              ; Gfx_DrawPortalForeground / Gfx_AnimatePortal
+2743+ 6BE4              ; Disegna il Portale della stanza corrente (definito a partire da OFFSET_PORTAL = 655)
+2744+ 6BE4              ; sempre in PRIMO PIANO (foreground) rispetto a Willy e ai Guardiani.
+2745+ 6BE4              ; - Scrive direttamente i 32 byte della bitmap 16x16 in VRAM.
+2746+ 6BE4              ; - Imposta i 4 attributi colore (2x2 celle):
+2747+ 6BE4              ;   * Se tutti gli item sono raccolti (game_objective_completed != 0): esegue il ciclo di colori lampeggianti.
+2748+ 6BE4              ;   * Se gli item non sono ancora tutti raccolti: imposta il colore statico originale del portale.
+2749+ 6BE4              ; -------------------------------------------------------------------
+2750+ 6BE4              Gfx_DrawPortalForeground:
+2751+ 6BE4              Gfx_AnimatePortal:
+2752+ 6BE4 E5               push hl
+2753+ 6BE5 D5               push de
+2754+ 6BE6 C5               push bc
+2755+ 6BE7 DD E5            push ix
+2756+ 6BE9
+2757+ 6BE9                  ; 1. Leggi i dati del portale da room_ptr + OFFSET_PORTAL (byte 655)
+2758+ 6BE9 2A 80 99         ld   hl, (room_ptr)
+2759+ 6BEC 11 8F 02         ld   de, OFFSET_PORTAL
+2760+ 6BEF 19               add  hl, de
+2761+ 6BF0 7E               ld   a, (hl)               ; A = Attribute originale (byte 0)
+2762+ 6BF1 32 18 9C         ld   (portal_static_color), a
+2763+ 6BF4 23               inc  hl
+2764+ 6BF5 E5               push hl
+2765+ 6BF6 DD E1            pop  ix                    ; IX = inizio bitmap 32 byte del portale
+2766+ 6BF8
+2767+ 6BF8                  ; Salta 32 byte bitmap per leggere AttrAddr (offset 688)
+2768+ 6BF8 11 20 00         ld   de, 32
+2769+ 6BFB 19               add  hl, de
+2770+ 6BFC 4E               ld   c, (hl)
+2771+ 6BFD 23               inc  hl
+2772+ 6BFE 46               ld   b, (hl)               ; BC = AttrAddr (es. 23997)
+2773+ 6BFF
+2774+ 6BFF                  ; Calcola AttrOffset = BC - 23552
+2775+ 6BFF 60               ld   h, b
+2776+ 6C00 69               ld   l, c
+2777+ 6C01 01 00 A4         ld   bc, -23552
+2778+ 6C04 09               add  hl, bc                ; HL = AttrOffset
+2779+ 6C05
+2780+ 6C05                  ; Col = AttrOffset & 31
+2781+ 6C05 7D               ld   a, l
+2782+ 6C06 E6 1F            and  31
+2783+ 6C08 4F               ld   c, a                  ; C = Col (0..31)
+2784+ 6C09
+2785+ 6C09                  ; Row = AttrOffset / 32
+2786+ 6C09 CB 3C            srl  h
+2786+ 6C0B CB 1D          rr l
+2787+ 6C0D CB 3C            srl  h
+2787+ 6C0F CB 1D          rr l
+2788+ 6C11 CB 3C            srl  h
+2788+ 6C13 CB 1D          rr l
+2789+ 6C15 CB 3C            srl  h
+2789+ 6C17 CB 1D          rr l
+2790+ 6C19 CB 3C            srl  h
+2790+ 6C1B CB 1D          rr l
+2791+ 6C1D 7D               ld   a, l
+2792+ 6C1E 47               ld   b, a                  ; B = Row (0..15)
+2793+ 6C1F
+2794+ 6C1F                  ; Converti in coordinate pixel (C = Pixel X, B = Pixel Y)
+2795+ 6C1F 79               ld   a, c
+2796+ 6C20 87               add  a, a
+2796+ 6C21 87             add a, a
+2796+ 6C22 87             add a, a
+2797+ 6C23 4F               ld   c, a                  ; C = Pixel X (Col * 8)
+2798+ 6C24 78               ld   a, b
+2799+ 6C25 87               add  a, a
+2799+ 6C26 87             add a, a
+2799+ 6C27 87             add a, a
+2800+ 6C28 47               ld   b, a                  ; B = Pixel Y (Row * 8)
+2801+ 6C29
+2802+ 6C29                  ; 2. Disegna la bitmap 16x16 del portale direttamente in VRAM (16 linee, 2 byte per linea)
+2803+ 6C29 60               ld   h, b
+2804+ 6C2A 69               ld   l, c
+2805+ 6C2B CD 10 5E         call Gfx_GetScreenAddr     ; HL = Indirizzo VRAM Top-Left del portale
+2806+ 6C2E
+2807+ 6C2E 06 10            ld   b, 16                 ; 16 scanlines
+2808+ 6C30              .portal_bitmap_loop:
+2809+ 6C30 DD 7E 00         ld   a, (ix+0)
+2810+ 6C33 77               ld   (hl), a               ; Scrivi byte sinistro
+2811+ 6C34 23               inc  hl
+2812+ 6C35 DD 7E 01         ld   a, (ix+1)
+2813+ 6C38 77               ld   (hl), a               ; Scrivi byte destro
+2814+ 6C39 2B               dec  hl                    ; Ripristina HL alla colonna sinistra
+2815+ 6C3A CD 30 5E         call Gfx_IncScreenLine     ; Prossima scanline
+2816+ 6C3D DD 23            inc  ix
+2817+ 6C3F DD 23            inc  ix                    ; Prossimi 2 byte della bitmap
+2818+ 6C41 10 ED            djnz .portal_bitmap_loop
+2819+ 6C43
+2820+ 6C43                  ; 3. Gestione Attributi Colore (4 celle 8x8)
+2821+ 6C43                  ; Calcola indirizzo VRAM attributi Top-Left: $5800 + AttrOffset
+2822+ 6C43 2A 80 99         ld   hl, (room_ptr)
+2823+ 6C46 11 B0 02         ld   de, OFFSET_PORTAL + 33
+2824+ 6C49 19               add  hl, de
+2825+ 6C4A 4E               ld   c, (hl)
+2826+ 6C4B 23               inc  hl
+2827+ 6C4C 46               ld   b, (hl)
+2828+ 6C4D 60               ld   h, b
+2829+ 6C4E 69               ld   l, c
+2830+ 6C4F 01 00 A4         ld   bc, -23552
+2831+ 6C52 09               add  hl, bc
+2832+ 6C53 01 00 58         ld   bc, $5800
+2833+ 6C56 09               add  hl, bc                ; HL = Indirizzo VRAM attributo Top-Left
+2834+ 6C57
+2835+ 6C57                  ; Controlla se il portale è attivo (tutti gli item raccolti)
+2836+ 6C57 3A 15 9C         ld   a, (game_objective_completed)
+2837+ 6C5A B7               or   a
+2838+ 6C5B 28 34            jr   z, .apply_static_portal_color
+2839+ 6C5D
+2840+ 6C5D                  ; --- PORTALE ATTIVO: ANIMAZIONE COLORI LAMPEGGIANTI ---
+2841+ 6C5D                  ; Avanza il timer animazione
+2842+ 6C5D 3A 16 9C         ld   a, (portal_anim_timer)
+2843+ 6C60 3C               inc  a
+2844+ 6C61 FE 02            cp   2
+2845+ 6C63 38 0D            jr   c, .skip_portal_anim_inc
+2846+ 6C65 AF               xor  a
+2847+ 6C66 32 16 9C         ld   (portal_anim_timer), a
+2848+ 6C69 3A 17 9C         ld   a, (portal_anim_frame)
+2849+ 6C6C 3C               inc  a
+2850+ 6C6D E6 07            and  7
+2851+ 6C6F 32 17 9C         ld   (portal_anim_frame), a
+2852+ 6C72              .skip_portal_anim_inc:
+2853+ 6C72
+2854+ 6C72 3A 17 9C         ld   a, (portal_anim_frame)
+2855+ 6C75 5F               ld   e, a                  ; E = frame base (0..7)
+2856+ 6C76
+2857+ 6C76                  ; Cella 0: Top-Left (frame + 0)
+2858+ 6C76 CD A4 6C         call .get_portal_color_hl
+2859+ 6C79 77               ld   (hl), a
+2860+ 6C7A
+2861+ 6C7A                  ; Cella 1: Top-Right (frame + 1)
+2862+ 6C7A 23               inc  hl
+2863+ 6C7B 1C               inc  e
+2864+ 6C7C CD A4 6C         call .get_portal_color_hl
+2865+ 6C7F 77               ld   (hl), a
+2866+ 6C80
+2867+ 6C80                  ; Cella 2: Bottom-Left (frame + 2)
+2868+ 6C80 01 1F 00         ld   bc, 31
+2869+ 6C83 09               add  hl, bc
+2870+ 6C84 1C               inc  e
+2871+ 6C85 CD A4 6C         call .get_portal_color_hl
+2872+ 6C88 77               ld   (hl), a
+2873+ 6C89
+2874+ 6C89                  ; Cella 3: Bottom-Right (frame + 3)
+2875+ 6C89 23               inc  hl
+2876+ 6C8A 1C               inc  e
+2877+ 6C8B CD A4 6C         call .get_portal_color_hl
+2878+ 6C8E 77               ld   (hl), a
+2879+ 6C8F 18 0D            jr   .portal_done
+2880+ 6C91
+2881+ 6C91              .apply_static_portal_color:
+2882+ 6C91                  ; --- PORTALE INATTIVO: COLORE STATICO ORIGINALE ---
+2883+ 6C91 3A 18 9C         ld   a, (portal_static_color)
+2884+ 6C94 77               ld   (hl), a               ; Top-Left
+2885+ 6C95 23               inc  hl
+2886+ 6C96 77               ld   (hl), a               ; Top-Right
+2887+ 6C97 01 1F 00         ld   bc, 31
+2888+ 6C9A 09               add  hl, bc
+2889+ 6C9B 77               ld   (hl), a               ; Bottom-Left
+2890+ 6C9C 23               inc  hl
+2891+ 6C9D 77               ld   (hl), a               ; Bottom-Right
+2892+ 6C9E
+2893+ 6C9E              .portal_done:
+2894+ 6C9E DD E1            pop  ix
+2895+ 6CA0 C1               pop  bc
+2896+ 6CA1 D1               pop  de
+2897+ 6CA2 E1               pop  hl
+2898+ 6CA3 C9               ret
+2899+ 6CA4
+2900+ 6CA4              .get_portal_color_hl:
+2901+ 6CA4 E5               push hl
+2902+ 6CA5 D5               push de
+2903+ 6CA6 7B               ld   a, e
+2904+ 6CA7 E6 07            and  7
+2905+ 6CA9 5F               ld   e, a
+2906+ 6CAA 16 00            ld   d, 0
+2907+ 6CAC 21 B4 6C         ld   hl, portal_color_table
+2908+ 6CAF 19               add  hl, de
+2909+ 6CB0 7E               ld   a, (hl)
+2910+ 6CB1 D1               pop  de
+2911+ 6CB2 E1               pop  hl
+2912+ 6CB3 C9               ret
+2913+ 6CB4
+2914+ 6CB4              ; Tabella colori lampeggio portale (Tutti con BRIGHT $40 attivo)
+2915+ 6CB4              portal_color_table:
+2916+ 6CB4 47               db (WHITE   | $40)         ; $47
+2917+ 6CB5 46               db (YELLOW  | $40)         ; $46
+2918+ 6CB6 45               db (CYAN    | $40)         ; $45
+2919+ 6CB7 44               db (GREEN   | $40)         ; $44
+2920+ 6CB8 43               db (MAGENTA | $40)         ; $43
+2921+ 6CB9 42               db (RED     | $40)         ; $42
+2922+ 6CBA 41               db (BLUE    | $40)         ; $41
+2923+ 6CBB 47               db (WHITE   | $40)         ; $47
+2924+ 6CBC
+2925+ 6CBC              ; -------------------------------------------------------------------
+2926+ 6CBC              ; Ottiene l'attributo colore originale dello sfondo per una cella
+2927+ 6CBC              ; Input: H = Row (0..23), B = Col (0..31)
+2928+ 6CBC              ; Output: A = Attributo colore
 2929+ 6CBC              ; -------------------------------------------------------------------
-2930+ 6CBC              ; Ottiene l'attributo colore originale dello sfondo per una cella
-2931+ 6CBC              ; Input: H = Row (0..23), B = Col (0..31)
-2932+ 6CBC              ; Output: A = Attributo colore
-2933+ 6CBC              ; -------------------------------------------------------------------
-2934+ 6CBC              Gfx_GetCellAttribute:
-2935+ 6CBC E5               push hl
-2936+ 6CBD D5               push de
-2937+ 6CBE C5               push bc
-2938+ 6CBF
-2939+ 6CBF D5               push de
-2940+ 6CC0 C5               push bc
-2941+ 6CC1 4C               ld   c, h                  ; C = Row
-2942+ 6CC2 CD 67 82         call CheckActiveItemAtCell
-2943+ 6CC5 30 06            jr   nc, .no_item_attr
-2944+ 6CC7
-2945+ 6CC7 C1               pop  bc
-2946+ 6CC8 D1               pop  de
-2947+ 6CC9 C1               pop  bc
-2948+ 6CCA D1               pop  de
-2949+ 6CCB E1               pop  hl
-2950+ 6CCC C9               ret
-2951+ 6CCD
-2952+ 6CCD              .no_item_attr:
-2953+ 6CCD C1               pop  bc
-2954+ 6CCE D1               pop  de
-2955+ 6CCF
-2956+ 6CCF                  ; 1. Controlla se Row (H) è fuori dal layout (H >= 16)
-2957+ 6CCF 7C               ld   a, h
-2958+ 6CD0 FE 10            cp   16
-2959+ 6CD2 D2 57 6D         jp   nc, .blank
-2960+ 6CD5
-2961+ 6CD5                  ; 1b. Controlla se la cella (Row H, Col B) appartiene al Portale
-2962+ 6CD5 E5               push hl
-2963+ 6CD6 D5               push de
-2964+ 6CD7 C5               push bc
-2965+ 6CD8 2A 80 99         ld   hl, (room_ptr)
-2966+ 6CDB 11 B0 02         ld   de, OFFSET_PORTAL + 33
-2967+ 6CDE 19               add  hl, de
-2968+ 6CDF 7E               ld   a, (hl)
-2969+ 6CE0 23               inc  hl
-2970+ 6CE1 66               ld   h, (hl)
-2971+ 6CE2 6F               ld   l, a                  ; HL = AttrAddr
-2972+ 6CE3 11 00 A4         ld   de, -23552
-2973+ 6CE6 19               add  hl, de                ; HL = AttrOffset
-2974+ 6CE7
-2975+ 6CE7 7D               ld   a, l
-2976+ 6CE8 E6 1F            and  31
-2977+ 6CEA 57               ld   d, a                  ; D = PortalCol (0..31)
-2978+ 6CEB
-2979+ 6CEB CB 3C            srl  h
-2979+ 6CED CB 1D          rr l
-2980+ 6CEF CB 3C            srl  h
-2980+ 6CF1 CB 1D          rr l
-2981+ 6CF3 CB 3C            srl  h
-2981+ 6CF5 CB 1D          rr l
-2982+ 6CF7 CB 3C            srl  h
-2982+ 6CF9 CB 1D          rr l
-2983+ 6CFB CB 3C            srl  h
-2983+ 6CFD CB 1D          rr l
-2984+ 6CFF 7D               ld   a, l                  ; A = PortalRow (0..15)
-2985+ 6D00
-2986+ 6D00 C1               pop  bc                    ; B = Col
-2987+ 6D01 D1               pop  de
-2988+ 6D02 E1               pop  hl                    ; H = Row
-2989+ 6D03
-2990+ 6D03                  ; DeltaRow = Row (H) - PortalRow (A)
-2991+ 6D03 94               sub  h
-2992+ 6D04 ED 44            neg
-2993+ 6D06 FE 02            cp   2
-2994+ 6D08 30 30            jr   nc, .not_portal_attr
-2995+ 6D0A
-2996+ 6D0A 5F               ld   e, a                  ; E = DeltaRow (0..1)
-2997+ 6D0B
-2998+ 6D0B                  ; DeltaCol = Col (B) - PortalCol (D)
-2999+ 6D0B 78               ld   a, b
-3000+ 6D0C 92               sub  d
-3001+ 6D0D FE 02            cp   2
-3002+ 6D0F 30 29            jr   nc, .not_portal_attr
-3003+ 6D11
-3004+ 6D11                  ; A = DeltaCol (0..1)
-3005+ 6D11 57               ld   d, a                  ; D = DeltaCol
-3006+ 6D12 7B               ld   a, e                  ; A = DeltaRow
-3007+ 6D13 87               add  a, a                  ; *2
-3008+ 6D14 82               add  a, d                  ; A = CellIndex (0..3)
-3009+ 6D15 5F               ld   e, a                  ; E = CellIndex (0..3)
-3010+ 6D16
-3011+ 6D16                  ; Se game_objective_completed != 0 (portale attivo):
-3012+ 6D16 3A 15 9C         ld   a, (game_objective_completed)
-3013+ 6D19 B7               or   a
-3014+ 6D1A 28 12            jr   z, .portal_static_attr
-3015+ 6D1C
-3016+ 6D1C 3A 17 9C         ld   a, (portal_anim_frame)
-3017+ 6D1F 83               add  a, e                  ; portal_anim_frame + CellIndex
-3018+ 6D20 E6 07            and  7
-3019+ 6D22 5F               ld   e, a
-3020+ 6D23 16 00            ld   d, 0
-3021+ 6D25 21 B4 6C         ld   hl, portal_color_table
-3022+ 6D28 19               add  hl, de
-3023+ 6D29 7E               ld   a, (hl)               ; A = colore lampeggiante
-3024+ 6D2A C1               pop  bc
-3025+ 6D2B D1               pop  de
-3026+ 6D2C E1               pop  hl
-3027+ 6D2D C9               ret
-3028+ 6D2E
-3029+ 6D2E              .portal_static_attr:
-3030+ 6D2E 2A 80 99         ld   hl, (room_ptr)
-3031+ 6D31 11 8F 02         ld   de, OFFSET_PORTAL
-3032+ 6D34 19               add  hl, de
-3033+ 6D35 7E               ld   a, (hl)               ; A = attributo originale del portale
-3034+ 6D36 C1               pop  bc
-3035+ 6D37 D1               pop  de
-3036+ 6D38 E1               pop  hl
-3037+ 6D39 C9               ret
-3038+ 6D3A
-3039+ 6D3A              .not_portal_attr:
-3040+ 6D3A                  ; 2. Leggi il tile index da unpacked_layout
-3041+ 6D3A 7C               ld   a, h                  ; A = Row
-3042+ 6D3B 48               ld   c, b                  ; C = Col
-3043+ 6D3C CD EA 78         call GetCellFromUnpacked   ; A = tile index (0..7)
-3044+ 6D3F
-3045+ 6D3F                  ; 3. Leggi l'attributo del tile corrispondente (room_ptr + OFFSET_TILES + A * 9)
-3046+ 6D3F 6F               ld   l, a
-3047+ 6D40 26 00            ld   h, 0
-3048+ 6D42 5F               ld   e, a
-3049+ 6D43 16 00            ld   d, 0
-3050+ 6D45 29               add  hl, hl                ; *2
-3051+ 6D46 29               add  hl, hl                ; *4
-3052+ 6D47 29               add  hl, hl                ; *8
-3053+ 6D48 19               add  hl, de                ; *9
-3054+ 6D49 11 20 02         ld   de, OFFSET_TILES
-3055+ 6D4C 19               add  hl, de
-3056+ 6D4D ED 5B 80 99      ld   de, (room_ptr)
-3057+ 6D51 19               add  hl, de                ; HL = puntatore al tile
-3058+ 6D52 7E               ld   a, (hl)               ; A = attributo colore del tile
-3059+ 6D53
-3060+ 6D53 C1               pop  bc
-3061+ 6D54 D1               pop  de
-3062+ 6D55 E1               pop  hl
-3063+ 6D56 C9               ret
-3064+ 6D57
-3065+ 6D57              .blank:
-3066+ 6D57 3E 07            ld   a, $07                ; Sfondo di default (bianco su nero)
-3067+ 6D59 C1               pop  bc
-3068+ 6D5A D1               pop  de
-3069+ 6D5B E1               pop  hl
-3070+ 6D5C C9               ret
-3071+ 6D5D
-3072+ 6D5D              ; -------------------------------------------------------------------
-3073+ 6D5D              ; Imposta gli attributi colore per la cella occupata da un nemico 16x16
-3074+ 6D5D              ; Input: C = X pixel, B = Y pixel, A = Colore Gfx_Ink (0..7)
-3075+ 6D5D              ; -------------------------------------------------------------------
-3076+ 6D5D              Gfx_SetEnemyColorAttributes:
-3077+ 6D5D E5               push hl
-3078+ 6D5E D5               push de
-3079+ 6D5F C5               push bc
-3080+ 6D60
-3081+ 6D60 57               ld   d, a              ; D = Colore Gfx_Ink (salvato)
-3082+ 6D61
-3083+ 6D61                  ; Se Y è fuori dai limiti della griglia di gioco, non fare nulla
-3084+ 6D61 78               ld   a, b
-3085+ 6D62 FE 80            cp   128
-3086+ 6D64 30 54            jr   nc, .done
-3087+ 6D66
-3088+ 6D66                  ; Calcola ColStart: col = X / 8
-3089+ 6D66 79               ld   a, c
-3090+ 6D67 CB 3F            srl  a
-3091+ 6D69 CB 3F            srl  a
-3092+ 6D6B CB 3F            srl  a
-3093+ 6D6D 5F               ld   e, a              ; E = ColStart
-3094+ 6D6E
-3095+ 6D6E                  ; Calcola ColEnd: col_end = (X + 15) / 8
-3096+ 6D6E 79               ld   a, c
-3097+ 6D6F C6 0F            add  a, 15
-3098+ 6D71 CB 3F            srl  a
-3099+ 6D73 CB 3F            srl  a
-3100+ 6D75 CB 3F            srl  a
-3101+ 6D77 4F               ld   c, a              ; C = ColEnd
-3102+ 6D78
-3103+ 6D78                  ; Calcola RowStart: row = Y / 8
-3104+ 6D78 78               ld   a, b
-3105+ 6D79 CB 3F            srl  a
-3106+ 6D7B CB 3F            srl  a
-3107+ 6D7D CB 3F            srl  a
-3108+ 6D7F 67               ld   h, a              ; H = RowStart
-3109+ 6D80
-3110+ 6D80                  ; Calcola RowEnd: row_end = (Y + 15) / 8
-3111+ 6D80 78               ld   a, b
-3112+ 6D81 C6 0F            add  a, 15
-3113+ 6D83 CB 3F            srl  a
-3114+ 6D85 CB 3F            srl  a
-3115+ 6D87 CB 3F            srl  a
-3116+ 6D89 6F               ld   l, a              ; L = RowEnd
-3117+ 6D8A
-3118+ 6D8A                  ; Loop righe: Row corrente in H, fino a L
-3119+ 6D8A              .row_loop:
-3120+ 6D8A 7C               ld   a, h
-3121+ 6D8B BD               cp   l
-3122+ 6D8C 28 02            jr   z, .ok_row
-3123+ 6D8E 30 2A            jr   nc, .done
-3124+ 6D90              .ok_row:
-3125+ 6D90 C5               push bc
-3126+ 6D91 D5               push de
-3127+ 6D92
-3128+ 6D92                  ; Col loop from E (ColStart) to C (ColEnd)
-3129+ 6D92 43               ld   b, e              ; B = Col corrente
-3130+ 6D93              .col_loop:
-3131+ 6D93 78               ld   a, b
-3132+ 6D94 B9               cp   c
-3133+ 6D95 28 02            jr   z, .ok_col
-3134+ 6D97 30 1C            jr   nc, .col_done
-3135+ 6D99              .ok_col:
-3136+ 6D99                  ; Processa la cella a H (Row), B (Col)
-3137+ 6D99 E5               push hl
-3138+ 6D9A 6C               ld   l, h
-3139+ 6D9B 26 00            ld   h, 0
-3140+ 6D9D 29               add  hl, hl
-3141+ 6D9E 29               add  hl, hl
-3142+ 6D9F 29               add  hl, hl
-3143+ 6DA0 29               add  hl, hl
-3144+ 6DA1 29               add  hl, hl            ; HL = Row * 32
-3145+ 6DA2
-3146+ 6DA2 78               ld   a, b              ; A = Col corrente
-3147+ 6DA3 85               add  a, l
-3148+ 6DA4 6F               ld   l, a
-3149+ 6DA5 30 01            jr   nc, .no_c_s
-3150+ 6DA7 24               inc  h
-3151+ 6DA8              .no_c_s:
-3152+ 6DA8 7C               ld   a, h
-3153+ 6DA9 C6 58            add  a, $58
-3154+ 6DAB 67               ld   h, a              ; HL = Attribute screen address ($5800 + Row * 32 + Col)
-3155+ 6DAC
-3156+ 6DAC 7E               ld   a, (hl)
-3157+ 6DAD E6 F8            and  $f8
-3158+ 6DAF B2               or   d                 ; D has the enemy color
-3159+ 6DB0 77               ld   (hl), a
-3160+ 6DB1 E1               pop  hl
-3161+ 6DB2
-3162+ 6DB2 04               inc  b                 ; Prossima colonna
-3163+ 6DB3 18 DE            jr   .col_loop
-3164+ 6DB5
-3165+ 6DB5              .col_done:
-3166+ 6DB5 D1               pop  de
-3167+ 6DB6 C1               pop  bc
-3168+ 6DB7 24               inc  h                 ; Prossima riga
-3169+ 6DB8 18 D0            jr   .row_loop
-3170+ 6DBA
-3171+ 6DBA              .done:
-3172+ 6DBA C1               pop  bc
-3173+ 6DBB D1               pop  de
-3174+ 6DBC E1               pop  hl
-3175+ 6DBD C9               ret
-3176+ 6DBE
-3177+ 6DBE              ; -------------------------------------------------------------------
-3178+ 6DBE              ; Ripristina gli attributi colore originali dello sfondo per la cella occupata da un nemico
-3179+ 6DBE              ; Input: C = X pixel, B = Y pixel
-3180+ 6DBE              ; -------------------------------------------------------------------
-3181+ 6DBE              Gfx_RestoreEnemyColorAttributes:
-3182+ 6DBE E5               push hl
-3183+ 6DBF D5               push de
-3184+ 6DC0 C5               push bc
-3185+ 6DC1
-3186+ 6DC1                  ; Se Y è fuori dai limiti della griglia di gioco, non fare nulla
-3187+ 6DC1 78               ld   a, b
-3188+ 6DC2 FE 80            cp   128
-3189+ 6DC4 30 54            jr   nc, .done
-3190+ 6DC6
-3191+ 6DC6                  ; Calcola ColStart: col = X / 8
-3192+ 6DC6 79               ld   a, c
-3193+ 6DC7 CB 3F            srl  a
-3194+ 6DC9 CB 3F            srl  a
-3195+ 6DCB CB 3F            srl  a
-3196+ 6DCD 5F               ld   e, a              ; E = ColStart
-3197+ 6DCE
-3198+ 6DCE                  ; Calcola ColEnd: col_end = (X + 15) / 8
-3199+ 6DCE 79               ld   a, c
-3200+ 6DCF C6 0F            add  a, 15
-3201+ 6DD1 CB 3F            srl  a
-3202+ 6DD3 CB 3F            srl  a
-3203+ 6DD5 CB 3F            srl  a
-3204+ 6DD7 4F               ld   c, a              ; C = ColEnd
-3205+ 6DD8
-3206+ 6DD8                  ; Calcola RowStart: row = Y / 8
-3207+ 6DD8 78               ld   a, b
-3208+ 6DD9 CB 3F            srl  a
-3209+ 6DDB CB 3F            srl  a
-3210+ 6DDD CB 3F            srl  a
-3211+ 6DDF 67               ld   h, a              ; H = RowStart
-3212+ 6DE0
-3213+ 6DE0                  ; Calcola RowEnd: row_end = (Y + 15) / 8
-3214+ 6DE0 78               ld   a, b
-3215+ 6DE1 C6 0F            add  a, 15
-3216+ 6DE3 CB 3F            srl  a
-3217+ 6DE5 CB 3F            srl  a
-3218+ 6DE7 CB 3F            srl  a
-3219+ 6DE9 6F               ld   l, a              ; L = RowEnd
-3220+ 6DEA
-3221+ 6DEA                  ; Loop righe: Row corrente in H, fino a L
-3222+ 6DEA              .row_loop:
-3223+ 6DEA 7C               ld   a, h
-3224+ 6DEB BD               cp   l
-3225+ 6DEC 28 02            jr   z, .ok_row
-3226+ 6DEE 30 2A            jr   nc, .done
-3227+ 6DF0              .ok_row:
-3228+ 6DF0 C5               push bc
-3229+ 6DF1 D5               push de
-3230+ 6DF2
-3231+ 6DF2                  ; Col loop from E (ColStart) to C (ColEnd)
-3232+ 6DF2 43               ld   b, e              ; B = Col corrente
-3233+ 6DF3              .col_loop:
-3234+ 6DF3 78               ld   a, b
-3235+ 6DF4 B9               cp   c
-3236+ 6DF5 28 02            jr   z, .ok_col
-3237+ 6DF7 30 1C            jr   nc, .col_done
-3238+ 6DF9              .ok_col:
-3239+ 6DF9                  ; Ottieni attributo originale dello sfondo per cella H (Row), B (Col)
-3240+ 6DF9 CD BC 6C         call Gfx_GetCellAttribute  ; A = attributo originale
-3241+ 6DFC 57               ld   d, a              ; D = attributo originale
-3242+ 6DFD
-3243+ 6DFD E5               push hl                ; Salva Row pointer
-3244+ 6DFE 6C               ld   l, h
-3245+ 6DFF 26 00            ld   h, 0
-3246+ 6E01 29               add  hl, hl
-3247+ 6E02 29               add  hl, hl
-3248+ 6E03 29               add  hl, hl
-3249+ 6E04 29               add  hl, hl
-3250+ 6E05 29               add  hl, hl            ; HL = Row * 32
-3251+ 6E06
-3252+ 6E06 78               ld   a, b              ; A = Col corrente
-3253+ 6E07 85               add  a, l
-3254+ 6E08 6F               ld   l, a
-3255+ 6E09 30 01            jr   nc, .no_c_r
-3256+ 6E0B 24               inc  h
-3257+ 6E0C              .no_c_r:
-3258+ 6E0C 7C               ld   a, h
-3259+ 6E0D C6 58            add  a, $58
-3260+ 6E0F 67               ld   h, a              ; HL = Attribute screen address ($5800 + Row * 32 + Col)
-3261+ 6E10
-3262+ 6E10 72               ld   (hl), d           ; Ripristina l'attributo colore dello sfondo
-3263+ 6E11 E1               pop  hl                ; Ripristina Row pointer
-3264+ 6E12
-3265+ 6E12 04               inc  b                 ; Prossima colonna
-3266+ 6E13 18 DE            jr   .col_loop
-3267+ 6E15
-3268+ 6E15              .col_done:
-3269+ 6E15 D1               pop  de
-3270+ 6E16 C1               pop  bc
-3271+ 6E17 24               inc  h                 ; Prossima riga
-3272+ 6E18 18 D0            jr   .row_loop
-3273+ 6E1A
-3274+ 6E1A              .done:
-3275+ 6E1A C1               pop  bc
-3276+ 6E1B D1               pop  de
-3277+ 6E1C E1               pop  hl
-3278+ 6E1D C9               ret
-3279+ 6E1E
-3280+ 6E1E              ; -------------------------------------------------------------------
-3281+ 6E1E              ; Disegna rampa e conveyor leggendo i dati della stanza corrente
-3282+ 6E1E              ; -------------------------------------------------------------------
-3283+ 6E1E              Gfx_DrawConveyorsAndRamps:
-3284+ 6E1E E5               push hl
-3285+ 6E1F D5               push de
-3286+ 6E20 C5               push bc
-3287+ 6E21 DD E5            push ix
-3288+ 6E23
-3289+ 6E23                  ; --- Inizializza dati Conveyor per Manic Miner ---
-3290+ 6E23 2A 80 99         ld   hl, (room_ptr)
-3291+ 6E26 11 6F 02         ld   de, OFFSET_CONVEYOR_DATA
-3292+ 6E29 19               add  hl, de            ; HL = ConveyorData pointer (offset 623)
-3293+ 6E2A
-3294+ 6E2A 7E               ld   a, (hl)           ; A = Direction (0 = Left, 1 = Right)
-3295+ 6E2B 32 27 99         ld   (conveyor_dir), a
-3296+ 6E2E 23               inc  hl
-3297+ 6E2F 5E               ld   e, (hl)
-3298+ 6E30 23               inc  hl
-3299+ 6E31 56               ld   d, (hl)           ; DE = Location
-3300+ 6E32 23               inc  hl
-3301+ 6E33 7E               ld   a, (hl)           ; A = Length (es. 20)
-3302+ 6E34 32 28 99         ld   (conveyor_len), a
-3303+ 6E37
-3304+ 6E37                  ; Col = DE & 31
-3305+ 6E37 7B               ld   a, e
-3306+ 6E38 E6 1F            and  31
-3307+ 6E3A 32 2A 99         ld   (conveyor_col), a
-3308+ 6E3D
-3309+ 6E3D                  ; Row = 9
-3310+ 6E3D 3E 09            ld   a, 9
-3311+ 6E3F 32 29 99         ld   (conveyor_row), a
-3312+ 6E42
-3313+ 6E42 AF               xor  a
-3314+ 6E43 32 2C 99         ld   (ramp_len), a
-3315+ 6E46 32 2B 99         ld   (ramp_dir), a
-3316+ 6E49 32 2D 99         ld   (ramp_row), a
-3317+ 6E4C 32 2E 99         ld   (ramp_col), a
-3318+ 6E4F
-3319+ 6E4F DD E1            pop  ix
-3320+ 6E51 C1               pop  bc
-3321+ 6E52 D1               pop  de
-3322+ 6E53 E1               pop  hl
-3323+ 6E54 C9               ret
-3324+ 6E55
-3325+ 6E55              Gfx_SetSpriteColor16x16: EQU Gfx_SetEnemyColorAttributes
-3326+ 6E55
-3327+ 6E55              PiedeSprite:
-3328+ 6E55 FF          > db 255
-3328+ 6E56 FF          > db 255
-3328+ 6E57 FF          > db 255
-3328+ 6E58 FF          > db 255
-3328+ 6E59 FF          > db 255
-3328+ 6E5A FF          > db 255
-3328+ 6E5B FF          > db 255
-3328+ 6E5C FF          > db 255
-3328+ 6E5D FF          > db 255
-3328+ 6E5E FF          > db 255
-3328+ 6E5F FF          > db 255
-3328+ 6E60 FF          > db 255
-3328+ 6E61 FF          > db 255
-3328+ 6E62 FF          > db 255
-3328+ 6E63 FF          > db 255
-3328+ 6E64 FF          > db 255
-3328+ 6E65 FF          > db 255
-3328+ 6E66 FF          > db 255
-3328+ 6E67 FF          > db 255
-3328+ 6E68 FF          > db 255
-3328+ 6E69 FF          > db 255
-3328+ 6E6A FF          > db 255
-3328+ 6E6B FF          > db 255
-3328+ 6E6C FF          > db 255
-3328+ 6E6D FF          > db 255
-3328+ 6E6E FF          > db 255
-3328+ 6E6F FF          > db 255
-3328+ 6E70 FF          > db 255
-3328+ 6E71 FF          > db 255
-3328+ 6E72 FF          > db 255
-3328+ 6E73 FF          > db 255
-3328+ 6E74 FF          > db 255
-3329+ 6E75              BotteSprite:
-3330+ 6E75 00          > db 0
-3330+ 6E76 00          > db 0
-3330+ 6E77 00          > db 0
-3330+ 6E78 00          > db 0
-3330+ 6E79 00          > db 0
-3330+ 6E7A 00          > db 0
-3330+ 6E7B 00          > db 0
-3330+ 6E7C 00          > db 0
-3330+ 6E7D 00          > db 0
-3330+ 6E7E 00          > db 0
-3330+ 6E7F 00          > db 0
-3330+ 6E80 00          > db 0
-3330+ 6E81 00          > db 0
-3330+ 6E82 00          > db 0
-3330+ 6E83 00          > db 0
-3330+ 6E84 00          > db 0
-3330+ 6E85 00          > db 0
-3330+ 6E86 00          > db 0
-3330+ 6E87 00          > db 0
-3330+ 6E88 00          > db 0
-3330+ 6E89 00          > db 0
-3330+ 6E8A 00          > db 0
-3330+ 6E8B 00          > db 0
-3330+ 6E8C 00          > db 0
-3330+ 6E8D 00          > db 0
-3330+ 6E8E 00          > db 0
-3330+ 6E8F 00          > db 0
-3330+ 6E90 00          > db 0
-3330+ 6E91 00          > db 0
-3330+ 6E92 00          > db 0
-3330+ 6E93 00          > db 0
-3330+ 6E94 00          > db 0
-3331+ 6E95              VecchiaSprite:
-3332+ 6E95 00          > db 0
-3332+ 6E96 00          > db 0
-3332+ 6E97 00          > db 0
-3332+ 6E98 00          > db 0
-3332+ 6E99 00          > db 0
-3332+ 6E9A 00          > db 0
-3332+ 6E9B 00          > db 0
-3332+ 6E9C 00          > db 0
-3332+ 6E9D 00          > db 0
-3332+ 6E9E 00          > db 0
-3332+ 6E9F 00          > db 0
-3332+ 6EA0 00          > db 0
-3332+ 6EA1 00          > db 0
-3332+ 6EA2 00          > db 0
-3332+ 6EA3 00          > db 0
-3332+ 6EA4 00          > db 0
-3332+ 6EA5 00          > db 0
-3332+ 6EA6 00          > db 0
-3332+ 6EA7 00          > db 0
-3332+ 6EA8 00          > db 0
-3332+ 6EA9 00          > db 0
-3332+ 6EAA 00          > db 0
-3332+ 6EAB 00          > db 0
-3332+ 6EAC 00          > db 0
-3332+ 6EAD 00          > db 0
-3332+ 6EAE 00          > db 0
-3332+ 6EAF 00          > db 0
-3332+ 6EB0 00          > db 0
-3332+ 6EB1 00          > db 0
-3332+ 6EB2 00          > db 0
-3332+ 6EB3 00          > db 0
-3332+ 6EB4 00          > db 0
-3333+ 6EB5
+2930+ 6CBC              Gfx_GetCellAttribute:
+2931+ 6CBC E5               push hl
+2932+ 6CBD D5               push de
+2933+ 6CBE C5               push bc
+2934+ 6CBF
+2935+ 6CBF D5               push de
+2936+ 6CC0 C5               push bc
+2937+ 6CC1 4C               ld   c, h                  ; C = Row
+2938+ 6CC2 CD 67 82         call CheckActiveItemAtCell
+2939+ 6CC5 30 06            jr   nc, .no_item_attr
+2940+ 6CC7
+2941+ 6CC7 C1               pop  bc
+2942+ 6CC8 D1               pop  de
+2943+ 6CC9 C1               pop  bc
+2944+ 6CCA D1               pop  de
+2945+ 6CCB E1               pop  hl
+2946+ 6CCC C9               ret
+2947+ 6CCD
+2948+ 6CCD              .no_item_attr:
+2949+ 6CCD C1               pop  bc
+2950+ 6CCE D1               pop  de
+2951+ 6CCF
+2952+ 6CCF                  ; 1. Controlla se Row (H) è fuori dal layout (H >= 16)
+2953+ 6CCF 7C               ld   a, h
+2954+ 6CD0 FE 10            cp   16
+2955+ 6CD2 D2 57 6D         jp   nc, .blank
+2956+ 6CD5
+2957+ 6CD5                  ; 1b. Controlla se la cella (Row H, Col B) appartiene al Portale
+2958+ 6CD5 E5               push hl
+2959+ 6CD6 D5               push de
+2960+ 6CD7 C5               push bc
+2961+ 6CD8 2A 80 99         ld   hl, (room_ptr)
+2962+ 6CDB 11 B0 02         ld   de, OFFSET_PORTAL + 33
+2963+ 6CDE 19               add  hl, de
+2964+ 6CDF 7E               ld   a, (hl)
+2965+ 6CE0 23               inc  hl
+2966+ 6CE1 66               ld   h, (hl)
+2967+ 6CE2 6F               ld   l, a                  ; HL = AttrAddr
+2968+ 6CE3 11 00 A4         ld   de, -23552
+2969+ 6CE6 19               add  hl, de                ; HL = AttrOffset
+2970+ 6CE7
+2971+ 6CE7 7D               ld   a, l
+2972+ 6CE8 E6 1F            and  31
+2973+ 6CEA 57               ld   d, a                  ; D = PortalCol (0..31)
+2974+ 6CEB
+2975+ 6CEB CB 3C            srl  h
+2975+ 6CED CB 1D          rr l
+2976+ 6CEF CB 3C            srl  h
+2976+ 6CF1 CB 1D          rr l
+2977+ 6CF3 CB 3C            srl  h
+2977+ 6CF5 CB 1D          rr l
+2978+ 6CF7 CB 3C            srl  h
+2978+ 6CF9 CB 1D          rr l
+2979+ 6CFB CB 3C            srl  h
+2979+ 6CFD CB 1D          rr l
+2980+ 6CFF 7D               ld   a, l                  ; A = PortalRow (0..15)
+2981+ 6D00
+2982+ 6D00 C1               pop  bc                    ; B = Col
+2983+ 6D01 D1               pop  de
+2984+ 6D02 E1               pop  hl                    ; H = Row
+2985+ 6D03
+2986+ 6D03                  ; DeltaRow = Row (H) - PortalRow (A)
+2987+ 6D03 94               sub  h
+2988+ 6D04 ED 44            neg
+2989+ 6D06 FE 02            cp   2
+2990+ 6D08 30 30            jr   nc, .not_portal_attr
+2991+ 6D0A
+2992+ 6D0A 5F               ld   e, a                  ; E = DeltaRow (0..1)
+2993+ 6D0B
+2994+ 6D0B                  ; DeltaCol = Col (B) - PortalCol (D)
+2995+ 6D0B 78               ld   a, b
+2996+ 6D0C 92               sub  d
+2997+ 6D0D FE 02            cp   2
+2998+ 6D0F 30 29            jr   nc, .not_portal_attr
+2999+ 6D11
+3000+ 6D11                  ; A = DeltaCol (0..1)
+3001+ 6D11 57               ld   d, a                  ; D = DeltaCol
+3002+ 6D12 7B               ld   a, e                  ; A = DeltaRow
+3003+ 6D13 87               add  a, a                  ; *2
+3004+ 6D14 82               add  a, d                  ; A = CellIndex (0..3)
+3005+ 6D15 5F               ld   e, a                  ; E = CellIndex (0..3)
+3006+ 6D16
+3007+ 6D16                  ; Se game_objective_completed != 0 (portale attivo):
+3008+ 6D16 3A 15 9C         ld   a, (game_objective_completed)
+3009+ 6D19 B7               or   a
+3010+ 6D1A 28 12            jr   z, .portal_static_attr
+3011+ 6D1C
+3012+ 6D1C 3A 17 9C         ld   a, (portal_anim_frame)
+3013+ 6D1F 83               add  a, e                  ; portal_anim_frame + CellIndex
+3014+ 6D20 E6 07            and  7
+3015+ 6D22 5F               ld   e, a
+3016+ 6D23 16 00            ld   d, 0
+3017+ 6D25 21 B4 6C         ld   hl, portal_color_table
+3018+ 6D28 19               add  hl, de
+3019+ 6D29 7E               ld   a, (hl)               ; A = colore lampeggiante
+3020+ 6D2A C1               pop  bc
+3021+ 6D2B D1               pop  de
+3022+ 6D2C E1               pop  hl
+3023+ 6D2D C9               ret
+3024+ 6D2E
+3025+ 6D2E              .portal_static_attr:
+3026+ 6D2E 2A 80 99         ld   hl, (room_ptr)
+3027+ 6D31 11 8F 02         ld   de, OFFSET_PORTAL
+3028+ 6D34 19               add  hl, de
+3029+ 6D35 7E               ld   a, (hl)               ; A = attributo originale del portale
+3030+ 6D36 C1               pop  bc
+3031+ 6D37 D1               pop  de
+3032+ 6D38 E1               pop  hl
+3033+ 6D39 C9               ret
+3034+ 6D3A
+3035+ 6D3A              .not_portal_attr:
+3036+ 6D3A                  ; 2. Leggi il tile index da unpacked_layout
+3037+ 6D3A 7C               ld   a, h                  ; A = Row
+3038+ 6D3B 48               ld   c, b                  ; C = Col
+3039+ 6D3C CD EA 78         call GetCellFromUnpacked   ; A = tile index (0..7)
+3040+ 6D3F
+3041+ 6D3F                  ; 3. Leggi l'attributo del tile corrispondente (room_ptr + OFFSET_TILES + A * 9)
+3042+ 6D3F 6F               ld   l, a
+3043+ 6D40 26 00            ld   h, 0
+3044+ 6D42 5F               ld   e, a
+3045+ 6D43 16 00            ld   d, 0
+3046+ 6D45 29               add  hl, hl                ; *2
+3047+ 6D46 29               add  hl, hl                ; *4
+3048+ 6D47 29               add  hl, hl                ; *8
+3049+ 6D48 19               add  hl, de                ; *9
+3050+ 6D49 11 20 02         ld   de, OFFSET_TILES
+3051+ 6D4C 19               add  hl, de
+3052+ 6D4D ED 5B 80 99      ld   de, (room_ptr)
+3053+ 6D51 19               add  hl, de                ; HL = puntatore al tile
+3054+ 6D52 7E               ld   a, (hl)               ; A = attributo colore del tile
+3055+ 6D53
+3056+ 6D53 C1               pop  bc
+3057+ 6D54 D1               pop  de
+3058+ 6D55 E1               pop  hl
+3059+ 6D56 C9               ret
+3060+ 6D57
+3061+ 6D57              .blank:
+3062+ 6D57 3E 07            ld   a, $07                ; Sfondo di default (bianco su nero)
+3063+ 6D59 C1               pop  bc
+3064+ 6D5A D1               pop  de
+3065+ 6D5B E1               pop  hl
+3066+ 6D5C C9               ret
+3067+ 6D5D
+3068+ 6D5D              ; -------------------------------------------------------------------
+3069+ 6D5D              ; Imposta gli attributi colore per la cella occupata da un nemico 16x16
+3070+ 6D5D              ; Input: C = X pixel, B = Y pixel, A = Colore Gfx_Ink (0..7)
+3071+ 6D5D              ; -------------------------------------------------------------------
+3072+ 6D5D              Gfx_SetEnemyColorAttributes:
+3073+ 6D5D E5               push hl
+3074+ 6D5E D5               push de
+3075+ 6D5F C5               push bc
+3076+ 6D60
+3077+ 6D60 57               ld   d, a              ; D = Colore Gfx_Ink (salvato)
+3078+ 6D61
+3079+ 6D61                  ; Se Y è fuori dai limiti della griglia di gioco, non fare nulla
+3080+ 6D61 78               ld   a, b
+3081+ 6D62 FE 80            cp   128
+3082+ 6D64 30 54            jr   nc, .done
+3083+ 6D66
+3084+ 6D66                  ; Calcola ColStart: col = X / 8
+3085+ 6D66 79               ld   a, c
+3086+ 6D67 CB 3F            srl  a
+3087+ 6D69 CB 3F            srl  a
+3088+ 6D6B CB 3F            srl  a
+3089+ 6D6D 5F               ld   e, a              ; E = ColStart
+3090+ 6D6E
+3091+ 6D6E                  ; Calcola ColEnd: col_end = (X + 15) / 8
+3092+ 6D6E 79               ld   a, c
+3093+ 6D6F C6 0F            add  a, 15
+3094+ 6D71 CB 3F            srl  a
+3095+ 6D73 CB 3F            srl  a
+3096+ 6D75 CB 3F            srl  a
+3097+ 6D77 4F               ld   c, a              ; C = ColEnd
+3098+ 6D78
+3099+ 6D78                  ; Calcola RowStart: row = Y / 8
+3100+ 6D78 78               ld   a, b
+3101+ 6D79 CB 3F            srl  a
+3102+ 6D7B CB 3F            srl  a
+3103+ 6D7D CB 3F            srl  a
+3104+ 6D7F 67               ld   h, a              ; H = RowStart
+3105+ 6D80
+3106+ 6D80                  ; Calcola RowEnd: row_end = (Y + 15) / 8
+3107+ 6D80 78               ld   a, b
+3108+ 6D81 C6 0F            add  a, 15
+3109+ 6D83 CB 3F            srl  a
+3110+ 6D85 CB 3F            srl  a
+3111+ 6D87 CB 3F            srl  a
+3112+ 6D89 6F               ld   l, a              ; L = RowEnd
+3113+ 6D8A
+3114+ 6D8A                  ; Loop righe: Row corrente in H, fino a L
+3115+ 6D8A              .row_loop:
+3116+ 6D8A 7C               ld   a, h
+3117+ 6D8B BD               cp   l
+3118+ 6D8C 28 02            jr   z, .ok_row
+3119+ 6D8E 30 2A            jr   nc, .done
+3120+ 6D90              .ok_row:
+3121+ 6D90 C5               push bc
+3122+ 6D91 D5               push de
+3123+ 6D92
+3124+ 6D92                  ; Col loop from E (ColStart) to C (ColEnd)
+3125+ 6D92 43               ld   b, e              ; B = Col corrente
+3126+ 6D93              .col_loop:
+3127+ 6D93 78               ld   a, b
+3128+ 6D94 B9               cp   c
+3129+ 6D95 28 02            jr   z, .ok_col
+3130+ 6D97 30 1C            jr   nc, .col_done
+3131+ 6D99              .ok_col:
+3132+ 6D99                  ; Processa la cella a H (Row), B (Col)
+3133+ 6D99 E5               push hl
+3134+ 6D9A 6C               ld   l, h
+3135+ 6D9B 26 00            ld   h, 0
+3136+ 6D9D 29               add  hl, hl
+3137+ 6D9E 29               add  hl, hl
+3138+ 6D9F 29               add  hl, hl
+3139+ 6DA0 29               add  hl, hl
+3140+ 6DA1 29               add  hl, hl            ; HL = Row * 32
+3141+ 6DA2
+3142+ 6DA2 78               ld   a, b              ; A = Col corrente
+3143+ 6DA3 85               add  a, l
+3144+ 6DA4 6F               ld   l, a
+3145+ 6DA5 30 01            jr   nc, .no_c_s
+3146+ 6DA7 24               inc  h
+3147+ 6DA8              .no_c_s:
+3148+ 6DA8 7C               ld   a, h
+3149+ 6DA9 C6 58            add  a, $58
+3150+ 6DAB 67               ld   h, a              ; HL = Attribute screen address ($5800 + Row * 32 + Col)
+3151+ 6DAC
+3152+ 6DAC 7E               ld   a, (hl)
+3153+ 6DAD E6 F8            and  $f8
+3154+ 6DAF B2               or   d                 ; D has the enemy color
+3155+ 6DB0 77               ld   (hl), a
+3156+ 6DB1 E1               pop  hl
+3157+ 6DB2
+3158+ 6DB2 04               inc  b                 ; Prossima colonna
+3159+ 6DB3 18 DE            jr   .col_loop
+3160+ 6DB5
+3161+ 6DB5              .col_done:
+3162+ 6DB5 D1               pop  de
+3163+ 6DB6 C1               pop  bc
+3164+ 6DB7 24               inc  h                 ; Prossima riga
+3165+ 6DB8 18 D0            jr   .row_loop
+3166+ 6DBA
+3167+ 6DBA              .done:
+3168+ 6DBA C1               pop  bc
+3169+ 6DBB D1               pop  de
+3170+ 6DBC E1               pop  hl
+3171+ 6DBD C9               ret
+3172+ 6DBE
+3173+ 6DBE              ; -------------------------------------------------------------------
+3174+ 6DBE              ; Ripristina gli attributi colore originali dello sfondo per la cella occupata da un nemico
+3175+ 6DBE              ; Input: C = X pixel, B = Y pixel
+3176+ 6DBE              ; -------------------------------------------------------------------
+3177+ 6DBE              Gfx_RestoreEnemyColorAttributes:
+3178+ 6DBE E5               push hl
+3179+ 6DBF D5               push de
+3180+ 6DC0 C5               push bc
+3181+ 6DC1
+3182+ 6DC1                  ; Se Y è fuori dai limiti della griglia di gioco, non fare nulla
+3183+ 6DC1 78               ld   a, b
+3184+ 6DC2 FE 80            cp   128
+3185+ 6DC4 30 54            jr   nc, .done
+3186+ 6DC6
+3187+ 6DC6                  ; Calcola ColStart: col = X / 8
+3188+ 6DC6 79               ld   a, c
+3189+ 6DC7 CB 3F            srl  a
+3190+ 6DC9 CB 3F            srl  a
+3191+ 6DCB CB 3F            srl  a
+3192+ 6DCD 5F               ld   e, a              ; E = ColStart
+3193+ 6DCE
+3194+ 6DCE                  ; Calcola ColEnd: col_end = (X + 15) / 8
+3195+ 6DCE 79               ld   a, c
+3196+ 6DCF C6 0F            add  a, 15
+3197+ 6DD1 CB 3F            srl  a
+3198+ 6DD3 CB 3F            srl  a
+3199+ 6DD5 CB 3F            srl  a
+3200+ 6DD7 4F               ld   c, a              ; C = ColEnd
+3201+ 6DD8
+3202+ 6DD8                  ; Calcola RowStart: row = Y / 8
+3203+ 6DD8 78               ld   a, b
+3204+ 6DD9 CB 3F            srl  a
+3205+ 6DDB CB 3F            srl  a
+3206+ 6DDD CB 3F            srl  a
+3207+ 6DDF 67               ld   h, a              ; H = RowStart
+3208+ 6DE0
+3209+ 6DE0                  ; Calcola RowEnd: row_end = (Y + 15) / 8
+3210+ 6DE0 78               ld   a, b
+3211+ 6DE1 C6 0F            add  a, 15
+3212+ 6DE3 CB 3F            srl  a
+3213+ 6DE5 CB 3F            srl  a
+3214+ 6DE7 CB 3F            srl  a
+3215+ 6DE9 6F               ld   l, a              ; L = RowEnd
+3216+ 6DEA
+3217+ 6DEA                  ; Loop righe: Row corrente in H, fino a L
+3218+ 6DEA              .row_loop:
+3219+ 6DEA 7C               ld   a, h
+3220+ 6DEB BD               cp   l
+3221+ 6DEC 28 02            jr   z, .ok_row
+3222+ 6DEE 30 2A            jr   nc, .done
+3223+ 6DF0              .ok_row:
+3224+ 6DF0 C5               push bc
+3225+ 6DF1 D5               push de
+3226+ 6DF2
+3227+ 6DF2                  ; Col loop from E (ColStart) to C (ColEnd)
+3228+ 6DF2 43               ld   b, e              ; B = Col corrente
+3229+ 6DF3              .col_loop:
+3230+ 6DF3 78               ld   a, b
+3231+ 6DF4 B9               cp   c
+3232+ 6DF5 28 02            jr   z, .ok_col
+3233+ 6DF7 30 1C            jr   nc, .col_done
+3234+ 6DF9              .ok_col:
+3235+ 6DF9                  ; Ottieni attributo originale dello sfondo per cella H (Row), B (Col)
+3236+ 6DF9 CD BC 6C         call Gfx_GetCellAttribute  ; A = attributo originale
+3237+ 6DFC 57               ld   d, a              ; D = attributo originale
+3238+ 6DFD
+3239+ 6DFD E5               push hl                ; Salva Row pointer
+3240+ 6DFE 6C               ld   l, h
+3241+ 6DFF 26 00            ld   h, 0
+3242+ 6E01 29               add  hl, hl
+3243+ 6E02 29               add  hl, hl
+3244+ 6E03 29               add  hl, hl
+3245+ 6E04 29               add  hl, hl
+3246+ 6E05 29               add  hl, hl            ; HL = Row * 32
+3247+ 6E06
+3248+ 6E06 78               ld   a, b              ; A = Col corrente
+3249+ 6E07 85               add  a, l
+3250+ 6E08 6F               ld   l, a
+3251+ 6E09 30 01            jr   nc, .no_c_r
+3252+ 6E0B 24               inc  h
+3253+ 6E0C              .no_c_r:
+3254+ 6E0C 7C               ld   a, h
+3255+ 6E0D C6 58            add  a, $58
+3256+ 6E0F 67               ld   h, a              ; HL = Attribute screen address ($5800 + Row * 32 + Col)
+3257+ 6E10
+3258+ 6E10 72               ld   (hl), d           ; Ripristina l'attributo colore dello sfondo
+3259+ 6E11 E1               pop  hl                ; Ripristina Row pointer
+3260+ 6E12
+3261+ 6E12 04               inc  b                 ; Prossima colonna
+3262+ 6E13 18 DE            jr   .col_loop
+3263+ 6E15
+3264+ 6E15              .col_done:
+3265+ 6E15 D1               pop  de
+3266+ 6E16 C1               pop  bc
+3267+ 6E17 24               inc  h                 ; Prossima riga
+3268+ 6E18 18 D0            jr   .row_loop
+3269+ 6E1A
+3270+ 6E1A              .done:
+3271+ 6E1A C1               pop  bc
+3272+ 6E1B D1               pop  de
+3273+ 6E1C E1               pop  hl
+3274+ 6E1D C9               ret
+3275+ 6E1E
+3276+ 6E1E              ; -------------------------------------------------------------------
+3277+ 6E1E              ; Disegna rampa e conveyor leggendo i dati della stanza corrente
+3278+ 6E1E              ; -------------------------------------------------------------------
+3279+ 6E1E              Gfx_DrawConveyorsAndRamps:
+3280+ 6E1E E5               push hl
+3281+ 6E1F D5               push de
+3282+ 6E20 C5               push bc
+3283+ 6E21 DD E5            push ix
+3284+ 6E23
+3285+ 6E23                  ; --- Inizializza dati Conveyor per Manic Miner ---
+3286+ 6E23 2A 80 99         ld   hl, (room_ptr)
+3287+ 6E26 11 6F 02         ld   de, OFFSET_CONVEYOR_DATA
+3288+ 6E29 19               add  hl, de            ; HL = ConveyorData pointer (offset 623)
+3289+ 6E2A
+3290+ 6E2A 7E               ld   a, (hl)           ; A = Direction (0 = Left, 1 = Right)
+3291+ 6E2B 32 27 99         ld   (conveyor_dir), a
+3292+ 6E2E 23               inc  hl
+3293+ 6E2F 5E               ld   e, (hl)
+3294+ 6E30 23               inc  hl
+3295+ 6E31 56               ld   d, (hl)           ; DE = Location
+3296+ 6E32 23               inc  hl
+3297+ 6E33 7E               ld   a, (hl)           ; A = Length (es. 20)
+3298+ 6E34 32 28 99         ld   (conveyor_len), a
+3299+ 6E37
+3300+ 6E37                  ; Col = DE & 31
+3301+ 6E37 7B               ld   a, e
+3302+ 6E38 E6 1F            and  31
+3303+ 6E3A 32 2A 99         ld   (conveyor_col), a
+3304+ 6E3D
+3305+ 6E3D                  ; Row = 9
+3306+ 6E3D 3E 09            ld   a, 9
+3307+ 6E3F 32 29 99         ld   (conveyor_row), a
+3308+ 6E42
+3309+ 6E42 AF               xor  a
+3310+ 6E43 32 2C 99         ld   (ramp_len), a
+3311+ 6E46 32 2B 99         ld   (ramp_dir), a
+3312+ 6E49 32 2D 99         ld   (ramp_row), a
+3313+ 6E4C 32 2E 99         ld   (ramp_col), a
+3314+ 6E4F
+3315+ 6E4F DD E1            pop  ix
+3316+ 6E51 C1               pop  bc
+3317+ 6E52 D1               pop  de
+3318+ 6E53 E1               pop  hl
+3319+ 6E54 C9               ret
+3320+ 6E55
+3321+ 6E55              Gfx_SetSpriteColor16x16: EQU Gfx_SetEnemyColorAttributes
+3322+ 6E55
+3323+ 6E55              PiedeSprite:
+3324+ 6E55 FF          > db 255
+3324+ 6E56 FF          > db 255
+3324+ 6E57 FF          > db 255
+3324+ 6E58 FF          > db 255
+3324+ 6E59 FF          > db 255
+3324+ 6E5A FF          > db 255
+3324+ 6E5B FF          > db 255
+3324+ 6E5C FF          > db 255
+3324+ 6E5D FF          > db 255
+3324+ 6E5E FF          > db 255
+3324+ 6E5F FF          > db 255
+3324+ 6E60 FF          > db 255
+3324+ 6E61 FF          > db 255
+3324+ 6E62 FF          > db 255
+3324+ 6E63 FF          > db 255
+3324+ 6E64 FF          > db 255
+3324+ 6E65 FF          > db 255
+3324+ 6E66 FF          > db 255
+3324+ 6E67 FF          > db 255
+3324+ 6E68 FF          > db 255
+3324+ 6E69 FF          > db 255
+3324+ 6E6A FF          > db 255
+3324+ 6E6B FF          > db 255
+3324+ 6E6C FF          > db 255
+3324+ 6E6D FF          > db 255
+3324+ 6E6E FF          > db 255
+3324+ 6E6F FF          > db 255
+3324+ 6E70 FF          > db 255
+3324+ 6E71 FF          > db 255
+3324+ 6E72 FF          > db 255
+3324+ 6E73 FF          > db 255
+3324+ 6E74 FF          > db 255
+3325+ 6E75              BotteSprite:
+3326+ 6E75 00          > db 0
+3326+ 6E76 00          > db 0
+3326+ 6E77 00          > db 0
+3326+ 6E78 00          > db 0
+3326+ 6E79 00          > db 0
+3326+ 6E7A 00          > db 0
+3326+ 6E7B 00          > db 0
+3326+ 6E7C 00          > db 0
+3326+ 6E7D 00          > db 0
+3326+ 6E7E 00          > db 0
+3326+ 6E7F 00          > db 0
+3326+ 6E80 00          > db 0
+3326+ 6E81 00          > db 0
+3326+ 6E82 00          > db 0
+3326+ 6E83 00          > db 0
+3326+ 6E84 00          > db 0
+3326+ 6E85 00          > db 0
+3326+ 6E86 00          > db 0
+3326+ 6E87 00          > db 0
+3326+ 6E88 00          > db 0
+3326+ 6E89 00          > db 0
+3326+ 6E8A 00          > db 0
+3326+ 6E8B 00          > db 0
+3326+ 6E8C 00          > db 0
+3326+ 6E8D 00          > db 0
+3326+ 6E8E 00          > db 0
+3326+ 6E8F 00          > db 0
+3326+ 6E90 00          > db 0
+3326+ 6E91 00          > db 0
+3326+ 6E92 00          > db 0
+3326+ 6E93 00          > db 0
+3326+ 6E94 00          > db 0
+3327+ 6E95              VecchiaSprite:
+3328+ 6E95 00          > db 0
+3328+ 6E96 00          > db 0
+3328+ 6E97 00          > db 0
+3328+ 6E98 00          > db 0
+3328+ 6E99 00          > db 0
+3328+ 6E9A 00          > db 0
+3328+ 6E9B 00          > db 0
+3328+ 6E9C 00          > db 0
+3328+ 6E9D 00          > db 0
+3328+ 6E9E 00          > db 0
+3328+ 6E9F 00          > db 0
+3328+ 6EA0 00          > db 0
+3328+ 6EA1 00          > db 0
+3328+ 6EA2 00          > db 0
+3328+ 6EA3 00          > db 0
+3328+ 6EA4 00          > db 0
+3328+ 6EA5 00          > db 0
+3328+ 6EA6 00          > db 0
+3328+ 6EA7 00          > db 0
+3328+ 6EA8 00          > db 0
+3328+ 6EA9 00          > db 0
+3328+ 6EAA 00          > db 0
+3328+ 6EAB 00          > db 0
+3328+ 6EAC 00          > db 0
+3328+ 6EAD 00          > db 0
+3328+ 6EAE 00          > db 0
+3328+ 6EAF 00          > db 0
+3328+ 6EB0 00          > db 0
+3328+ 6EB1 00          > db 0
+3328+ 6EB2 00          > db 0
+3328+ 6EB3 00          > db 0
+3328+ 6EB4 00          > db 0
+3329+ 6EB5
 # file closed: graphics.asm
   17  6EB5                  include "player.asm"
 # file opened: player.asm

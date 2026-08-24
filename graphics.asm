@@ -2279,9 +2279,9 @@ Gfx_InitAirBar:
     cp   4
     jr   c, .air_label_loop
 
-    ; Imposta attributi colore "AIR " (Verde Brillante su sfondo nero)
+    ; Imposta attributi colore "AIR " (Sfondo Rosso Brillante, Testo Bianco Brillante)
     ld   hl, $5a20
-    ld   (hl), (GREEN | $40)
+    ld   (hl), (RED * 8) | WHITE | $40
     ld   de, $5a21
     ld   bc, 3
     ldir
@@ -2423,14 +2423,10 @@ air_bar_masks:
     db %11111111 ; 8 pixels (full)
 
 air_bar_attrs:
-    ; 7 segmenti da 4 colonne ciascuno (Cols 4..31)
-    .4 db (RED | $40)         ; Cols 4..7   - Rosso
-    .4 db (YELLOW | $40)      ; Cols 8..11  - Giallo
-    .4 db (GREEN | $40)       ; Cols 12..15 - Verde
-    .4 db (CYAN | $40)        ; Cols 16..19 - Ciano
-    .4 db (MAGENTA | $40)     ; Cols 20..23 - Magenta
-    .4 db (BLUE | $40)        ; Cols 24..27 - Blu
-    .4 db (WHITE | $40)       ; Cols 28..31 - Bianco
+    ; Prime 10 caselle della barra (Cols 4..13): Sfondo Rosso (Paper Red), Barra Bianca (Ink White)
+    .10 db (RED * 8) | WHITE | $40
+    ; Rimanenti 18 caselle della barra (Cols 14..31): Sfondo Verde (Paper Green), Barra Bianca (Ink White)
+    .18 db (GREEN * 8) | WHITE | $40
 
 
 
