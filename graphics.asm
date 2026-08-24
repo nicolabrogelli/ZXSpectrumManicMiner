@@ -2083,7 +2083,7 @@ Gfx_ClearPixelSprite8x8:
 
 ; -------------------------------------------------------------------
 ; Gfx_UpdateScoreDisplay
-; Formatta e visualizza High score e Score nella riga di stato (Riga 18).
+; Formatta e visualizza High score e Score nella riga di stato (Riga 19).
 ; Scrive DIRETTAMENTE in VRAM senza passare dalle routine ROM (rst $10).
 ; Garantisce un aggiornamento istantaneo, atomico e affidabile a ogni raccolta item.
 ; -------------------------------------------------------------------
@@ -2104,7 +2104,7 @@ Gfx_UpdateScoreDisplay:
     ld   hl, status_line + 26
     call Gfx_FormatBCD6
 
-    ; 3. Rendering diretto in VRAM dei 32 caratteri di status_line a Riga 18 ($5040..$575F)
+    ; 3. Rendering diretto in VRAM dei 32 caratteri di status_line a Riga 19 ($5060..$577F)
     ld   c, 0                  ; C = Colonna (0..31)
 .char_loop:
     ld   e, c
@@ -2122,11 +2122,11 @@ Gfx_UpdateScoreDisplay:
     ld   de, font_buffer
     add  hl, de                ; HL = puntatore ai dati bitmap del carattere (8 byte)
 
-    ; DE = Indirizzo VRAM scanline 0 per Riga 18, Colonna C ($5040 + C)
+    ; DE = Indirizzo VRAM scanline 0 per Riga 19, Colonna C ($5060 + C)
     ld   a, c
-    add  a, $40
+    add  a, $60
     ld   e, a
-    ld   d, $50                ; DE = $5040 + C
+    ld   d, $50                ; DE = $5060 + C
 
     ; Copia le 8 scanline del carattere direttamente in VRAM
     ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 0 ($50xx)
@@ -2143,9 +2143,9 @@ Gfx_UpdateScoreDisplay:
     cp   32
     jr   c, .char_loop
 
-    ; 4. Imposta gli attributi colore di Riga 18 ($5A40..$5A5F)
+    ; 4. Imposta gli attributi colore di Riga 19 ($5A60..$5A7F)
     ld   hl, status_line_attrs
-    ld   de, $5a40             ; Indirizzo attributi Riga 18 ($5800 + 18*32 = $5A40)
+    ld   de, $5a60             ; Indirizzo attributi Riga 19 ($5800 + 19*32 = $5A60)
     ld   bc, 32
     ldir
 

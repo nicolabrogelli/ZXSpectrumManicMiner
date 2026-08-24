@@ -2649,7 +2649,7 @@
 2083+ 68DC
 2084+ 68DC              ; -------------------------------------------------------------------
 2085+ 68DC              ; Gfx_UpdateScoreDisplay
-2086+ 68DC              ; Formatta e visualizza High score e Score nella riga di stato (Riga 18).
+2086+ 68DC              ; Formatta e visualizza High score e Score nella riga di stato (Riga 19).
 2087+ 68DC              ; Scrive DIRETTAMENTE in VRAM senza passare dalle routine ROM (rst $10).
 2088+ 68DC              ; Garantisce un aggiornamento istantaneo, atomico e affidabile a ogni raccolta item.
 2089+ 68DC              ; -------------------------------------------------------------------
@@ -2670,7 +2670,7 @@
 2104+ 68F0 21 A3 69         ld   hl, status_line + 26
 2105+ 68F3 CD 46 69         call Gfx_FormatBCD6
 2106+ 68F6
-2107+ 68F6                  ; 3. Rendering diretto in VRAM dei 32 caratteri di status_line a Riga 18 ($5040..$575F)
+2107+ 68F6                  ; 3. Rendering diretto in VRAM dei 32 caratteri di status_line a Riga 19 ($5060..$577F)
 2108+ 68F6 0E 00            ld   c, 0                  ; C = Colonna (0..31)
 2109+ 68F8              .char_loop:
 2110+ 68F8 59               ld   e, c
@@ -2688,11 +2688,11 @@
 2122+ 6906 11 D7 8E         ld   de, font_buffer
 2123+ 6909 19               add  hl, de                ; HL = puntatore ai dati bitmap del carattere (8 byte)
 2124+ 690A
-2125+ 690A                  ; DE = Indirizzo VRAM scanline 0 per Riga 18, Colonna C ($5040 + C)
+2125+ 690A                  ; DE = Indirizzo VRAM scanline 0 per Riga 19, Colonna C ($5060 + C)
 2126+ 690A 79               ld   a, c
-2127+ 690B C6 40            add  a, $40
+2127+ 690B C6 60            add  a, $60
 2128+ 690D 5F               ld   e, a
-2129+ 690E 16 50            ld   d, $50                ; DE = $5040 + C
+2129+ 690E 16 50            ld   d, $50                ; DE = $5060 + C
 2130+ 6910
 2131+ 6910                  ; Copia le 8 scanline del carattere direttamente in VRAM
 2132+ 6910 7E               ld   a, (hl)
@@ -2731,9 +2731,9 @@
 2143+ 6930 FE 20            cp   32
 2144+ 6932 38 C4            jr   c, .char_loop
 2145+ 6934
-2146+ 6934                  ; 4. Imposta gli attributi colore di Riga 18 ($5A40..$5A5F)
+2146+ 6934                  ; 4. Imposta gli attributi colore di Riga 19 ($5A60..$5A7F)
 2147+ 6934 21 A9 69         ld   hl, status_line_attrs
-2148+ 6937 11 40 5A         ld   de, $5a40             ; Indirizzo attributi Riga 18 ($5800 + 18*32 = $5A40)
+2148+ 6937 11 60 5A         ld   de, $5a60             ; Indirizzo attributi Riga 19 ($5800 + 19*32 = $5A60)
 2149+ 693A 01 20 00         ld   bc, 32
 2150+ 693D ED B0            ldir
 2151+ 693F
