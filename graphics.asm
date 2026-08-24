@@ -186,7 +186,7 @@ Gfx_GetBackgroundByte:
     ; 1. Controlla se Y (in D) è fuori dalla griglia di layout (Y >= 128)
     ld   a, d
     cp   128
-    jr   nc, .blank
+    jp   nc, .blank
 
     ; 2. Calcola Col = X / 8
     ld   a, c
@@ -239,6 +239,79 @@ Gfx_GetBackgroundByte:
     pop  bc                    ; B = Scanline offset (1..8), C = Col
     pop  de                    ; D = Y, E = Row
 
+    ; 5b. Controlla se la cella (Row E, Col C) appartiene al Portale (16x16 pixel a OFFSET_PORTAL = 655)
+    push de
+    push bc
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_PORTAL + 33
+    add  hl, de
+    ld   a, (hl)
+    inc  hl
+    ld   h, (hl)
+    ld   l, a                  ; HL = AttrAddr (es. 23997)
+    ld   de, -23552
+    add  hl, de                ; HL = AttrOffset
+
+    ld   a, l
+    and  31
+    ld   d, a                  ; D = PortalCol (0..31)
+
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    ld   a, l                  ; A = PortalRow (0..15)
+
+    pop  bc                    ; B = Scanline offset (1..8), C = Col
+    pop  de                    ; D = Y, E = Row
+
+    ; Confronta Row (in E) con PortalRow (in A): DeltaRow = E - PortalRow
+    sub  e
+    neg
+    cp   2
+    jr   nc, .not_portal_bg
+
+    ld   h, a                  ; H = DeltaRow (0..1)
+
+    ; Confronta Col (in C) con PortalCol (in D): DeltaCol = C - PortalCol
+    ld   a, c
+    sub  d
+    cp   2
+    jr   nc, .not_portal_bg
+
+    ; A = DeltaCol (0..1)
+    ld   l, a                  ; L = DeltaCol (0..1)
+
+    ; --- LA CELLA APPARTIENE AL PORTALE! ---
+    ; Calcola offset nella bitmap del portale (32 byte):
+    ; ScanlineIndex = (DeltaRow * 8) + (ScanlineOffset - 1)
+    ; BitmapOffset = (DeltaRow * 16) + (Scanline * 2) + DeltaCol
+    ld   a, b                  ; A = Scanline offset (1..8)
+    dec  a                     ; A = Scanline (0..7)
+    add  a, a                  ; *2
+    add  a, l                  ; + DeltaCol
+    ld   e, a
+    ld   a, h                  ; A = DeltaRow (0..1)
+    or   a
+    jr   z, .portal_top_row
+    ld   a, e
+    add  a, 16                 ; +16 per la riga inferiore del portale
+    ld   e, a
+.portal_top_row:
+    ld   d, 0
+    ld   hl, (room_ptr)
+    ld   bc, OFFSET_PORTAL + 1 ; Inizio bitmap 32 byte del portale
+    add  hl, bc
+    add  hl, de
+    ld   a, (hl)               ; A = byte bitmap del portale
+
+    pop  bc
+    pop  de
+    pop  hl
+    ret
+
+.not_portal_bg:
     ; 6. Ottieni il tipo di cella da unpacked_layout
     ld   a, e                  ; A = Row (0..15)
     ; C = Col (0..31)
@@ -2175,40 +2248,51 @@ Gfx_DrawRoom:
 ; Disegna il portale di uscita della stanza corrente (16x16 pixel)
 ; -------------------------------------------------------------------
 Gfx_DrawPortal:
+; -------------------------------------------------------------------
+; Gfx_DrawPortalForeground / Gfx_AnimatePortal
+; Disegna il Portale della stanza corrente (definito a partire da OFFSET_PORTAL = 655)
+; sempre in PRIMO PIANO (foreground) rispetto a Willy e ai Guardiani.
+; - Scrive direttamente i 32 byte della bitmap 16x16 in VRAM.
+; - Imposta i 4 attributi colore (2x2 celle):
+;   * Se tutti gli item sono raccolti (game_objective_completed != 0): esegue il ciclo di colori lampeggianti.
+;   * Se gli item non sono ancora tutti raccolti: imposta il colore statico originale del portale.
+; -------------------------------------------------------------------
+Gfx_DrawPortalForeground:
+Gfx_AnimatePortal:
     push hl
     push de
     push bc
     push ix
-    
+
+    ; 1. Leggi i dati del portale da room_ptr + OFFSET_PORTAL (byte 655)
     ld   hl, (room_ptr)
     ld   de, OFFSET_PORTAL
     add  hl, de
-    
-    ld   a, (hl)               ; Attribute
-    ld   e, a                  ; E = Attribute
+    ld   a, (hl)               ; A = Attribute originale (byte 0)
+    ld   (portal_static_color), a
     inc  hl
     push hl
-    pop  ix                    ; IX = 32 byte bitmap portal
-    
-    ; Salta 32 byte bitmap per leggere AttrAddr (DEFW)
+    pop  ix                    ; IX = inizio bitmap 32 byte del portale
+
+    ; Salta 32 byte bitmap per leggere AttrAddr (offset 688)
     ld   de, 32
     add  hl, de
     ld   c, (hl)
     inc  hl
-    ld   b, (hl)               ; BC = Attr Address (e.g. 23997)
-    
-    ; Offset = BC - 23552
+    ld   b, (hl)               ; BC = AttrAddr (es. 23997)
+
+    ; Calcola AttrOffset = BC - 23552
     ld   h, b
     ld   l, c
     ld   bc, -23552
-    add  hl, bc
-    
-    ; Col = Offset & 31
+    add  hl, bc                ; HL = AttrOffset
+
+    ; Col = AttrOffset & 31
     ld   a, l
     and  31
     ld   c, a                  ; C = Col (0..31)
-    
-    ; Row = Offset / 32
+
+    ; Row = AttrOffset / 32
     srl  h : rr l
     srl  h : rr l
     srl  h : rr l
@@ -2216,102 +2300,114 @@ Gfx_DrawPortal:
     srl  h : rr l
     ld   a, l
     ld   b, a                  ; B = Row (0..15)
-    
-    ; Converti in pixel X, Y
+
+    ; Converti in coordinate pixel (C = Pixel X, B = Pixel Y)
     ld   a, c
     add  a, a : add a, a : add a, a
-    ld   c, a                  ; C = Pixel X
+    ld   c, a                  ; C = Pixel X (Col * 8)
     ld   a, b
     add  a, a : add a, a : add a, a
-    ld   b, a                  ; B = Pixel Y
-    
-    call Gfx_DrawPixelSprite16x16
-    ld   a, e                  ; A = Attribute
-    call Gfx_SetSpriteColor16x16
-    
+    ld   b, a                  ; B = Pixel Y (Row * 8)
+
+    ; 2. Disegna la bitmap 16x16 del portale direttamente in VRAM (16 linee, 2 byte per linea)
+    ld   h, b
+    ld   l, c
+    call Gfx_GetScreenAddr     ; HL = Indirizzo VRAM Top-Left del portale
+
+    ld   b, 16                 ; 16 scanlines
+.portal_bitmap_loop:
+    ld   a, (ix+0)
+    ld   (hl), a               ; Scrivi byte sinistro
+    inc  hl
+    ld   a, (ix+1)
+    ld   (hl), a               ; Scrivi byte destro
+    dec  hl                    ; Ripristina HL alla colonna sinistra
+    call Gfx_IncScreenLine     ; Prossima scanline
+    inc  ix
+    inc  ix                    ; Prossimi 2 byte della bitmap
+    djnz .portal_bitmap_loop
+
+    ; 3. Gestione Attributi Colore (4 celle 8x8)
+    ; Calcola indirizzo VRAM attributi Top-Left: $5800 + AttrOffset
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_PORTAL + 33
+    add  hl, de
+    ld   c, (hl)
+    inc  hl
+    ld   b, (hl)
+    ld   h, b
+    ld   l, c
+    ld   bc, -23552
+    add  hl, bc
+    ld   bc, $5800
+    add  hl, bc                ; HL = Indirizzo VRAM attributo Top-Left
+
+    ; Controlla se il portale è attivo (tutti gli item raccolti)
+    ld   a, (game_objective_completed)
+    or   a
+    jr   z, .apply_static_portal_color
+
+    ; --- PORTALE ATTIVO: ANIMAZIONE COLORI LAMPEGGIANTI ---
+    ; Avanza il timer animazione
+    ld   a, (portal_anim_timer)
+    inc  a
+    cp   2
+    jr   c, .skip_portal_anim_inc
+    xor  a
+    ld   (portal_anim_timer), a
+    ld   a, (portal_anim_frame)
+    inc  a
+    and  7
+    ld   (portal_anim_frame), a
+.skip_portal_anim_inc:
+
+    ld   a, (portal_anim_frame)
+    ld   e, a                  ; E = frame base (0..7)
+
+    ; Cella 0: Top-Left (frame + 0)
+    call .get_portal_color_hl
+    ld   (hl), a
+
+    ; Cella 1: Top-Right (frame + 1)
+    inc  hl
+    inc  e
+    call .get_portal_color_hl
+    ld   (hl), a
+
+    ; Cella 2: Bottom-Left (frame + 2)
+    ld   bc, 31
+    add  hl, bc
+    inc  e
+    call .get_portal_color_hl
+    ld   (hl), a
+
+    ; Cella 3: Bottom-Right (frame + 3)
+    inc  hl
+    inc  e
+    call .get_portal_color_hl
+    ld   (hl), a
+    jr   .portal_done
+
+.apply_static_portal_color:
+    ; --- PORTALE INATTIVO: COLORE STATICO ORIGINALE ---
+    ld   a, (portal_static_color)
+    ld   (hl), a               ; Top-Left
+    inc  hl
+    ld   (hl), a               ; Top-Right
+    ld   bc, 31
+    add  hl, bc
+    ld   (hl), a               ; Bottom-Left
+    inc  hl
+    ld   (hl), a               ; Bottom-Right
+
+.portal_done:
     pop  ix
     pop  bc
     pop  de
     pop  hl
     ret
 
-; -------------------------------------------------------------------
-; Gfx_AnimatePortal
-; Esegue l'animazione di lampeggio continuo e fluido del portale quando
-; tutti gli item del livello sono stati raccolti (game_objective_completed != 0).
-; Riproduce l'effetto e il timing visivo dell'originale Manic Miner per ZX Spectrum.
-; -------------------------------------------------------------------
-Gfx_AnimatePortal:
-    ; 1. Verifica se il portale è attivo
-    ld   a, (game_objective_completed)
-    or   a
-    ret  z                      ; Se 0, gli item non sono ancora tutti raccolti -> nessun lampeggio
-
-    ; 2. Avanza il timer di animazione (ogni 2 cicli di game loop per un'animazione fluida)
-    ld   a, (portal_anim_timer)
-    inc  a
-    cp   2
-    jr   c, .skip_advance
-    xor  a
-    ld   (portal_anim_timer), a
-    ld   a, (portal_anim_frame)
-    inc  a
-    and  7                      ; Ciclo di 8 frame di colore
-    ld   (portal_anim_frame), a
-.skip_advance:
-
-    push hl
-    push de
-    push bc
-
-    ; 3. Calcola l'indirizzo degli attributi VRAM ($5800 + AttrOffset) del portale
-    ld   hl, (room_ptr)
-    ld   de, OFFSET_PORTAL + 33
-    add  hl, de
-    ld   c, (hl)
-    inc  hl
-    ld   b, (hl)               ; BC = AttrAddr dai dati della stanza (base 23552)
-
-    ld   h, b
-    ld   l, c
-    ld   bc, -23552
-    add  hl, bc                ; HL = AttrOffset (0..767)
-    ld   bc, $5800
-    add  hl, bc                ; HL = Indirizzo VRAM attributo cella Top-Left
-
-    ; 4. Applica il pattern di colori sfalsati alle 4 celle 8x8 (blocco 16x16)
-    ld   a, (portal_anim_frame)
-    ld   e, a                  ; E = frame base (0..7)
-
-    ; Cella 0: Top-Left (frame + 0)
-    call .get_portal_color
-    ld   (hl), a
-
-    ; Cella 1: Top-Right (frame + 1)
-    inc  hl
-    inc  e
-    call .get_portal_color
-    ld   (hl), a
-
-    ; Cella 2: Bottom-Left (frame + 2)
-    ld   bc, 31                ; Da Top-Right a Bottom-Left (+31 colonne)
-    add  hl, bc
-    inc  e
-    call .get_portal_color
-    ld   (hl), a
-
-    ; Cella 3: Bottom-Right (frame + 3)
-    inc  hl
-    inc  e
-    call .get_portal_color
-    ld   (hl), a
-
-    pop  bc
-    pop  de
-    pop  hl
-    ret
-
-.get_portal_color:
+.get_portal_color_hl:
     push hl
     push de
     ld   a, e
@@ -2366,8 +2462,87 @@ Gfx_GetCellAttribute:
     ; 1. Controlla se Row (H) è fuori dal layout (H >= 16)
     ld   a, h
     cp   16
-    jr   nc, .blank
+    jp   nc, .blank
 
+    ; 1b. Controlla se la cella (Row H, Col B) appartiene al Portale
+    push hl
+    push de
+    push bc
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_PORTAL + 33
+    add  hl, de
+    ld   a, (hl)
+    inc  hl
+    ld   h, (hl)
+    ld   l, a                  ; HL = AttrAddr
+    ld   de, -23552
+    add  hl, de                ; HL = AttrOffset
+
+    ld   a, l
+    and  31
+    ld   d, a                  ; D = PortalCol (0..31)
+
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    srl  h : rr l
+    ld   a, l                  ; A = PortalRow (0..15)
+
+    pop  bc                    ; B = Col
+    pop  de
+    pop  hl                    ; H = Row
+
+    ; DeltaRow = Row (H) - PortalRow (A)
+    sub  h
+    neg
+    cp   2
+    jr   nc, .not_portal_attr
+
+    ld   e, a                  ; E = DeltaRow (0..1)
+
+    ; DeltaCol = Col (B) - PortalCol (D)
+    ld   a, b
+    sub  d
+    cp   2
+    jr   nc, .not_portal_attr
+
+    ; A = DeltaCol (0..1)
+    ld   d, a                  ; D = DeltaCol
+    ld   a, e                  ; A = DeltaRow
+    add  a, a                  ; *2
+    add  a, d                  ; A = CellIndex (0..3)
+    ld   e, a                  ; E = CellIndex (0..3)
+
+    ; Se game_objective_completed != 0 (portale attivo):
+    ld   a, (game_objective_completed)
+    or   a
+    jr   z, .portal_static_attr
+
+    ld   a, (portal_anim_frame)
+    add  a, e                  ; portal_anim_frame + CellIndex
+    and  7
+    ld   e, a
+    ld   d, 0
+    ld   hl, portal_color_table
+    add  hl, de
+    ld   a, (hl)               ; A = colore lampeggiante
+    pop  bc
+    pop  de
+    pop  hl
+    ret
+
+.portal_static_attr:
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_PORTAL
+    add  hl, de
+    ld   a, (hl)               ; A = attributo originale del portale
+    pop  bc
+    pop  de
+    pop  hl
+    ret
+
+.not_portal_attr:
     ; 2. Leggi il tile index da unpacked_layout
     ld   a, h                  ; A = Row
     ld   c, b                  ; C = Col
