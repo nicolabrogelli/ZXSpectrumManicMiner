@@ -1,7 +1,7 @@
 ;===========================================================================
 ; settings.asm
 ;
-; Impostazioni e flag di configurazione a tempo di compilazione per Jet Set Willy.
+; Impostazioni e flag di configurazione a tempo di compilazione per .
 ; Ogni flag può essere abilitato (1) o disabilitato (0).
 ; Possono anche essere sovrascritti via riga di comando con sjasmplus 
 ; (es. -DENABLE_MUSIC=0 -DENABLE_ROOM_SKIP_KEYS=0).

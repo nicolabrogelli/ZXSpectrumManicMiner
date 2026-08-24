@@ -14,7 +14,7 @@
    1+ 5DAD              ;===========================================================================
    2+ 5DAD              ; settings.asm
    3+ 5DAD              ;
-   4+ 5DAD              ; Impostazioni e flag di configurazione a tempo di compilazione per Jet Set Willy.
+   4+ 5DAD              ; Impostazioni e flag di configurazione a tempo di compilazione per .
    5+ 5DAD              ; Ogni flag può essere abilitato (1) o disabilitato (0).
    6+ 5DAD              ; Possono anche essere sovrascritti via riga di comando con sjasmplus
    7+ 5DAD              ; (es. -DENABLE_MUSIC=0 -DENABLE_ROOM_SKIP_KEYS=0).
@@ -150,7 +150,7 @@
    1+ 5DAD              ;===========================================================================
    2+ 5DAD              ; physics_config.asm
    3+ 5DAD              ;
-   4+ 5DAD              ; Configurazioni globali per la fisica del salto e del movimento in Jet Set Willy.
+   4+ 5DAD              ; Configurazioni globali per la fisica del salto e del movimento in Manic Miner.
    5+ 5DAD              ; Tutti i parametri di default della fisica possono essere personalizzati qui.
    6+ 5DAD              ; Possono anche essere sovrascritti via riga di comando con sjasmplus
    7+ 5DAD              ; (es. -DDEFAULT_JUMP_STRENGTH=5 -DDEFAULT_GRAVITY_PRESET=1).
@@ -159,7 +159,7 @@
   10+ 5DAD              ; --- Forza del Salto di Default (Altezza iniziale) ---
   11+ 5DAD              ; Definisce l'impulso verticale iniziale per il salto quando la stanza non specifica un valore personalizzato.
   12+ 5DAD              ; Valori tipici:
-  13+ 5DAD              ;   6 = Salto standard (Jet Set Willy originale)
+  13+ 5DAD              ;   6 = Salto standard (Manic Miner originale)
   14+ 5DAD              ;   5 = Salto medio/corto
   15+ 5DAD              ;   4 = Salto corto
   16+ 5DAD                  IFNDEF DEFAULT_JUMP_STRENGTH
@@ -173,7 +173,7 @@
   24+ 5DAD              ; Definisce il comportamento della gravità per le stanze che non hanno un valore personalizzato.
   25+ 5DAD              ; Presets:
   26+ 5DAD              ;   0 = Gravità 0.5 (leggera)
-  27+ 5DAD              ;   1 = Gravità 0.75 (standard JSW)
+  27+ 5DAD              ;   1 = Gravità 0.75 (standard MM)
   28+ 5DAD              ;   2 = Gravità 1.0 (pesante)
   29+ 5DAD              ;   3 = Gravità 0.25 (molto leggera)
   30+ 5DAD              ;   4 = Gravità 0.0 (nessuna gravità)
@@ -1253,12 +1253,12 @@
  817+ 6141              ; ===================================================================
  818+ 6141
  819+ 6141              title_banner_1:
- 820+ 6141 20 20 20 2A      db "   * * * JET SET WILLY * * *    "
+ 820+ 6141 20 20 20 2A      db "   * * *  MANIC MINER  * * *    "
  820+ 6145 20 2A 20 2A
- 820+ 6149 20 4A 45 54
- 820+ 614D 20 53 45 54
- 820+ 6151 20 57 49 4C
- 820+ 6155 4C 59 20 2A
+ 820+ 6149 20 20 4D 41
+ 820+ 614D 4E 49 43 20
+ 820+ 6151 4D 49 4E 45
+ 820+ 6155 52 20 20 2A
  820+ 6159 20 2A 20 2A
  820+ 615D 20 20 20 20
  821+ 6161              title_banner_2:
@@ -1343,7 +1343,7 @@
  843+ 6269              ; Gfx_DrawTitleScreen
  844+ 6269              ; Disegna la schermata iniziale (Title Screen):
  845+ 6269              ; - Bordo nero e pulizia schermo.
- 846+ 6269              ; - Titolo "JET SET WILLY" e sottotitolo.
+ 846+ 6269              ; - Titolo "MANIC MINER" e sottotitolo.
  847+ 6269              ; - Separatori grafici.
  848+ 6269              ; - Sprite decorativi (Willy a sinistra, Maria a destra).
  849+ 6269              ; - Obiettivo di gioco.

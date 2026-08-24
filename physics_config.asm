@@ -1,7 +1,7 @@
 ;===========================================================================
 ; physics_config.asm
 ;
-; Configurazioni globali per la fisica del salto e del movimento in Jet Set Willy.
+; Configurazioni globali per la fisica del salto e del movimento in Manic Miner.
 ; Tutti i parametri di default della fisica possono essere personalizzati qui.
 ; Possono anche essere sovrascritti via riga di comando con sjasmplus
 ; (es. -DDEFAULT_JUMP_STRENGTH=5 -DDEFAULT_GRAVITY_PRESET=1).
@@ -10,7 +10,7 @@
 ; --- Forza del Salto di Default (Altezza iniziale) ---
 ; Definisce l'impulso verticale iniziale per il salto quando la stanza non specifica un valore personalizzato.
 ; Valori tipici:
-;   6 = Salto standard (Jet Set Willy originale)
+;   6 = Salto standard (Manic Miner originale)
 ;   5 = Salto medio/corto
 ;   4 = Salto corto
     IFNDEF DEFAULT_JUMP_STRENGTH
@@ -24,7 +24,7 @@ JUMP_STRENGTH: EQU DEFAULT_JUMP_STRENGTH
 ; Definisce il comportamento della gravità per le stanze che non hanno un valore personalizzato.
 ; Presets:
 ;   0 = Gravità 0.5 (leggera)
-;   1 = Gravità 0.75 (standard JSW)
+;   1 = Gravità 0.75 (standard MM)
 ;   2 = Gravità 1.0 (pesante)
 ;   3 = Gravità 0.25 (molto leggera)
 ;   4 = Gravità 0.0 (nessuna gravità)

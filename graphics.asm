@@ -817,7 +817,7 @@ Gfx_Clear2Scanlines_Black:
 ; ===================================================================
 
 title_banner_1:
-    db "   * * * JET SET WILLY * * *    "
+    db "   * * *  MANIC MINER  * * *    "
 title_banner_2:
     db "   THE SPECTRUM 48K ADVENTURE   "
 title_sep_line:
@@ -843,7 +843,7 @@ title_color_table:
 ; Gfx_DrawTitleScreen
 ; Disegna la schermata iniziale (Title Screen):
 ; - Bordo nero e pulizia schermo.
-; - Titolo "JET SET WILLY" e sottotitolo.
+; - Titolo "MANIC MINER" e sottotitolo.
 ; - Separatori grafici.
 ; - Sprite decorativi (Willy a sinistra, Maria a destra).
 ; - Obiettivo di gioco.
