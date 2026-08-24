@@ -133,7 +133,7 @@ TheMenagerieWillyAppearanceAndPosition:
 ;The next four bytes are copied to 32879 and specify the direction, location and length of the conveyor.
 TheMenagerieConveyorData:
 	DEFB 1			;Direction (right)
-	DEFW 30758		;Location in the screen buffer at 30819: (11,3)
+	DEFW 30790		;Location in the screen buffer at 28672: (10,6) -> Layout Row 9, Col 6
 	DEFB 6			;Length
 	
 TheMenagerieBorderColor:

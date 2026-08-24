@@ -298,8 +298,18 @@ LoadPositionPlayeinRoom:
     srl  a                         ; A = Pixel Y (es. 208 -> 104)
     ld   d, a                      ; D = PlayerY
 
+    ; Byte 1: Anim frame
+    inc  hl
+    ld   a, (hl)
+    and  3                         ; Garanzia valore valido (0..3)
+    cp   3
+    jr   c, .valid_anim
+    xor  a
+.valid_anim:
+    ld   (body_state), a
+    ld   (player_old_body), a
+
     ; Byte 2: Direction (0 = right, 1 = left in formato MM)
-    inc  hl                        ; Byte 1 (Anim frame)
     inc  hl                        ; Byte 2 (Direction)
     ld   a, (hl)
     and  1
@@ -310,6 +320,7 @@ LoadPositionPlayeinRoom:
     ld   a, 2                      ; 2 = Destra nel motore
 .set_dir:
     ld   (direction), a
+    ld   (player_old_dir), a
 
     ; Byte 4-5: Location in attribute buffer (DEFW) -> AttrAddr (es. 23970)
     inc  hl                        ; Byte 3 (Airborne)
@@ -335,6 +346,17 @@ LoadPositionPlayeinRoom:
     ; Salva coordinate (C = X, B = Y)
     ld   (PlayerPos), bc
     ld   (PlayerPosOld), bc
+
+    ; Reset completi di stato player e rendering
+    xor  a
+    ld   (sprite_shift), a
+    ld   (collision_active), a
+    ld   (willy_needs_redraw), a
+    ld   (current_input_dir), a
+    ld   (conveyor_caught), a
+    ld   a, $FF
+    ld   (player_drawn_pos), a
+    ld   (player_drawn_pos+1), a
     ret
 
 ; -------------------------------------------------------------------

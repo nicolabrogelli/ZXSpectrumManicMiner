@@ -125,7 +125,7 @@ AbandonedUraniumWorkingsExtra:
 AbandonedUraniumWorkingsWillyAppearanceAndPosition:
 	DEFB 208		;Pixel y-coordinate * 2 (see 32872)
 	DEFB 0			;Animation frame (see 32873)
-	DEFB 0			;Direction and movement flags: facing right (see 32874)
+	DEFB 1			;Direction and movement flags: facing right (see 32874)
 	DEFB 0			;Airborne status indicator (see 32875)
 	DEFW 23997		;Location in the attribute buffer at 23552: (13,2) (see 32876)
 	DEFB 0			;Jumping animation counter (see 32878)
@@ -133,7 +133,7 @@ AbandonedUraniumWorkingsWillyAppearanceAndPosition:
 ;The next four bytes are copied to 32879 and specify the direction, location and length of the conveyor.
 AbandonedUraniumWorkingsConveyorData:
 	DEFB 1			;Direction (right)
-	DEFW 30785		;Location in the screen buffer at 28672: (10,1)
+	DEFW 30817		;Location in the screen buffer at 28672: (11,1) -> Layout Row 10, Col 1
 	DEFB 3			;Length
 	
 AbandonedUraniumWorkingsBorderColor:
@@ -212,19 +212,20 @@ AbandonedUraniumWorkingsUnused2:
 	DEFB 0,0	;Unused
 
 ;The next byte is copied to 32989 and indicates that there are no vertical guardians in this cavern.
-AbandonedUraniumWorkingsVGuardians:
+AbandonedUraniumWorkingVGuardians:
 	DEFB 255	;Terminator
 
 ;The next two bytes are unused.
-AbandonedUraniumWorkingsUnused3:
+AbandonedUraniumWorkingUnused3:
 	DEFB 0,0	;Unused
 
 ;The next 32 bytes define graphic.
 AbandonedUraniumWorkingsGraphicElement:
-	DEFB 255,0,0,0,0,0,0	;Vertical guardian 1 (unused)
-	DEFB 0,0,0,0,0,0,0		;Vertical guardian 2 (unused)
-	DEFB 0,0,0,0,0,0,0		;Vertical guardian 3 (unused)
-	DEFB 0,0,0,0,0,0,0		;Vertical guardian 4 (unused)
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+
 
 ;The next 256 bytes define the guardian graphics.
 AbandonedUraniumWorkingsGraphicGuardian:

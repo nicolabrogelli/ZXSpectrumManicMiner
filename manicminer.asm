@@ -245,6 +245,14 @@ Main_loop:
     ld   (coyote_timer), a
     ld   (jump_frame), a
     ld   (jump_dir), a
+    ld   (body_state), a
+    ld   (player_old_body), a
+    ld   (player_old_dir), a
+    ld   (sprite_shift), a
+    ld   (collision_active), a
+    ld   (willy_needs_redraw), a
+    ld   (current_input_dir), a
+    ld   (conveyor_caught), a
     ld   (transition_active), a    ; 0 = Posiziona Willy nel punto definito nella stanza (OFFSET_POS_WILLY)
     ld   a, 1
     ld   (on_ground), a

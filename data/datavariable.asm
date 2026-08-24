@@ -51,6 +51,7 @@ conveyor_dir:   db 0
 conveyor_len:   db 0
 conveyor_row:   db 0
 conveyor_col:   db 0
+conveyor_caught: db 0
 ramp_dir:       db 0
 ramp_len:       db 0
 ramp_row:       db 0
