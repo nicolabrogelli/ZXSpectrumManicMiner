@@ -3328,13 +3328,13 @@ Gfx_DrawConveyorsAndRamps:
     and  31
     ld   (conveyor_col), a
     
-    ; Row = (D & $18) | ((E >> 5) & 7)
+    ; Row = (D & $08) | ((E >> 5) & 7)
     ld   a, e
     and  %11100000
     rrca : rrca : rrca : rrca : rrca
     ld   b, a
     ld   a, d
-    and  $18
+    and  $08
     or   b
     ld   (conveyor_row), a
     
