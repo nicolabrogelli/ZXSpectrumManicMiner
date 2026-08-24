@@ -1012,22 +1012,69 @@ Gfx_PrintString:
 ; Disegna il nome della stanza sotto la piattaforma di base (Riga 16)
 ; -------------------------------------------------------------------
 Gfx_PrintRoomName:
-    ; Posiziona il cursore a Y = 16, X = 0 usando i codici di controllo rst $10
-    ld   a, 22             ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 16             ; Riga 16
-    rst  $10
-    ld   a, 0              ; Colonna 0
-    rst  $10
-    
-    ld   a, YELLOW         ; Inchiostro Giallo
-    call Gfx_Ink
-    
-    ld   hl, (room_ptr)    ; HL = indirizzo stanza
-    ld   de, OFFSET_ROOM_NAME ; Offset del nome stanza (32 byte, offset 512)
-    add  hl, de            ; HL = indirizzo nome stanza
-    ld   b, 32             ; B = 32 caratteri
-    call Gfx_PrintString
+    push af
+    push bc
+    push de
+    push hl
+
+    ; Calcola una volta sola l'indirizzo del nome stanza
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_ROOM_NAME
+    add  hl, de
+    push hl                    ; Salva puntatore base del nome stanza
+
+    ; 1. Rendering diretto in VRAM dei 32 caratteri del nome stanza a Riga 16 ($5000..$571F)
+    ld   c, 0                  ; C = Colonna (0..31)
+.room_name_loop:
+    pop  hl
+    push hl                    ; HL = puntatore base del nome stanza
+    ld   e, c
+    ld   d, 0
+    add  hl, de
+    ld   a, (hl)               ; A = codice ASCII del carattere
+
+    ; Indirizzo nel font_buffer: font_buffer + ASCII * 8
+    ld   l, a
+    ld   h, 0
+    add  hl, hl                ; *2
+    add  hl, hl                ; *4
+    add  hl, hl                ; *8
+    ld   de, font_buffer
+    add  hl, de                ; HL = puntatore bitmap font (8 byte)
+
+    ; DE = Indirizzo VRAM scanline 0 per Riga 16, Colonna C ($5000 + C)
+    ld   a, c
+    ld   e, a
+    ld   d, $50                ; DE = $5000 + C
+
+    ; Copia le 8 scanline
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 0 ($50xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 1 ($51xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 2 ($52xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 3 ($53xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 4 ($54xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 5 ($55xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 6 ($56xx)
+    ld   a, (hl) : ld (de), a                   ; Scanline 7 ($57xx)
+
+    inc  c
+    ld   a, c
+    cp   32
+    jr   c, .room_name_loop
+
+    pop  hl                    ; Ripulisci lo stack dal puntatore nome stanza
+
+    ; 2. Imposta attributi colore Giallo Brillante per Riga 16 ($5A00..$5A1F)
+    ld   hl, $5a00
+    ld   (hl), (YELLOW | $40)
+    ld   de, $5a01
+    ld   bc, 31
+    ldir
+
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
 
     ; Disegna la riga di stato (High score & Score) a Riga 18
     call Gfx_UpdateScoreDisplay
@@ -2037,7 +2084,8 @@ Gfx_ClearPixelSprite8x8:
 ; -------------------------------------------------------------------
 ; Gfx_UpdateScoreDisplay
 ; Formatta e visualizza High score e Score nella riga di stato (Riga 18).
-; Formato: "High score XXXXXX   Score YYYYYY" (32 caratteri esatti)
+; Scrive DIRETTAMENTE in VRAM senza passare dalle routine ROM (rst $10).
+; Garantisce un aggiornamento istantaneo, atomico e affidabile a ogni raccolta item.
 ; -------------------------------------------------------------------
 Gfx_UpdateScoreDisplay:
     push af
@@ -2056,22 +2104,49 @@ Gfx_UpdateScoreDisplay:
     ld   hl, status_line + 26
     call Gfx_FormatBCD6
 
-    ; 3. Ristampa la riga di stato a riga 18
-    ld   a, 22                 ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 18                 ; Riga 18
-    rst  $10
-    ld   a, 0                  ; Colonna 0
-    rst  $10
-    
-    ld   hl, status_line       ; HL = indirizzo stringa di stato
-    ld   b, 32                 ; B = 32 caratteri
-    call Gfx_PrintString
+    ; 3. Rendering diretto in VRAM dei 32 caratteri di status_line a Riga 18 ($5040..$575F)
+    ld   c, 0                  ; C = Colonna (0..31)
+.char_loop:
+    ld   e, c
+    ld   d, 0
+    ld   hl, status_line
+    add  hl, de
+    ld   a, (hl)               ; A = codice ASCII del carattere
 
-    ; 4. Ripristina i colori degli attributi di Riga 18 ($5A40)
+    ; Indirizzo nel font_buffer: font_buffer + ASCII * 8
+    ld   l, a
+    ld   h, 0
+    add  hl, hl                ; *2
+    add  hl, hl                ; *4
+    add  hl, hl                ; *8
+    ld   de, font_buffer
+    add  hl, de                ; HL = puntatore ai dati bitmap del carattere (8 byte)
+
+    ; DE = Indirizzo VRAM scanline 0 per Riga 18, Colonna C ($5040 + C)
+    ld   a, c
+    add  a, $40
+    ld   e, a
+    ld   d, $50                ; DE = $5040 + C
+
+    ; Copia le 8 scanline del carattere direttamente in VRAM
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 0 ($50xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 1 ($51xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 2 ($52xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 3 ($53xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 4 ($54xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 5 ($55xx)
+    ld   a, (hl) : ld (de), a : inc hl : inc d  ; Scanline 6 ($56xx)
+    ld   a, (hl) : ld (de), a                   ; Scanline 7 ($57xx)
+
+    inc  c
+    ld   a, c
+    cp   32
+    jr   c, .char_loop
+
+    ; 4. Imposta gli attributi colore di Riga 18 ($5A40..$5A5F)
     ld   hl, status_line_attrs
-    ld   de, $5a40             ; Indirizzo attributi Riga 18
-    ld   bc, 32                ; 32 byte
+    ld   de, $5a40             ; Indirizzo attributi Riga 18 ($5800 + 18*32 = $5A40)
+    ld   bc, 32
     ldir
 
     pop  ix
