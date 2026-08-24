@@ -671,8 +671,8 @@ Gfx_PrintPlayer:
 ; -------------------------------------------------------------------
 ; Gfx_ApplyPlayerTileLayers
 ; Gestisce la colorazione e il livello di Willy rispetto alle tiles della stanza:
-; - Scansiona tutte le celle 8x8 sovrapposte dallo sprite 16x16 di Willy (PlayerPos).
-; - Se la cella è spazio vuoto (tile 0): applica il colore bianco brillante di Willy.
+; - Scansiona tutte le celle 8x8 sovrapposte dallo sprite di Willy (largo 8 pixel, alto 16 pixel).
+; - Se la cella è spazio vuoto (tile 0): applica il colore bianco brillante di Willy preservando il Paper di sfondo.
 ; - Se la cella contiene un tile della stanza (Floor, Wall, Crumbling, Conveyor, Nasty, Portal, Item):
 ;   la cella mantiene l'attributo originale del tile, così la parte di Willy sovrapposta
 ;   prende il colore del tile, esattamente come nel gioco originale per ZX Spectrum!
@@ -688,23 +688,23 @@ Gfx_ApplyPlayerTileLayers:
     cp   128
     jp   nc, .done_layers
 
-    ; Calcola ColStart (E) e ColEnd (C)
+    ; Calcola ColStart (E) e ColEnd (C) per uno sprite largo 8 pixel (X .. X+7)
     ld   a, c
     srl  a : srl a : srl a
     ld   e, a                  ; E = ColStart (0..31)
 
     ld   a, c
-    add  a, 15
+    add  a, 7                  ; Willy è largo 8 pixel (span massimo 2 colonne)
     srl  a : srl a : srl a
     ld   c, a                  ; C = ColEnd (0..31)
 
-    ; Calcola RowStart (H) e RowEnd (L)
+    ; Calcola RowStart (H) e RowEnd (L) per uno sprite alto 16 pixel (Y .. Y+15)
     ld   a, b
     srl  a : srl a : srl a
     ld   h, a                  ; H = RowStart (0..15)
 
     ld   a, b
-    add  a, 15
+    add  a, 15                 ; Willy è alto 16 pixel
     srl  a : srl a : srl a
     ld   l, a                  ; L = RowEnd (0..15)
 
@@ -756,7 +756,17 @@ Gfx_ApplyPlayerTileLayers:
 
 .cell_is_empty:
     ; --- LA CELLA È SPAZIO VUOTO ---
-    ; Applica il colore bianco brillante di Willy
+    ; Leggi l'attributo originale di sfondo della stanza, preserva il Paper e imposta Ink Bianco Brillante
+    push hl
+    push bc
+    call Gfx_GetCellAttribute  ; Input: H = Row, B = Col -> Output: A = attributo originale sfondo
+    pop  bc
+    pop  hl
+
+    and  $f8                   ; Preserva il Paper dello sfondo (es. Blue in TheColdRoom, Black in CentralCavern)
+    or   (WHITE | $40)         ; Imposta Ink Bianco Brillante per Willy
+    ld   e, a
+
     push hl
     ld   l, h
     ld   h, 0
@@ -770,11 +780,7 @@ Gfx_ApplyPlayerTileLayers:
     ld   a, h
     add  a, $58
     ld   h, a                  ; HL = AttrAddr ($5800 + Row * 32 + Col)
-
-    ld   a, (hl)
-    and  $f8
-    or   (WHITE | $40)         ; Bianco brillante
-    ld   (hl), a
+    ld   (hl), e
     pop  hl
 
 .next_col:
@@ -788,6 +794,96 @@ Gfx_ApplyPlayerTileLayers:
     jr   .row_loop
 
 .done_layers:
+    pop  bc
+    pop  de
+    pop  hl
+    ret
+
+; -------------------------------------------------------------------
+; Gfx_RestorePlayerColorAttributes
+; Ripristina gli attributi di sfondo originali per le celle 8x8 occupate da Willy (8x16 pixel)
+; Input: C = PlayerX, B = PlayerY
+; -------------------------------------------------------------------
+Gfx_RestorePlayerColorAttributes:
+    push hl
+    push de
+    push bc
+
+    ; Se Y è fuori dai limiti della griglia di gioco, non fare nulla
+    ld   a, b
+    cp   128
+    jr   nc, .done_willy_attr
+
+    ; Calcola ColStart: col = X / 8
+    ld   a, c
+    srl  a : srl a : srl a
+    ld   e, a                  ; E = ColStart
+
+    ; Calcola ColEnd: col_end = (X + 7) / 8 (Willy è largo 8 pixel)
+    ld   a, c
+    add  a, 7
+    srl  a : srl a : srl a
+    ld   c, a                  ; C = ColEnd
+
+    ; Calcola RowStart: row = Y / 8
+    ld   a, b
+    srl  a : srl a : srl a
+    ld   h, a                  ; H = RowStart
+
+    ; Calcola RowEnd: row_end = (Y + 15) / 8 (Willy è alto 16 pixel)
+    ld   a, b
+    add  a, 15
+    srl  a : srl a : srl a
+    ld   l, a                  ; L = RowEnd
+
+.row_loop:
+    ld   a, h
+    cp   l
+    jr   z, .ok_row
+    jr   nc, .done_willy_attr
+.ok_row:
+    push bc
+    push de
+
+    ld   b, e                  ; B = Col corrente
+.col_loop:
+    ld   a, b
+    cp   c
+    jr   z, .ok_col
+    jr   nc, .col_done
+.ok_col:
+    ; Ottieni attributo originale dello sfondo per cella H (Row), B (Col)
+    call Gfx_GetCellAttribute  ; A = attributo originale
+    ld   d, a                  ; D = attributo originale
+
+    push hl
+    ld   l, h
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl ; HL = Row * 32
+
+    ld   a, b                  ; A = Col corrente
+    add  a, l
+    ld   l, a
+    jr   nc, .no_c_r
+    inc  h
+.no_c_r:
+    ld   a, h
+    add  a, $58
+    ld   h, a                  ; HL = Attribute screen address ($5800 + Row * 32 + Col)
+
+    ld   (hl), d               ; Ripristina l'attributo colore dello sfondo
+    pop  hl
+
+    inc  b                     ; Prossima colonna
+    jr   .col_loop
+
+.col_done:
+    pop  de
+    pop  bc
+    inc  h                     ; Prossima riga
+    jr   .row_loop
+
+.done_willy_attr:
     pop  bc
     pop  de
     pop  hl
@@ -933,7 +1029,7 @@ Gfx_UpdatePlayer:
     ld   b, a
     call Gfx_ErasePixelSprite8x8    ; Cancella corpo
     ld   bc, (player_drawn_pos)
-    call Gfx_RestoreEnemyColorAttributes ; Ripristina sfondo
+    call Gfx_RestorePlayerColorAttributes ; Ripristina sfondo 8x16
 
 .redraw_overlay_only:
     ; Durante il timer di sicurezza, fa lampeggiare lo sprite
@@ -986,7 +1082,7 @@ Gfx_DeleteCharAtOldPos:
     ld   b, a
     call Gfx_ErasePixelSprite8x8    ; Cancella corpo
     ld   bc, (player_drawn_pos)
-    call Gfx_RestoreEnemyColorAttributes ; Ripristina sfondo
+    call Gfx_RestorePlayerColorAttributes ; Ripristina sfondo 8x16
 
 .done_del:
     ld   a, $FF
