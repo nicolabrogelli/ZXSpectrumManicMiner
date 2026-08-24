@@ -105,7 +105,7 @@ TheColdRoomTile:
 		
 ; The next 72 bytes contain the attributes and graphic data for the tiles used to build the cavern.
 TheColdRoomBackground:
-	DEFB 0,0,0,0,0,0,0,0,0	
+	DEFB 8,0,0,0,0,0,0,0,0	
 TheColdRoomFloor:	
 	DEFB 75,255,255,219,110,197,64,0,0	
 TheColdRoomCrumblingFloor:	

@@ -9126,7 +9126,7 @@
    7+ 846D
    8+ 846D              RoomsStart:
    9+ 846D                  include "rooms/CentralCavern.asm"               ; ID 00
-# file opened: CentralCavern.asm
+# file opened: rooms/CentralCavern.asm
    1++846D              ;===========================================================================
    2++846D              ; CentralCavern.asm
    3++846D              ;
@@ -9515,9 +9515,9 @@
  256++8861 00 70 00 F8
  257++8865 05 DD 03 8E  	DEFB 5,221,3,142,1,4,0,136
  257++8869 01 04 00 88
-# file closed: CentralCavern.asm
+# file closed: rooms/CentralCavern.asm
   10+ 886D                  include "rooms/TheColdRoom.asm"                 ; ID 01
-# file opened: TheColdRoom.asm
+# file opened: rooms/TheColdRoom.asm
    1++886D              ;===========================================================================
    2++886D              ; TheColdRoom.asm
    3++886D              ;
@@ -9696,7 +9696,7 @@
  105++8A8D
  106++8A8D              ; The next 72 bytes contain the attributes and graphic data for the tiles used to build the cavern.
  107++8A8D              TheColdRoomBackground:
- 108++8A8D 00 00 00 00  	DEFB 0,0,0,0,0,0,0,0,0
+ 108++8A8D 08 00 00 00  	DEFB 8,0,0,0,0,0,0,0,0
  108++8A91 00 00 00 00
  108++8A95 00
  109++8A96              TheColdRoomFloor:
@@ -9911,11 +9911,11 @@
  262++8C61 00 96 00 86
  263++8C65 00 8E 00 7D  	DEFB 0,142,0,125,0,16,0,120
  263++8C69 00 10 00 78
-# file closed: TheColdRoom.asm
+# file closed: rooms/TheColdRoom.asm
   11+ 8C6D
   12+ 8C6D
   13+ 8C6D                  include "data/datasprite.asm"
-# file opened: datasprite.asm
+# file opened: data/datasprite.asm
    1++8C6D
    2++8C6D
    3++8C6D
@@ -9944,7 +9944,7 @@
   18++8CAD                  ; 9° carattere per i bordi verticali
   19++8CAD                  ;db %11111111, %10001000, %11111111, %00100010, %11111111, %10001000, %11111111, %00100100
   20++8CAD
-# file closed: datasprite.asm
+# file closed: data/datasprite.asm
   14+ 8CAD
   15+ 8CAD              font_buffer:
   16+ 8CAD 00          > db 0
@@ -11488,7 +11488,7 @@
   20+ 92AD
 # file closed: resources.asm
  973  92AD                  include "data/datavariable.asm"
-# file opened: datavariable.asm
+# file opened: data/datavariable.asm
    1+ 92AD              ; -------------------------------------------------------------------
    2+ 92AD              ; Variabili
    3+ 92AD              ; -------------------------------------------------------------------
@@ -13063,7 +13063,7 @@
   95+ 98C7 ~            Audio_music_frame_counter: db 1
   96+ 98C7                  ENDIF
   97+ 98C7
-# file closed: datavariable.asm
+# file closed: data/datavariable.asm
  974  98C7
  975  98C7                  SAVESNA "manicminer.sna", start ; sna48-ok
  976  98C7
