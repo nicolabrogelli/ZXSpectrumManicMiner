@@ -111,7 +111,7 @@ TheColdRoomFloor:
 TheColdRoomCrumblingFloor:	
 	DEFB 11,255,219,165,36,82,32,8,0	 
 TheColdRoomWall:	
-	DEFB 22,34,255,136,255,34,255,136,25	
+	DEFB 22,34,255,136,255,34,255,136,255	
 TheColdRoomConveyor:	
 	DEFB 14,240,102,240,102,0,153,255,0	
 TheColdRoomNasty1:	

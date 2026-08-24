@@ -240,43 +240,20 @@ Gfx_GetBackgroundByte:
     pop  de                    ; D = Y, E = Row
 
     ; 5b. Controlla se la cella (Row E, Col C) appartiene al Portale (16x16 pixel a OFFSET_PORTAL = 655)
-    push de
-    push bc
-    ld   hl, (room_ptr)
-    ld   de, OFFSET_PORTAL + 33
-    add  hl, de
-    ld   a, (hl)
-    inc  hl
-    ld   h, (hl)
-    ld   l, a                  ; HL = AttrAddr (es. 23997)
-    ld   de, -23552
-    add  hl, de                ; HL = AttrOffset
-
-    ld   a, l
-    and  31
-    ld   d, a                  ; D = PortalCol (0..31)
-
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    ld   a, l                  ; A = PortalRow (0..15)
-
-    pop  bc                    ; B = Scanline offset (1..8), C = Col
-    pop  de                    ; D = Y, E = Row
-
-    ; Confronta Row (in E) con PortalRow (in A): DeltaRow = E - PortalRow
-    sub  e
-    neg
+    ld   a, (portal_row)
+    ld   h, a                  ; H = PortalRow (0..15)
+    ld   a, e                  ; A = Row (0..15)
+    sub  h                     ; A = Row - PortalRow
     cp   2
     jr   nc, .not_portal_bg
 
     ld   h, a                  ; H = DeltaRow (0..1)
 
-    ; Confronta Col (in C) con PortalCol (in D): DeltaCol = C - PortalCol
+    ; Confronta Col (in C) con PortalCol: DeltaCol = C - PortalCol
+    ld   a, (portal_col)
+    ld   l, a                  ; L = PortalCol (0..31)
     ld   a, c
-    sub  d
+    sub  l
     cp   2
     jr   nc, .not_portal_bg
 
@@ -914,43 +891,17 @@ IsCellEmptyBackground:
     jr   c, .not_empty
 
     ; 3. Controlla se appartiene al Portale (16x16)
-    push hl
-    push de
-    push bc
-    ld   hl, (room_ptr)
-    ld   de, OFFSET_PORTAL + 33
-    add  hl, de
-    ld   a, (hl)
-    inc  hl
-    ld   h, (hl)
-    ld   l, a                  ; HL = AttrAddr
-    ld   de, -23552
-    add  hl, de                ; HL = AttrOffset
-
-    ld   a, l
-    and  31
-    ld   d, a                  ; D = PortalCol
-
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    ld   a, l                  ; A = PortalRow
-
-    pop  bc                    ; B = Col
-    pop  de
-    pop  hl                    ; H = Row
-
-    ; DeltaRow = H - PortalRow (in A)
-    sub  h
-    neg
+    ld   a, (portal_row)
+    ld   e, a
+    ld   a, h
+    sub  e
     cp   2
     jr   nc, .check_layout_tile
 
-    ; DeltaCol = B - PortalCol (in D)
+    ld   a, (portal_col)
+    ld   e, a
     ld   a, b
-    sub  d
+    sub  e
     cp   2
     jr   c, .not_empty         ; Se DeltaRow < 2 E DeltaCol < 2 -> È nel portale!
 
@@ -2745,11 +2696,17 @@ Gfx_DrawCrumblingTile:
     jr   c, .line_loop
 
     ; 4. Gestione Attributo Colore
-    ; Se Stage >= 8, azzera l'attributo a 0 (Background)
+    ; Se Stage >= 8, ripristina l'attributo di sfondo della stanza
     ld   a, e
     cp   8
     jr   c, .done_draw_crumble
     
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_TILES
+    add  hl, de
+    ld   a, (hl)               ; A = attributo originale di sfondo della stanza
+    push af
+
     ld   h, 0
     ld   l, b                  ; HL = Row
     add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
@@ -2758,7 +2715,7 @@ Gfx_DrawCrumblingTile:
     add  hl, de
     ld   de, $5800
     add  hl, de                ; HL = AttrAddr
-    xor  a
+    pop  af
     ld   (hl), a
 
 .done_draw_crumble:
@@ -2876,6 +2833,7 @@ Gfx_AnimatePortal:
     ; Col = AttrOffset & 31
     ld   a, l
     and  31
+    ld   (portal_col), a
     ld   c, a                  ; C = Col (0..31)
 
     ; Row = AttrOffset / 32
@@ -2885,6 +2843,7 @@ Gfx_AnimatePortal:
     srl  h : rr l
     srl  h : rr l
     ld   a, l
+    ld   (portal_row), a
     ld   b, a                  ; B = Row (0..15)
 
     ; Converti in coordinate pixel (C = Pixel X, B = Pixel Y)
@@ -3050,50 +3009,24 @@ Gfx_GetCellAttribute:
     cp   16
     jp   nc, .blank
 
-    ; 1b. Controlla se la cella (Row H, Col B) appartiene al Portale
-    push hl
-    push de
-    push bc
-    ld   hl, (room_ptr)
-    ld   de, OFFSET_PORTAL + 33
-    add  hl, de
-    ld   a, (hl)
-    inc  hl
-    ld   h, (hl)
-    ld   l, a                  ; HL = AttrAddr
-    ld   de, -23552
-    add  hl, de                ; HL = AttrOffset
-
-    ld   a, l
-    and  31
-    ld   d, a                  ; D = PortalCol (0..31)
-
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    srl  h : rr l
-    ld   a, l                  ; A = PortalRow (0..15)
-
-    pop  bc                    ; B = Col
-    pop  de
-    pop  hl                    ; H = Row
-
-    ; DeltaRow = Row (H) - PortalRow (A)
-    sub  h
-    neg
+    ; 1b. Controlla se la cella (Row H, Col B) appartiene al Portale (2x2 celle)
+    ld   a, (portal_row)
+    ld   e, a
+    ld   a, h
+    sub  e
     cp   2
     jr   nc, .not_portal_attr
 
     ld   e, a                  ; E = DeltaRow (0..1)
 
-    ; DeltaCol = Col (B) - PortalCol (D)
+    ld   a, (portal_col)
+    ld   d, a
     ld   a, b
     sub  d
     cp   2
     jr   nc, .not_portal_attr
 
-    ; A = DeltaCol (0..1)
+    ; A = DeltaCol (0..1), E = DeltaRow (0..1)
     ld   d, a                  ; D = DeltaCol
     ld   a, e                  ; A = DeltaRow
     add  a, a                  ; *2
@@ -3119,10 +3052,7 @@ Gfx_GetCellAttribute:
     ret
 
 .portal_static_attr:
-    ld   hl, (room_ptr)
-    ld   de, OFFSET_PORTAL
-    add  hl, de
-    ld   a, (hl)               ; A = attributo originale del portale
+    ld   a, (portal_static_color)
     pop  bc
     pop  de
     pop  hl
@@ -3398,8 +3328,14 @@ Gfx_DrawConveyorsAndRamps:
     and  31
     ld   (conveyor_col), a
     
-    ; Row = 9
-    ld   a, 9
+    ; Row = (D & $18) | ((E >> 5) & 7)
+    ld   a, e
+    and  %11100000
+    rrca : rrca : rrca : rrca : rrca
+    ld   b, a
+    ld   a, d
+    and  $18
+    or   b
     ld   (conveyor_row), a
     
     xor  a
