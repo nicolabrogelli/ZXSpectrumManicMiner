@@ -1064,9 +1064,9 @@ Gfx_PrintRoomName:
 
     pop  hl                    ; Ripulisci lo stack dal puntatore nome stanza
 
-    ; 2. Imposta attributi colore Giallo Brillante per Riga 16 ($5A00..$5A1F)
+    ; 2. Imposta attributi colore: Sfondo Giallo Brillante, Testo Nero per Riga 16 ($5A00..$5A1F)
     ld   hl, $5a00
-    ld   (hl), (YELLOW | $40)
+    ld   (hl), (YELLOW * 8) | BLACK | $40
     ld   de, $5a01
     ld   bc, 31
     ldir

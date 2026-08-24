@@ -14,6 +14,7 @@ UDG:        EQU $5c7b
 INITIAL_LIVES: EQU 7
 
 ; Colori
+BLACK:  EQU $00
 NONE:   EQU $00
 BLUE:   EQU $01
 RED:    EQU $02
