@@ -638,6 +638,7 @@ TriggerRoomChange:
 
 RoomsListTable:
 .CentralCavernLayout:              dw CentralCavernLayout              ; 00
+.TheColdRoomLayout:                dw TheColdRoomLayout                ; 01
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2
 
