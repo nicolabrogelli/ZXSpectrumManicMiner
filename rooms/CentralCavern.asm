@@ -34,7 +34,6 @@
 ; Room layout for Room 0 (Central Cavern)
 ; The first 512 bytes are the attributes that define the layout of the cavern.
 CentralCavernLayout:
-CentgralCavernLayout:
 	DEFB 22,0,0,0,0,0,0,0	; Attributes
 	DEFB 0,0,0,5,0,0,0,0
 	DEFB 5,0,0,0,0,0,0,0
@@ -102,38 +101,28 @@ CentgralCavernLayout:
 
 ;The next 72 bytes  specify the room name.
 CentralCavernTile:
-CentgralCavernTile:
     	DEFM "         Central Cavern         "	    ;Room name
 		
 ; The next 72 bytes contain the attributes and graphic data for the tiles used to build the cavern.
-CentralCavernBackground:
-CentgralCavernBackground:  
+CentralCavernBackground: 
 	DEFB 0,0,0,0,0,0,0,0,0	
 CentralCavernFloor:
-CentgralCavernFloor:	
 	DEFB 66,255,255,219,110,197,64,0,0	
 CentralCavernCrumblingFloor:
-CentgralCavernCrumblingFloor:	
 	DEFB 2,255,219,165,36,82,32,8,0	 
 CentralCavernWall:
-CentgralCavernWall:	
 	DEFB 22,34,255,136,255,34,255,136,255	
 CentralCavernConveyor:
-CentgralCavernConveyor:	
 	DEFB 4,240,102,240,102,0,153,255,0	
-CentralCavernNasty1:
-CentgralCavernNasty1:	
+CentralCavernNasty1:	
 	DEFB 68,68,40,148,81,53,214,88,16	
 CentralCavernNasty2:
-CentgralCavernNasty2:
 	DEFB 5,255,254,126,124,76,76,8,8	
 CentralCavernExtra:
-CentgralCavernExtra:
 	DEFB 0,0,0,0,0,0,0,0,0
 
 ; The next seven bytes specify Miner Willy's initial location and appearance in the cavern.
-CentralCavernWillyPos:
-CentgralCavernWillyApperanceAndPosition:
+CentralCavernWillyAppearanceAndPosition:
 	DEFB 208		;Pixel y-coordinate * 2 (see 32872)
 	DEFB 0			;Animation frame (see 32873)
 	DEFB 0			;Direction and movement flags: facing right (see 32874)
@@ -148,15 +137,13 @@ CentralCavernConveyorData:
 	DEFB 20			;Length
 	
 CentralCavernBorderColor:
-CentgralCavernBorderColor:
 	DEFB 2			;Border Color	
 
 CentralCaverUnused1:
 	DEFB 0			;Unused	
 	
 ;The next 25 bytes specify the location and initial colour of the items in the cavern.
-CentralCavernItems:
-CentralCaverLocationColorItems:
+CentralCavernLocationColorItems:
 	DEFB 3			;Item 1 at (0,9)
 	DEFW 23561
 	DEFB 96
@@ -181,7 +168,6 @@ CentralCaverLocationColorItems:
 	
 ;The next 37 bytes define the portal graphic and its location.
 CentralCavernPortal:
-CentralCaverPortal:
 	DEFB 14			;Attribute
 	DEFB 255,255,146,73,182,219,255,255		;Graphic data
 	DEFB 146,73,182,219,255,255,146,73
@@ -193,21 +179,17 @@ CentralCaverPortal:
 
 ;The next eight bytes are copied to 32948 and define the item graphic.
 CentralCavernItemGraphic:
-CentralCaverItem:
 	DEFB 48,72,136,144,104,4,10,4	;Item graphic data
 
 ;The next byte is  specifies the initial air supply in the cavern.
 CentralCavernInitialAir:
-CentralCaverInitialAir:
 	DEFB 63		;Air
 
 ;The next byte initialises the game clock.
 CentralCavernGameClock:
-CentralCaverGameClock:
 	DEFB 252	;Game clock
 
 ;The next 28 bytes are copied to 32958 and define the horizontal guardians.
-CentralCavernHGuardians:
 CentralCaverHorizontalGuardians:
 	DEFB 70					;Horizontal guardian 1: y=7, initial x=8, 8<=x<=15, speed=normal
 	DEFW 23784
@@ -226,7 +208,6 @@ CentralCaverUnused2:
 
 ;The next byte is copied to 32989 and indicates that there are no vertical guardians in this cavern.
 CentralCavernVGuardians:
-CentralCaverTerminator:
 	DEFB 255	;Terminator
 
 ;The next two bytes are unused.
@@ -235,7 +216,6 @@ CentralCaverUnused3:
 
 ;The next 32 bytes define graphic.
 CentralCavernGraphicElement:
-CentralCaverGrapichElement:
 	DEFB 2,160,5,67,31,228,115,255		;Swordfish graphic data
 	DEFB 242,248,31,63,255,228,63,195
 	DEFB 0,0,1,0,57,252,111,2
@@ -243,7 +223,6 @@ CentralCaverGrapichElement:
 
 ;The next 256 bytes define the guardian graphics.
 CentralCavernGraphicGuardian:
-CentralCaverGrapichGuardian:
 	DEFB 31,32,57,224,25,224,15,32		;Guardian graphic data
 	DEFB 159,0,95,128,255,192,94,0
 	DEFB 159,192,31,128,14,0,31,0
