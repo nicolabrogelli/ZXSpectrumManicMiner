@@ -158,11 +158,9 @@ Main_loop:
     call Enemy_Update
     call Items_CheckCollision
     
-    ; Controlla condizione di vittoria (Tutti gli item + Master Bedroom + Conveyor)
-    IF ENABLE_VICTORY_SCREEN != 0
-    call CheckVictoryCondition
-    jp   c, TriggerVictory
-    ENDIF
+    ; Controlla passaggio alla stanza successiva tramite Portale (dopo aver raccolto tutti gli item)
+    call CheckPortalTransition
+    jp   c, TriggerPortalTransition
 
     ; Controlla collisione con Nasties (morte di Willy)
     IF ENABLE_NASTY_COLLISION_DEATH != 0
@@ -637,21 +635,27 @@ TriggerVictory:
     jp   LoadRoomAndRestart
 
 ; -------------------------------------------------------------------
-; CheckVictoryCondition
-; Verifica le condizioni di completamento della caverna:
-; 1. Tutti gli oggetti della caverna raccolti;
-; 2. Willy collide con il portale attivo.
+; CheckPortalTransition
+; Verifica le condizioni per accedere alla stanza successiva:
+; 1. Tutti gli oggetti della caverna corrente devono essere raccolti (game_objective_completed != 0);
+; 2. Willy collide con il portale attivo definito a partire dal byte 655 (OFFSET_PORTAL).
+;
+; Output:
+;   Carry Set   = Tutti gli item raccolti e Willy sul portale -> Transizione attiva
+;   Carry Clear = Condizioni non soddisfatte -> Nessuna transizione
 ; -------------------------------------------------------------------
-CheckVictoryCondition:
+CheckPortalTransition:
     push bc
     push de
     push hl
 
-    ; 1. Tutti gli item raccolti?
+    ; 1. Tutti gli item della stanza sono stati raccolti?
     call CheckAllItemsCollected
-    jr   nc, .no_victory
+    jr   nc, .no_transition
 
-    ; 2. Willy collide con il portale (16x16)?
+    ; 2. Willy collide con il portale (16x16 pixel)?
+    ; Dai dati della stanza (OFFSET_PORTAL = 655):
+    ; Offset 655 + 33 (688) contiene AttrAddr (DEFW: 23552 + Row * 32 + Col)
     ld   hl, (room_ptr)
     ld   de, OFFSET_PORTAL + 33    ; Offset AttrAddr del portale
     add  hl, de
@@ -665,12 +669,13 @@ CheckVictoryCondition:
     ld   bc, -23552
     add  hl, bc
     
-    ; PortalX = (Offset & 31) * 8, PortalY = (Offset / 32) * 8
+    ; PortalX = (Offset & 31) * 8
     ld   a, l
     and  31
     add  a, a : add a, a : add a, a
-    ld   e, a                      ; E = PortalX
+    ld   e, a                      ; E = PortalX (0..248)
     
+    ; PortalY = (Offset / 32) * 8
     srl  h : rr l
     srl  h : rr l
     srl  h : rr l
@@ -678,42 +683,110 @@ CheckVictoryCondition:
     srl  h : rr l
     ld   a, l
     add  a, a : add a, a : add a, a
-    ld   d, a                      ; D = PortalY
+    ld   d, a                      ; D = PortalY (0..120)
 
     ; Collisione Bounding Box 16x16 tra Willy (PlayerPos) e Portale (E, D)
     ld   bc, (PlayerPos)           ; C = WillyX, B = WillyY
     
-    ; |WillyX - PortalX| < 12
+    ; Controllo orizzontale: |WillyX - PortalX| < 12
     ld   a, e
     sub  c
     jr   nc, .x_diff_pos
     neg
 .x_diff_pos:
     cp   12
-    jr   nc, .no_victory
+    jr   nc, .no_transition
 
-    ; |WillyY - PortalY| < 14
+    ; Controllo verticale: |WillyY - PortalY| < 14
     ld   a, d
     sub  b
     jr   nc, .y_diff_pos
     neg
 .y_diff_pos:
     cp   14
-    jr   nc, .no_victory
+    jr   nc, .no_transition
 
-    ; Vittoria / Portale raggiunto!
+    ; Transizione al portale attiva!
     pop  hl
     pop  de
     pop  bc
     scf
     ret
 
-.no_victory:
+.no_transition:
     pop  hl
     pop  de
     pop  bc
     or   a
     ret
+
+; Alias per retrocompatibilità
+CheckVictoryCondition: EQU CheckPortalTransition
+
+; -------------------------------------------------------------------
+; TriggerPortalTransition
+; Esegue il passaggio alla stanza successiva quando Willy entra nel portale:
+; - Identifica l'ID della stanza corrente in RoomsListTable.
+; - Avanza all'indice della stanza successiva.
+; - Se ci sono altre stanze: carica la nuova stanza leggendo le coordinate
+;   iniziali di Willy da OFFSET_POS_WILLY (byte 616) e avvia la stanza.
+; - Se era l'ultima stanza disponibile: scatena la vittoria (Victory Screen).
+; -------------------------------------------------------------------
+TriggerPortalTransition:
+    ; 1. Determina l'ID della stanza corrente
+    call DetermineCurrentRoomID    ; (current_room) = ID stanza (0..NUM_ROOMS-1)
+    
+    ; 2. Calcola l'indice della stanza successiva
+    ld   a, (current_room)
+    inc  a
+    cp   NUM_ROOMS
+    jr   nc, .all_rooms_completed  ; Se >= NUM_ROOMS, tutte le stanze completate!
+
+    ; 3. Carica il puntatore alla stanza successiva da RoomsListTable[A]
+    ld   hl, RoomsListTable
+    ld   e, a
+    ld   d, 0
+    add  hl, de
+    add  hl, de                    ; HL = RoomsListTable + A * 2
+    ld   e, (hl)
+    inc  hl
+    ld   d, (hl)                   ; DE = puntatore layout nuova stanza
+    ld   (room_ptr), de
+
+    ; 4. Prepara lo stato per l'ingresso nella nuova stanza
+    xor  a
+    ld   (transition_active), a    ; 0 = carica coordinate da OFFSET_POS_WILLY
+    ld   (velocity_y), a
+    ld   (game_objective_completed), a
+    ld   a, 1
+    ld   (on_ground), a
+
+    ; 5. Pulisci lo schermo e avvia la nuova stanza
+    ld   hl, ATTR_P
+    ld   (hl), $07
+    call CLS
+
+    jp   LoadRoomAndRestart
+
+.all_rooms_completed:
+    ; Tutte le stanze sono state completate con successo!
+    IF ENABLE_VICTORY_SCREEN != 0
+    jp   TriggerVictory
+    ELSE
+    ; Ricomincia dalla prima stanza (Stanza 00)
+    ld   de, (RoomsListTable)
+    ld   (room_ptr), de
+    xor  a
+    ld   (transition_active), a
+    ld   (velocity_y), a
+    ld   (game_objective_completed), a
+    ld   a, 1
+    ld   (on_ground), a
+    ld   hl, ATTR_P
+    ld   (hl), $07
+    call CLS
+    jp   LoadRoomAndRestart
+    ENDIF
 
 ; -------------------------------------------------------------------
 ; CheckAllItemsCollected
