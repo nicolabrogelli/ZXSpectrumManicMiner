@@ -2109,3 +2109,44 @@ Phys_UpdateCrumblingFloors:
     pop  de
     pop  hl
     ret
+
+; -------------------------------------------------------------------
+; Phys_UpdateAir
+; Aggiorna il consumo di aria durante ogni frame di gioco.
+; Decrementa progressivamente i pixel di aria e aggiorna la barra a schermo.
+; Output:
+;   Carry Set   = Aria esaurita (Willy muore per asfissia)
+;   Carry Clear = Aria ancora disponibile
+; -------------------------------------------------------------------
+Phys_UpdateAir:
+    ; Incrementa il timer dei frame
+    ld   a, (air_timer)
+    inc  a
+    ld   (air_timer), a
+    ld   hl, air_deplete_rate
+    cp   (hl)
+    jr   c, .no_deplete
+
+    ; Intervallo raggiunto: azzera timer e consuma 1 pixel di aria
+    xor  a
+    ld   (air_timer), a
+
+    ld   a, (air_pixels)
+    or   a
+    jr   z, .air_finished
+
+    dec  a
+    ld   (air_pixels), a
+    call Gfx_UpdateAirBar
+
+    or   a
+    jr   z, .air_finished
+
+.no_deplete:
+    or   a                     ; Carry Clear = Ok
+    ret
+
+.air_finished:
+    scf                        ; Carry Set = Morte per esaurimento aria
+    ret
+

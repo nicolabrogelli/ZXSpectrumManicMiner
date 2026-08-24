@@ -2225,6 +2225,214 @@ status_line:
 status_line_attrs:
     .32 db (YELLOW | $40)     ; 32 colonne colore Giallo Brillante (Bright Yellow on Black Paper)
 
+; -------------------------------------------------------------------
+; Gfx_InitAirBar
+; Inizializza e disegna la barra dell'aria a Riga 17 ($5020..$573F, Attr $5A20..$5A3F):
+; - Colonne 0..3: Scritta "AIR " in Verde Brillante
+; - Colonne 4..31 (28 colonne = 224 pixel): Barra multicolore piena (100% aria)
+; -------------------------------------------------------------------
+Gfx_InitAirBar:
+    push af
+    push bc
+    push de
+    push hl
+
+    ; Inizializza variabili aria
+    ld   a, 224
+    ld   (air_pixels), a
+    xor  a
+    ld   (air_timer), a
+
+    ; 1. Disegna la scritta "AIR " alle colonne 0..3 di Riga 17
+    ld   hl, air_label_text
+    ld   c, 0                  ; Colonna 0
+.air_label_loop:
+    ld   a, (hl)
+    push hl
+    ; Indirizzo font_buffer: font_buffer + ASCII * 8
+    ld   l, a
+    ld   h, 0
+    add  hl, hl : add hl, hl : add hl, hl
+    ld   de, font_buffer
+    add  hl, de
+
+    ; DE = Indirizzo VRAM scanline 0 per Riga 17, Colonna C ($5020 + C)
+    ld   a, c
+    add  a, $20
+    ld   e, a
+    ld   d, $50
+
+    ; Copia 8 scanline
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a : inc hl : inc d
+    ld   a, (hl) : ld (de), a
+
+    pop  hl
+    inc  hl
+    inc  c
+    ld   a, c
+    cp   4
+    jr   c, .air_label_loop
+
+    ; Imposta attributi colore "AIR " (Verde Brillante su sfondo nero)
+    ld   hl, $5a20
+    ld   (hl), (GREEN | $40)
+    ld   de, $5a21
+    ld   bc, 3
+    ldir
+
+    ; 2. Disegna tutte le 28 colonne piene della barra (Cols 4..31)
+    ld   c, 4                  ; C = Colonna (4..31)
+.bar_init_loop:
+    ; DE = VRAM scanline 0 per Riga 17, Colonna C ($5020 + C)
+    ld   a, c
+    add  a, $20
+    ld   e, a
+    ld   d, $50
+
+    ; Scanline 0: 0
+    xor  a
+    ld   (de), a
+    inc  d                     ; Scanline 1 ($51xx)
+    ; Scanlines 1..6: $FF (pieno)
+    ld   a, $ff
+    ld   (de), a : inc d       ; Scanline 2 ($52xx)
+    ld   (de), a : inc d       ; Scanline 3 ($53xx)
+    ld   (de), a : inc d       ; Scanline 4 ($54xx)
+    ld   (de), a : inc d       ; Scanline 5 ($55xx)
+    ld   (de), a : inc d       ; Scanline 6 ($56xx)
+    ld   (de), a : inc d       ; Scanline 7 ($57xx)
+    ; Scanline 7: 0
+    xor  a
+    ld   (de), a
+
+    inc  c
+    ld   a, c
+    cp   32
+    jr   c, .bar_init_loop
+
+    ; 3. Applica la palette originale dei 7 segmenti colorati (Cols 4..31)
+    ld   hl, air_bar_attrs
+    ld   de, $5a24             ; Indirizzo attributi Riga 17, Col 4
+    ld   bc, 28
+    ldir
+
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
+    ret
+
+; -------------------------------------------------------------------
+; Gfx_UpdateAirBar
+; Aggiorna il rendering grafico della barra dell'aria (Riga 17, Colonne 4..31)
+; in base al valore corrente di air_pixels (0..224).
+; -------------------------------------------------------------------
+Gfx_UpdateAirBar:
+    push af
+    push bc
+    push de
+    push hl
+
+    ld   a, (air_pixels)
+    ld   b, a                  ; B = air_pixels rimanenti (0..224)
+
+    ld   c, 0                  ; C = indice colonna barra (0..27)
+.col_loop:
+    ; Calcola quanti pixel cadono in questa colonna (indice C)
+    ; Indice colonna C copre il range [C*8 .. C*8+7]
+    ld   a, c
+    add  a, a : add a, a : add a, a  ; A = C * 8 (pixel di inizio colonna)
+
+    ld   e, a                  ; E = C * 8
+    ld   a, b                  ; A = air_pixels totali
+    sub  e                     ; A = air_pixels - C * 8
+    jr   c, .cell_empty        ; Se air_pixels < C * 8 -> 0 pixel (cella vuota)
+    cp   8
+    jr   nc, .cell_full        ; Se >= 8 -> 8 pixel (cella piena)
+
+    ; Cella parzialmente piena: A = 1..7 pixel
+    ld   hl, air_bar_masks
+    ld   e, a
+    ld   d, 0
+    add  hl, de
+    ld   a, (hl)               ; A = maschera bitmap (es. %11110000)
+    jr   .draw_cell
+
+.cell_empty:
+    xor  a                     ; Maschera = $00
+    jr   .draw_cell
+
+.cell_full:
+    ld   a, $ff                ; Maschera = $FF
+
+.draw_cell:
+    ; A = maschera bitmap per scanline 1..6
+    push af
+    ; Calcola indirizzo VRAM scanline 0 per Riga 17, Colonna C + 4
+    ld   a, c
+    add  a, 4 + $20            ; A = C + 4 + $20 (Riga 17 Colonna C+4)
+    ld   e, a
+    ld   d, $50                ; DE = $50xx (Scanline 0)
+
+    ; Scanline 0: 0
+    xor  a
+    ld   (de), a
+    inc  d                     ; Scanline 1 ($51xx)
+
+    pop  af                    ; A = maschera
+    ld   (de), a : inc d       ; Scanline 2 ($52xx)
+    ld   (de), a : inc d       ; Scanline 3 ($53xx)
+    ld   (de), a : inc d       ; Scanline 4 ($54xx)
+    ld   (de), a : inc d       ; Scanline 5 ($55xx)
+    ld   (de), a : inc d       ; Scanline 6 ($56xx)
+    ld   (de), a : inc d       ; Scanline 7 ($57xx)
+
+    ; Scanline 7: 0
+    xor  a
+    ld   (de), a
+
+    inc  c
+    ld   a, c
+    cp   28
+    jr   c, .col_loop
+
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
+    ret
+
+air_label_text:
+    db "AIR "
+
+air_bar_masks:
+    db %00000000 ; 0 pixels
+    db %10000000 ; 1 pixel
+    db %11000000 ; 2 pixels
+    db %11100000 ; 3 pixels
+    db %11110000 ; 4 pixels
+    db %11111000 ; 5 pixels
+    db %11111100 ; 6 pixels
+    db %11111110 ; 7 pixels
+    db %11111111 ; 8 pixels (full)
+
+air_bar_attrs:
+    ; 7 segmenti da 4 colonne ciascuno (Cols 4..31)
+    .4 db (RED | $40)         ; Cols 4..7   - Rosso
+    .4 db (YELLOW | $40)      ; Cols 8..11  - Giallo
+    .4 db (GREEN | $40)       ; Cols 12..15 - Verde
+    .4 db (CYAN | $40)        ; Cols 16..19 - Ciano
+    .4 db (MAGENTA | $40)     ; Cols 20..23 - Magenta
+    .4 db (BLUE | $40)        ; Cols 24..27 - Blu
+    .4 db (WHITE | $40)       ; Cols 28..31 - Bianco
+
+
 
 
 ; -------------------------------------------------------------------

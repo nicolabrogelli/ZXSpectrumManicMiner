@@ -96,3 +96,9 @@ Audio_music_note_idx:      db 0
 Audio_music_frame_counter: db 1
     ENDIF
 
+; Gestione Barra dell'Aria (AIR bar - Riga 17)
+air_pixels:             db 224     ; Quantità aria rimanente in pixel (28 colonne * 8 = 224 pixel)
+air_timer:              db 0       ; Timer frame per il consumo progressivo dell'aria
+air_deplete_rate:       db 8       ; Frame per decremento di 1 pixel di aria
+
+

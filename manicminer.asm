@@ -64,6 +64,7 @@ LoadRoomAndRestart:
     call Gfx_DrawRoom
     call Gfx_DrawConveyorsAndRamps
     call Gfx_PrintRoomName
+    call Gfx_InitAirBar
     call Items_DrawRoom
     call Enemy_LoadRoom
     
@@ -130,6 +131,10 @@ Main_loop:
     
     ; 4. Aggiorna animazione lampeggio del portale (se attivo)
     call Gfx_AnimatePortal
+
+    ; 4b. Aggiorna consumo aria (morte se esaurita)
+    call Phys_UpdateAir
+    jp   c, .willy_dies
     
     ; 5. Aggiornamento audio
     IF ENABLE_EFFECTS != 0
