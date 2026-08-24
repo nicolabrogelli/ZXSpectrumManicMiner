@@ -262,6 +262,9 @@ Items_DrawRoom:
     jr   .loop
 
 .done:
+    ; Scrivi terminatore lista item per questa stanza
+    ld   (iy+2), $FF
+
     ; Se la stanza non ha item o sono già stati tutti raccolti, attiva subito il portale
     ld   a, (num_room_items)
     or   a
@@ -429,42 +432,49 @@ CheckWillyItemCollision:
     ld   bc, (PlayerPos)           ; B = WillyY, C = WillyX
 
     ; WillyLeft <= ItemRight
-    ld   a, c
-    cp   d
+    ld   a, c                      ; A = WillyX
+    cp   d                         ; D = ItemRight
     jr   z, .x_ok
     jr   c, .x_ok
     jr   .no_collision
 
 .x_ok:
-    ; WillyRight >= ItemLeft (WillyRight = WillyX + 7 o 15)
-    add  a, 7
+    ; Se WillyX >= ItemLeft, allora WillyX è compreso tra ItemLeft e ItemRight (overlap X garantito)
+    cp   e                         ; E = ItemLeft
+    jr   z, .y_check
+    jr   nc, .y_check              ; WillyX >= ItemLeft
+
+    ; Se WillyX < ItemLeft, verifichiamo che WillyRight (WillyX + 15) >= ItemLeft
+    add  a, 15
     cp   e
     jr   z, .y_check
     jr   nc, .y_check
     jr   .no_collision
 
 .y_check:
-    pop  hl
-    push hl
-
     ; ItemTop = Row * 8, ItemBottom = ItemTop + 7
-    ld   a, h
+    ld   a, h                      ; H = Item Row
     add  a, a                      ; *2
     add  a, a                      ; *4
     add  a, a                      ; *8
-    ld   e, a                      ; ItemTop
+    ld   e, a                      ; E = ItemTop
     add  a, 7
-    ld   d, a                      ; ItemBottom
+    ld   d, a                      ; D = ItemBottom
 
     ; WillyTop <= ItemBottom
-    ld   a, b
-    cp   d
+    ld   a, b                      ; A = WillyY
+    cp   d                         ; D = ItemBottom
     jr   z, .y_ok
     jr   c, .y_ok
     jr   .no_collision
 
 .y_ok:
-    ; WillyBottom >= ItemTop (WillyBottom = WillyY + 15)
+    ; Se WillyY >= ItemTop, allora WillyY è compreso tra ItemTop e ItemBottom (overlap Y garantito)
+    cp   e                         ; E = ItemTop
+    jr   z, .collision
+    jr   nc, .collision            ; WillyY >= ItemTop
+
+    ; Se WillyY < ItemTop, verifichiamo che WillyBottom (WillyY + 15) >= ItemTop
     add  a, 15
     cp   e
     jr   z, .collision
@@ -500,13 +510,14 @@ Items_CheckCollision:
     or   a
     jr   z, .done
 
-    ld   b, a                      ; B = numero item attivi
     ld   iy, current_room_items
 
 .loop:
-    ld   a, (iy+2)                 ; Color / Active
+    ld   a, (iy+2)                 ; Color / Active / Terminator ($FF)
+    cp   $FF
+    jr   z, .done                  ; Fine lista item della stanza
     or   a
-    jr   z, .next_item
+    jr   z, .next_item             ; Item già raccolto -> controlla il successivo
 
     ld   c, (iy+0)                 ; C = Item Col (0..31)
     ld   h, (iy+1)                 ; H = Item Row (0..15)
@@ -568,7 +579,7 @@ Items_CheckCollision:
 .next_item:
     ld   de, 5
     add  iy, de
-    djnz .loop
+    jr   .loop
 
 .done:
     pop  iy
