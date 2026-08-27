@@ -39,6 +39,10 @@ MovePlayer:
     or   a
     jr   nz, .on_ground_check
 
+    ; In aria: resetta lo stato di cattura del nastro
+    xor  a
+    ld   (conveyor_caught), a
+
     ld   a, (jump_dir)
     or   a
     ret  z                  ; Se jump_dir è 0, salto verticale -> nessun movimento orizzontale
@@ -63,8 +67,11 @@ MovePlayer:
 
     ; ---------------------------------------------------------------
     ; Terreno normale (non su conveyor):
-    ; Muoviti solo se c'è input (bit 0 di flags impostato)
+    ; Resetta lo stato di cattura del conveyor
     ; ---------------------------------------------------------------
+    xor  a
+    ld   (conveyor_caught), a
+
     ld   ix, flags
     bit  $00, (ix)
     ret  z
@@ -90,44 +97,86 @@ MovePlayer:
 .on_conveyor_ground:
     ; ---------------------------------------------------------------
     ; Willy si trova sul nastro trasportatore:
-    ; - Se il giocatore tiene premuto un tasto direzionale (anche in direzione opposta
-    ;   allo scorrimento del nastro), Willy continua il movimento nella direzione scelta.
-    ; - Quando si rilascia il tasto direzionale (nessun input di direzione),
-    ;   Willy viene automaticamente trascinato nella direzione del nastro trasportatore.
+    ; - Se Willy monta sul nastro muovendosi nella direzione opposta
+    ;   allo scorrimento, finché tiene premuto il tasto direzionale
+    ;   continua il movimento nella direzione scelta.
+    ; - Non appena il tasto direzionale opposto viene rilasciato,
+    ;   Willy viene catturato dal nastro (conveyor_caught = 1) e trascinato
+    ;   nella direzione del nastro.
+    ; - Se il tasto opposto viene ripremuto mentre Willy è già catturato
+    ;   sul nastro, non ha alcun effetto e Willy continua a essere trascinato.
     ; ---------------------------------------------------------------
     ld   ix, flags
     res  $00, (ix)
     ld   bc, (PlayerPos)
 
-    ; 1. Controlla se il giocatore preme DESTRA (bit 1 di D)
-    bit  $01, d
-    jr   z, .conv_check_left
-    ld   a, 2
-    ld   (direction), a         ; Guarda a destra
-    jp   movePlayer_right
-
-.conv_check_left:
-    ; 2. Controlla se il giocatore preme SINISTRA (bit 0 di D)
-    bit  $00, d
-    jr   z, .conv_idle_drag
-    ld   a, 1
-    ld   (direction), a         ; Guarda a sinistra
-    jp   movePlayer_left
-
-.conv_idle_drag:
-    ; 3. Tasti rilasciati: Willy viene trascinato nella direzione del conveyor
     ld   a, (conveyor_dir)
     or   a
-    jr   nz, .conv_drag_right
+    jr   nz, .conv_is_right
 
-.conv_drag_left:
+    ; ── CONVEYOR VA A SINISTRA (conveyor_dir == 0) ──
+    ; Tasto opposto = DESTRA (bit 1 di D)
+    bit  $01, d                 ; Premuto DESTRA (opposto)?
+    jr   nz, .check_oppose_right
+
+    ; Non sta premendo Destra: Willy viene catturato dal nastro a Sinistra
     ld   a, 1
-    ld   (direction), a         ; Guarda a sinistra
+    ld   (conveyor_caught), a
+
+    ; Muovi a Sinistra (trascinamento del nastro)
+    ld   a, 1
+    ld   (direction), a
     jp   movePlayer_left
 
-.conv_drag_right:
+.check_oppose_right:
+    ; Sta premendo Destra contro il nastro a Sinistra.
+    ; Se era già stato catturato (tasto rilasciato prima sul nastro), ignora l'input!
+    ld   a, (conveyor_caught)
+    or   a
+    jr   nz, .right_ignored_drag_left
+
+    ; Non era ancora catturato: continua a muoversi a Destra!
     ld   a, 2
-    ld   (direction), a         ; Guarda a destra
+    ld   (direction), a
+    jp   movePlayer_right
+
+.right_ignored_drag_left:
+    ; Tasto opposto ignorato: continua il trascinamento a Sinistra
+    ld   a, 1
+    ld   (direction), a
+    jp   movePlayer_left
+
+.conv_is_right:
+    ; ── CONVEYOR VA A DESTRA (conveyor_dir == 1) ──
+    ; Tasto opposto = SINISTRA (bit 0 di D)
+    bit  $00, d                 ; Premuto SINISTRA (opposto)?
+    jr   nz, .check_oppose_left
+
+    ; Non sta premendo Sinistra: Willy viene catturato dal nastro a Destra
+    ld   a, 1
+    ld   (conveyor_caught), a
+
+    ; Muovi a Destra (trascinamento del nastro)
+    ld   a, 2
+    ld   (direction), a
+    jp   movePlayer_right
+
+.check_oppose_left:
+    ; Sta premendo Sinistra contro il nastro a Destra.
+    ; Se era già stato catturato (tasto rilasciato prima sul nastro), ignora l'input!
+    ld   a, (conveyor_caught)
+    or   a
+    jr   nz, .left_ignored_drag_right
+
+    ; Non era ancora catturato: continua a muoversi a Sinistra!
+    ld   a, 1
+    ld   (direction), a
+    jp   movePlayer_left
+
+.left_ignored_drag_right:
+    ; Tasto opposto ignorato: continua il trascinamento a Destra
+    ld   a, 2
+    ld   (direction), a
     jp   movePlayer_right
 
 ; ===============================================================
