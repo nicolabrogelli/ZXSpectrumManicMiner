@@ -49,14 +49,21 @@ MovePlayer:
 
     ld   bc, (PlayerPos)
     cp   1
-    jr   z, movePlayer_left
+    jp   z, movePlayer_left
     cp   2
-    jr   z, movePlayer_right
+    jp   z, movePlayer_right
     ret
 
 .on_ground_check:
     ; ---------------------------------------------------------------
-    ; Se siamo a terra, muoviti solo se c'è input (bit 0 di flags impostato)
+    ; Controlla se Willy è sopra un nastro trasportatore (Conveyor)
+    ; ---------------------------------------------------------------
+    call CheckWillyOnConveyor
+    jr   c, .on_conveyor_ground
+
+    ; ---------------------------------------------------------------
+    ; Terreno normale (non su conveyor):
+    ; Muoviti solo se c'è input (bit 0 di flags impostato)
     ; ---------------------------------------------------------------
     ld   ix, flags
     bit  $00, (ix)
@@ -71,26 +78,69 @@ MovePlayer:
     ; Input: destra?
     ; ---------------------------------------------------------------
     bit  $01, d
-    jr   nz, movePlayer_right
+    jp   nz, movePlayer_right
 
     ; ---------------------------------------------------------------
     ; Input: sinistra?
     ; ---------------------------------------------------------------
     bit  $00, d
     ret  z
+    jp   movePlayer_left
+
+.on_conveyor_ground:
+    ; ---------------------------------------------------------------
+    ; Willy si trova sul nastro trasportatore:
+    ; - Se non si preme alcun tasto (o tasti concordi): Willy viene trascinato
+    ;   nella direzione del conveyor a velocità normale (1 pixel per frame)
+    ;   con l'animazione di camminata attiva nella direzione del nastro.
+    ; - Se il giocatore preme il tasto nella direzione OPPOSTA al conveyor:
+    ;   la spinta del giocatore e la spinta del conveyor si annullano (velocità netta 0).
+    ;   Willy guarda nella direzione in cui cerca di camminare e muove le gambe
+    ;   sul posto (running in place) senza avanzare né arretrare.
+    ; ---------------------------------------------------------------
+    ld   ix, flags
+    res  $00, (ix)
+    ld   bc, (PlayerPos)
+
+    ld   a, (conveyor_dir)
+    or   a
+    jr   nz, .conveyor_goes_right
+
+    ; ── CONVEYOR VA A SINISTRA (conveyor_dir == 0) ──
+    bit  $01, d                 ; Il giocatore preme DESTRA (P)?
+    jr   z, .conv_left_move
+
+    ; Opposizione: premuto Destra su Conveyor a Sinistra -> Moto nullo (0 px)
+    ld   a, 2
+    ld   (direction), a         ; Guarda a destra
+    call movePlayer_print       ; Anima i passi sul posto
+    ret
+
+.conv_left_move:
+    ld   a, 1
+    ld   (direction), a         ; Guarda a sinistra
+    jr   movePlayer_left
+
+.conveyor_goes_right:
+    ; ── CONVEYOR VA A DESTRA (conveyor_dir == 1) ──
+    bit  $00, d                 ; Il giocatore preme SINISTRA (O)?
+    jr   z, .conv_right_move
+
+    ; Opposizione: premuto Sinistra su Conveyor a Destra -> Moto nullo (0 px)
+    ld   a, 1
+    ld   (direction), a         ; Guarda a sinistra
+    call movePlayer_print       ; Anima i passi sul posto
+    ret
+
+.conv_right_move:
+    ld   a, 2
+    ld   (direction), a         ; Guarda a destra
+    jr   movePlayer_right
 
 ; ===============================================================
 ; MOVIMENTO SINISTRA
 ; ===============================================================
 movePlayer_left:
-    ; Impedisci lo spostamento a sinistra se Willy è sul conveyor ed il conveyor va a destra.
-    call CheckWillyOnConveyor
-    jr   nc, .continue_left
-    ld   a, (conveyor_dir)
-    or   a
-    ret  nz                     ; Se è sul conveyor e va a destra, ritorna senza muovere
-
-.continue_left:
     ; Calcola nuova posizione: X - speed
     ld   a, (on_ground)
     or   a
@@ -161,14 +211,6 @@ movePlayer_left:
 ; MOVIMENTO DESTRA
 ; ===============================================================
 movePlayer_right:
-    ; Impedisci lo spostamento a destra se Willy è sul conveyor ed il conveyor va a sinistra.
-    call CheckWillyOnConveyor
-    jr   nc, .continue_right
-    ld   a, (conveyor_dir)
-    or   a
-    ret  z                      ; Se è sul conveyor e va a sinistra, ritorna senza muovere
-
-.continue_right:
     ; Prova movimento X + speed
     ld   a, (on_ground)
     or   a

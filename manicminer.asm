@@ -132,11 +132,11 @@ Main_loop:
     ; 4. Aggiorna animazione lampeggio del portale (se attivo)
     call Gfx_AnimatePortal
 
-    ; 4b. Aggiorna consumo aria (morte se esaurita)
+    ; 5b. Aggiorna consumo aria (morte se esaurita)
     call Phys_UpdateAir
     jp   c, .willy_dies
     
-    ; 5. Aggiornamento audio
+    ; 6. Aggiornamento audio
     IF ENABLE_EFFECTS != 0
     call Audio_UpdateJumpSound    ; Aggiorna l'effetto sonoro del salto
     ENDIF
@@ -151,15 +151,14 @@ Main_loop:
     ENDIF
 
 
-    ; 6. Salva le posizioni correnti del player per il prossimo frame
+    ; 7. Salva le posizioni correnti del player per il prossimo frame
     ld   bc, (PlayerPos)
     ld   (PlayerPosOld), bc
     
-    ; 7. Aggiorna le posizioni dei personaggi per il prossimo frame
+    ; 8. Aggiorna le posizioni dei personaggi per il prossimo frame
     call Input_CheckCtrl
     call MovePlayer
     call Phys_ApplyGravity
-    call Phys_ApplyConveyor
     call Enemy_Update
     call Items_CheckCollision
     

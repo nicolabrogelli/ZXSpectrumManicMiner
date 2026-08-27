@@ -780,121 +780,11 @@ CheckConveyorOrRampCell:
     or   a                 ; Clear carry
     ret
 
-; -------------------------------------------------------------------
+;; -------------------------------------------------------------------
 ; Applica la forza di trascinamento del conveyor se Willy vi è sopra
+; (Il movimento è ora integrato e gestito direttamente in MovePlayer)
 ; -------------------------------------------------------------------
 Phys_ApplyConveyor:
-    ld   a, (on_ground)
-    or   a
-    ret  z                 ; Se non è a terra, nessuna forza
-    
-    ld   a, (conveyor_len)
-    or   a
-    ret  z                 ; Se non c'è conveyor in questa stanza, fine
-    
-    ld   bc, (PlayerPos)   ; C = WillyX, B = WillyY
-    
-    ; Calcola screenRow dei piedi del player: RowPiedi = Y / 8
-    ld   a, b
-    add  a, 16
-    srl  a
-    srl  a
-    srl  a                 ; A = (Y + 16) / 8
-    
-    ; Confronta con conveyor_row
-    ld   d, a              ; D = RowPiedi
-    ld   a, (conveyor_row)
-    cp   d
-    ret  nz                ; Se non siamo sulla riga del conveyor, fine
-    
-    ; ColStart = WillyX / 8
-    ld   a, c
-    srl  a
-    srl  a
-    srl  a                 ; A = ColStart
-    ld   e, a              ; E = ColStart
-    
-    ; ColEnd = (WillyX + 7) / 8
-    ld   a, c
-    add  a, 7
-    srl  a
-    srl  a
-    srl  a                 ; A = ColEnd
-    ld   d, a              ; D = ColEnd
-    
-    ; conveyor_col_end = conveyor_col + conveyor_len - 1
-    ld   a, (conveyor_col)
-    ld   hl, conveyor_len
-    add  a, (hl)
-    dec  a                 ; A = conveyor_col_end
-    
-    ; E <= conveyor_col_end (conveyor_col_end >= E)
-    cp   e
-    ret  c                 ; Se conveyor_col_end < E, fine
-    
-    ; D >= conveyor_col
-    ld   a, (conveyor_col)
-    ld   e, a
-    ld   a, d
-    cp   e
-    ret  c                 ; Se D < conveyor_col, fine
-    
-    ; Willy è sul conveyor! Muovilo nella direzione del conveyor!
-    ld   a, (conveyor_dir)
-    or   a
-    jr   z, .move_left
-    
-.move_right:
-    ld   a, 2
-    ld   (direction), a    ; Imposta direzione Willy a destra (2)
-    ld   a, c
-    add  a, 1              ; trascina di 1 pixel a destra per frame
-    cp   PLAYER_MAX_X
-    jr   c, .store_x
-    jr   z, .store_x
-    
-    ; Controlla se c'è una stanza a destra
-    ld   hl, (room_ptr)
-    ld   de, 236           ; Offset per stanza a destra
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza a destra
-    cp   $FF
-    jr   z, .no_right_conveyor_transition
-    
-    ; C'è una stanza a destra!
-    ld   c, PLAYER_MIN_X   ; Posiziona Willy a sinistra della nuova stanza
-    jp   TriggerRoomChange ; Salta alla transizione
-    
-.no_right_conveyor_transition:
-    ld   a, PLAYER_MAX_X
-    jr   .store_x
-
-.move_left:
-    ld   a, 1
-    ld   (direction), a    ; Imposta direzione Willy a sinistra (1)
-    ld   a, c
-    sub  1                 ; trascina di 1 pixel a sinistra per frame
-    cp   PLAYER_MIN_X
-    jr   nc, .store_x
-    
-    ; Controlla se c'è una stanza a sinistra
-    ld   hl, (room_ptr)
-    ld   de, 235           ; Offset per stanza a sinistra
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza a sinistra
-    cp   $FF
-    jr   z, .no_left_conveyor_transition
-    
-    ; C'è una stanza a sinistra!
-    ld   c, PLAYER_MAX_X   ; Posiziona Willy a destra della nuova stanza
-    jp   TriggerRoomChange ; Salta alla transizione (non ritorna qui)
-    
-.no_left_conveyor_transition:
-    ld   a, PLAYER_MIN_X
-    
-.store_x:
-    ld   c, a
-    ld   (PlayerPos), bc   ; salva la nuova posizione
     ret
 
 ; -------------------------------------------------------------------
@@ -910,69 +800,84 @@ CheckWillyOnConveyor:
     or   a
     jr   z, .not_on_conveyor
 
-    ld   a, (conveyor_len)
-    or   a
-    jr   z, .not_on_conveyor
-
     ld   bc, (PlayerPos)   ; C = WillyX, B = WillyY
     
     ; Calcola screenRow dei piedi del player: RowPiedi = (Y + 16) / 8
     ld   a, b
     add  a, 16
+    cp   128
+    jr   nc, .not_on_conveyor
     srl  a
     srl  a
-    srl  a                 ; A = (Y + 16) / 8
-    
-    ; Confronta con conveyor_row
+    srl  a                 ; A = RowPiedi (0..15)
     ld   d, a              ; D = RowPiedi
-    ld   a, (conveyor_row)
-    cp   d
-    jr   nz, .not_on_conveyor
-    
-    ; ColStart = WillyX / 8
+
+    ; Controlla se la cella sotto il piede sinistro (ColStart) è un Conveyor (Tile 4)
     ld   a, c
     srl  a
     srl  a
-    srl  a                 ; A = ColStart
-    ld   e, a              ; E = ColStart
-    
-    ; ColEnd = (WillyX + 7) / 8
+    srl  a                 ; A = ColStart (0..31)
+    ld   c, a
+    ld   a, d              ; A = Row
+    call GetCellFromUnpacked
+    cp   4
+    jr   z, .is_on_conveyor
+
+    ; Controlla se la cella sotto il piede destro (ColEnd) è un Conveyor (Tile 4)
+    ld   bc, (PlayerPos)
     ld   a, c
     add  a, 7
     srl  a
     srl  a
-    srl  a                 ; A = ColEnd
+    srl  a                 ; A = ColEnd (0..31)
+    ld   c, a
+    ld   a, d              ; A = Row
+    call GetCellFromUnpacked
+    cp   4
+    jr   z, .is_on_conveyor
+
+    ; Controlla anche i limiti espliciti di conveyor_len se impostati
+    ld   a, (conveyor_len)
+    or   a
+    jr   z, .not_on_conveyor
+
+    ld   a, (conveyor_row)
+    cp   d
+    jr   nz, .not_on_conveyor
+
+    ld   bc, (PlayerPos)
+    ld   a, c
+    srl  a : srl a : srl a
+    ld   e, a              ; E = ColStart
+    ld   a, c
+    add  a, 7
+    srl  a : srl a : srl a
     ld   d, a              ; D = ColEnd
-    
-    ; conveyor_col_end = conveyor_col + conveyor_len - 1
+
     ld   a, (conveyor_col)
     ld   hl, conveyor_len
     add  a, (hl)
     dec  a                 ; A = conveyor_col_end
-    
-    ; E <= conveyor_col_end (conveyor_col_end >= E)
-    cp   e
-    jr   c, .not_on_conveyor
-    
-    ; D >= conveyor_col
-    ld   a, (conveyor_col)
-    ld   e, a
-    ld   a, d
     cp   e
     jr   c, .not_on_conveyor
 
-    ; Willy è sul conveyor! Imposta carry
-    pop  hl
-    pop  de
-    pop  bc
-    scf
-    ret
+    ld   a, (conveyor_col)
+    cp   d
+    jr   z, .is_on_conveyor
+    jr   c, .is_on_conveyor
 
 .not_on_conveyor:
     pop  hl
     pop  de
     pop  bc
     or   a                 ; Clear carry
+    ret
+
+.is_on_conveyor:
+    pop  hl
+    pop  de
+    pop  bc
+    scf                    ; Set carry
     ret
 
 ; -------------------------------------------------------------------
