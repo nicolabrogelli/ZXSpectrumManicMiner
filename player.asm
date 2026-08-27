@@ -90,52 +90,45 @@ MovePlayer:
 .on_conveyor_ground:
     ; ---------------------------------------------------------------
     ; Willy si trova sul nastro trasportatore:
-    ; - Se non si preme alcun tasto (o tasti concordi): Willy viene trascinato
-    ;   nella direzione del conveyor a velocità normale (1 pixel per frame)
-    ;   con l'animazione di camminata attiva nella direzione del nastro.
-    ; - Se il giocatore preme il tasto nella direzione OPPOSTA al conveyor:
-    ;   la spinta del giocatore e la spinta del conveyor si annullano (velocità netta 0).
-    ;   Willy guarda nella direzione in cui cerca di camminare e muove le gambe
-    ;   sul posto (running in place) senza avanzare né arretrare.
+    ; - Se il giocatore tiene premuto un tasto direzionale (anche in direzione opposta
+    ;   allo scorrimento del nastro), Willy continua il movimento nella direzione scelta.
+    ; - Quando si rilascia il tasto direzionale (nessun input di direzione),
+    ;   Willy viene automaticamente trascinato nella direzione del nastro trasportatore.
     ; ---------------------------------------------------------------
     ld   ix, flags
     res  $00, (ix)
     ld   bc, (PlayerPos)
 
+    ; 1. Controlla se il giocatore preme DESTRA (bit 1 di D)
+    bit  $01, d
+    jr   z, .conv_check_left
+    ld   a, 2
+    ld   (direction), a         ; Guarda a destra
+    jp   movePlayer_right
+
+.conv_check_left:
+    ; 2. Controlla se il giocatore preme SINISTRA (bit 0 di D)
+    bit  $00, d
+    jr   z, .conv_idle_drag
+    ld   a, 1
+    ld   (direction), a         ; Guarda a sinistra
+    jp   movePlayer_left
+
+.conv_idle_drag:
+    ; 3. Tasti rilasciati: Willy viene trascinato nella direzione del conveyor
     ld   a, (conveyor_dir)
     or   a
-    jr   nz, .conveyor_goes_right
+    jr   nz, .conv_drag_right
 
-    ; ── CONVEYOR VA A SINISTRA (conveyor_dir == 0) ──
-    bit  $01, d                 ; Il giocatore preme DESTRA (P)?
-    jr   z, .conv_left_move
-
-    ; Opposizione: premuto Destra su Conveyor a Sinistra -> Moto nullo (0 px)
-    ld   a, 2
-    ld   (direction), a         ; Guarda a destra
-    call movePlayer_print       ; Anima i passi sul posto
-    ret
-
-.conv_left_move:
+.conv_drag_left:
     ld   a, 1
     ld   (direction), a         ; Guarda a sinistra
-    jr   movePlayer_left
+    jp   movePlayer_left
 
-.conveyor_goes_right:
-    ; ── CONVEYOR VA A DESTRA (conveyor_dir == 1) ──
-    bit  $00, d                 ; Il giocatore preme SINISTRA (O)?
-    jr   z, .conv_right_move
-
-    ; Opposizione: premuto Sinistra su Conveyor a Destra -> Moto nullo (0 px)
-    ld   a, 1
-    ld   (direction), a         ; Guarda a sinistra
-    call movePlayer_print       ; Anima i passi sul posto
-    ret
-
-.conv_right_move:
+.conv_drag_right:
     ld   a, 2
     ld   (direction), a         ; Guarda a destra
-    jr   movePlayer_right
+    jp   movePlayer_right
 
 ; ===============================================================
 ; MOVIMENTO SINISTRA

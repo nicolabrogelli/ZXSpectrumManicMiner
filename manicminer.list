@@ -4257,377 +4257,370 @@
   90+ 6F01              .on_conveyor_ground:
   91+ 6F01                  ; ---------------------------------------------------------------
   92+ 6F01                  ; Willy si trova sul nastro trasportatore:
-  93+ 6F01                  ; - Se non si preme alcun tasto (o tasti concordi): Willy viene trascinato
-  94+ 6F01                  ;   nella direzione del conveyor a velocità normale (1 pixel per frame)
-  95+ 6F01                  ;   con l'animazione di camminata attiva nella direzione del nastro.
-  96+ 6F01                  ; - Se il giocatore preme il tasto nella direzione OPPOSTA al conveyor:
-  97+ 6F01                  ;   la spinta del giocatore e la spinta del conveyor si annullano (velocità netta 0).
-  98+ 6F01                  ;   Willy guarda nella direzione in cui cerca di camminare e muove le gambe
-  99+ 6F01                  ;   sul posto (running in place) senza avanzare né arretrare.
- 100+ 6F01                  ; ---------------------------------------------------------------
- 101+ 6F01 DD 21 0C 9E      ld   ix, flags
- 102+ 6F05 DD CB 00 86      res  $00, (ix)
- 103+ 6F09 ED 4B 04 9E      ld   bc, (PlayerPos)
- 104+ 6F0D
- 105+ 6F0D 3A 2B A1         ld   a, (conveyor_dir)
- 106+ 6F10 B7               or   a
- 107+ 6F11 20 14            jr   nz, .conveyor_goes_right
- 108+ 6F13
- 109+ 6F13                  ; ── CONVEYOR VA A SINISTRA (conveyor_dir == 0) ──
- 110+ 6F13 CB 4A            bit  $01, d                 ; Il giocatore preme DESTRA (P)?
- 111+ 6F15 28 09            jr   z, .conv_left_move
- 112+ 6F17
- 113+ 6F17                  ; Opposizione: premuto Destra su Conveyor a Sinistra -> Moto nullo (0 px)
- 114+ 6F17 3E 02            ld   a, 2
- 115+ 6F19 32 0B 9E         ld   (direction), a         ; Guarda a destra
- 116+ 6F1C CD D2 6F         call movePlayer_print       ; Anima i passi sul posto
- 117+ 6F1F C9               ret
- 118+ 6F20
- 119+ 6F20              .conv_left_move:
- 120+ 6F20 3E 01            ld   a, 1
- 121+ 6F22 32 0B 9E         ld   (direction), a         ; Guarda a sinistra
- 122+ 6F25 18 14            jr   movePlayer_left
- 123+ 6F27
- 124+ 6F27              .conveyor_goes_right:
- 125+ 6F27                  ; ── CONVEYOR VA A DESTRA (conveyor_dir == 1) ──
- 126+ 6F27 CB 42            bit  $00, d                 ; Il giocatore preme SINISTRA (O)?
- 127+ 6F29 28 09            jr   z, .conv_right_move
- 128+ 6F2B
- 129+ 6F2B                  ; Opposizione: premuto Sinistra su Conveyor a Destra -> Moto nullo (0 px)
- 130+ 6F2B 3E 01            ld   a, 1
- 131+ 6F2D 32 0B 9E         ld   (direction), a         ; Guarda a sinistra
- 132+ 6F30 CD D2 6F         call movePlayer_print       ; Anima i passi sul posto
- 133+ 6F33 C9               ret
- 134+ 6F34
- 135+ 6F34              .conv_right_move:
- 136+ 6F34 3E 02            ld   a, 2
- 137+ 6F36 32 0B 9E         ld   (direction), a         ; Guarda a destra
- 138+ 6F39 18 47            jr   movePlayer_right
- 139+ 6F3B
- 140+ 6F3B              ; ===============================================================
- 141+ 6F3B              ; MOVIMENTO SINISTRA
- 142+ 6F3B              ; ===============================================================
- 143+ 6F3B              movePlayer_left:
- 144+ 6F3B                  ; Calcola nuova posizione: X - speed
- 145+ 6F3B 3A 13 9E         ld   a, (on_ground)
- 146+ 6F3E B7               or   a
- 147+ 6F3F 28 05            jr   z, .air_left
- 148+ 6F41 3A 89 A1         ld   a, (player_speed)
- 149+ 6F44 18 0A            jr   .speed_left_ok
- 150+ 6F46              .air_left:
- 151+ 6F46 3E 02            ld   a, 2
- 152+ 6F48 21 19 9E         ld   hl, jump_frame
- 153+ 6F4B CB 46            bit  0, (hl)
- 154+ 6F4D 28 01            jr   z, .speed_left_ok
- 155+ 6F4F 3C               inc  a                      ; Alterna 2 e 3 px per frame (Media = 2.5 px/frame)
- 156+ 6F50              .speed_left_ok:
- 157+ 6F50 5F               ld   e, a
- 158+ 6F51
- 159+ 6F51 79               ld   a, c
- 160+ 6F52 93               sub  e
- 161+ 6F53
- 162+ 6F53                  ; Controllo limite sinistro schermo
- 163+ 6F53 FE 05            cp   PLAYER_MIN_X
- 164+ 6F55 38 0D            jr   c, .clamp_left
- 165+ 6F57
- 166+ 6F57                  ; -----------------------------------------------------------
- 167+ 6F57                  ; Collisione con muro (pre-check)
- 168+ 6F57                  ; -----------------------------------------------------------
- 169+ 6F57 C5               push bc
- 170+ 6F58 4F               ld   c, a
- 171+ 6F59 CD 4E 78         call CheckWillyWallCollision
- 172+ 6F5C C1               pop  bc
- 173+ 6F5D
- 174+ 6F5D                  ; Se collisione: non aggiornare posizione
- 175+ 6F5D 38 6F            jr   c, save_x
- 176+ 6F5F
- 177+ 6F5F                  ; Applica movimento
- 178+ 6F5F 79               ld   a, c
- 179+ 6F60 93               sub  e
- 180+ 6F61 4F               ld   c, a
- 181+ 6F62
- 182+ 6F62 18 6A            jr   save_x
- 183+ 6F64
- 184+ 6F64              ; ---------------------------------------------------------------
- 185+ 6F64              ; Clamp sinistra: forzatura al limite minimo
- 186+ 6F64              ; ---------------------------------------------------------------
- 187+ 6F64              .clamp_left:
- 188+ 6F64                  ; Controlla se c'è una stanza a sinistra
- 189+ 6F64 2A 85 A1         ld   hl, (room_ptr)
- 190+ 6F67 11 EB 00         ld   de, 235           ; Offset per stanza a sinistra
- 191+ 6F6A 19               add  hl, de
- 192+ 6F6B 7E               ld   a, (hl)           ; A = ID stanza a sinistra
- 193+ 6F6C FE FF            cp   $FF
- 194+ 6F6E 28 05            jr   z, .no_left_transition
- 195+ 6F70
- 196+ 6F70                  ; C'è una stanza a sinistra!
- 197+ 6F70 0E F5            ld   c, PLAYER_MAX_X   ; Posiziona Willy a destra della nuova stanza
- 198+ 6F72 C3 AD 72         jp   TriggerRoomChange ; Salta alla transizione (non ritorna qui)
- 199+ 6F75
- 200+ 6F75              .no_left_transition:
- 201+ 6F75 C5               push bc
- 202+ 6F76 0E 05            ld   c, PLAYER_MIN_X
- 203+ 6F78 CD 4E 78         call CheckWillyWallCollision
- 204+ 6F7B C1               pop  bc
- 205+ 6F7C 38 50            jr   c, save_x         ; Se collide al limite, mantieni la posizione precedente
- 206+ 6F7E
- 207+ 6F7E 0E 05            ld   c, PLAYER_MIN_X
- 208+ 6F80 18 4C            jr   save_x
- 209+ 6F82
- 210+ 6F82              ; ===============================================================
- 211+ 6F82              ; MOVIMENTO DESTRA
- 212+ 6F82              ; ===============================================================
- 213+ 6F82              movePlayer_right:
- 214+ 6F82                  ; Prova movimento X + speed
- 215+ 6F82 3A 13 9E         ld   a, (on_ground)
- 216+ 6F85 B7               or   a
- 217+ 6F86 28 05            jr   z, .air_right
- 218+ 6F88 3A 89 A1         ld   a, (player_speed)
- 219+ 6F8B 18 0A            jr   .speed_right_ok
- 220+ 6F8D              .air_right:
- 221+ 6F8D 3E 02            ld   a, 2
- 222+ 6F8F 21 19 9E         ld   hl, jump_frame
- 223+ 6F92 CB 46            bit  0, (hl)
- 224+ 6F94 28 01            jr   z, .speed_right_ok
- 225+ 6F96 3C               inc  a                      ; Alterna 2 e 3 px per frame (Media = 2.5 px/frame)
- 226+ 6F97              .speed_right_ok:
- 227+ 6F97 5F               ld   e, a
- 228+ 6F98
- 229+ 6F98 79               ld   a, c
- 230+ 6F99 83               add  a, e
- 231+ 6F9A
- 232+ 6F9A                  ; Controllo limite destro
- 233+ 6F9A FE F5            cp   PLAYER_MAX_X
- 234+ 6F9C 28 02            jr   z, .ok_right
- 235+ 6F9E 30 0F            jr   nc, .clamp_right
- 236+ 6FA0
- 237+ 6FA0              .ok_right:
- 238+ 6FA0
- 239+ 6FA0                  ; -----------------------------------------------------------
- 240+ 6FA0                  ; Collisione muro a destra
- 241+ 6FA0                  ; usa bordo destro player (X + 7)
- 242+ 6FA0                  ; -----------------------------------------------------------
- 243+ 6FA0 C5               push bc
- 244+ 6FA1 C6 07            add  a, 7
- 245+ 6FA3 4F               ld   c, a
- 246+ 6FA4 CD 4E 78         call CheckWillyWallCollision
- 247+ 6FA7 C1               pop  bc
- 248+ 6FA8
- 249+ 6FA8 38 24            jr   c, save_x
- 250+ 6FAA
- 251+ 6FAA                  ; Applica movimento
- 252+ 6FAA 79               ld   a, c
- 253+ 6FAB 83               add  a, e
- 254+ 6FAC 4F               ld   c, a
- 255+ 6FAD
- 256+ 6FAD 18 1F            jr   save_x
- 257+ 6FAF
- 258+ 6FAF              ; ---------------------------------------------------------------
- 259+ 6FAF              ; Clamp destro: forzatura al limite massimo
- 260+ 6FAF              ; ---------------------------------------------------------------
- 261+ 6FAF              .clamp_right:
- 262+ 6FAF                  ; Controlla se c'è una stanza a destra
- 263+ 6FAF 2A 85 A1         ld   hl, (room_ptr)
- 264+ 6FB2 11 EC 00         ld   de, 236           ; Offset per stanza a destra
- 265+ 6FB5 19               add  hl, de
- 266+ 6FB6 7E               ld   a, (hl)           ; A = ID stanza a destra
- 267+ 6FB7 FE FF            cp   $FF
- 268+ 6FB9 28 05            jr   z, .no_right_transition
- 269+ 6FBB
- 270+ 6FBB                  ; C'è una stanza a destra!
- 271+ 6FBB 0E 05            ld   c, PLAYER_MIN_X   ; Posiziona Willy a sinistra della nuova stanza
- 272+ 6FBD C3 AD 72         jp   TriggerRoomChange ; Salta alla transizione
- 273+ 6FC0
- 274+ 6FC0              .no_right_transition:
- 275+ 6FC0 C5               push bc
- 276+ 6FC1 3E F5            ld   a, PLAYER_MAX_X
- 277+ 6FC3 C6 07            add  a, 7
- 278+ 6FC5 4F               ld   c, a
- 279+ 6FC6 CD 4E 78         call CheckWillyWallCollision
- 280+ 6FC9 C1               pop  bc
- 281+ 6FCA 38 02            jr   c, save_x         ; Se collide al limite, mantieni la posizione precedente
- 282+ 6FCC
- 283+ 6FCC 0E F5            ld   c, PLAYER_MAX_X
- 284+ 6FCE
- 285+ 6FCE              ; ===============================================================
- 286+ 6FCE              ; Salvataggio posizione finale
- 287+ 6FCE              ; ===============================================================
- 288+ 6FCE              save_x:
- 289+ 6FCE
- 290+ 6FCE ED 43 04 9E      ld   (PlayerPos), bc
- 291+ 6FD2
- 292+ 6FD2              ; ===============================================================
- 293+ 6FD2              ; Animazione corpo (gambe)
- 294+ 6FD2              ; ciclo: 0 → 1 → 2 → 0 ...
- 295+ 6FD2              ; ===============================================================
- 296+ 6FD2              movePlayer_print:
- 297+ 6FD2
- 298+ 6FD2 3A 0A 9E         ld   a, (body_state)
- 299+ 6FD5 3C               inc  a
- 300+ 6FD6
- 301+ 6FD6 FE 03            cp   3
- 302+ 6FD8 20 02            jr   nz, .save_state
- 303+ 6FDA
- 304+ 6FDA 3E 00            ld   a, 0
- 305+ 6FDC
- 306+ 6FDC              .save_state:
- 307+ 6FDC
- 308+ 6FDC 32 0A 9E         ld   (body_state), a
- 309+ 6FDF
- 310+ 6FDF C9               ret
- 311+ 6FE0
- 312+ 6FE0              ; -------------------------------------------------------------------
- 313+ 6FE0              ; LoadPositionPlayeinRoom
- 314+ 6FE0              ;
- 315+ 6FE0              ; Inizializza la posizione del player (Willy) quando entra
- 316+ 6FE0              ; in una nuova stanza.
+  93+ 6F01                  ; - Se il giocatore tiene premuto un tasto direzionale (anche in direzione opposta
+  94+ 6F01                  ;   allo scorrimento del nastro), Willy continua il movimento nella direzione scelta.
+  95+ 6F01                  ; - Quando si rilascia il tasto direzionale (nessun input di direzione),
+  96+ 6F01                  ;   Willy viene automaticamente trascinato nella direzione del nastro trasportatore.
+  97+ 6F01                  ; ---------------------------------------------------------------
+  98+ 6F01 DD 21 0C 9E      ld   ix, flags
+  99+ 6F05 DD CB 00 86      res  $00, (ix)
+ 100+ 6F09 ED 4B 04 9E      ld   bc, (PlayerPos)
+ 101+ 6F0D
+ 102+ 6F0D                  ; 1. Controlla se il giocatore preme DESTRA (bit 1 di D)
+ 103+ 6F0D CB 4A            bit  $01, d
+ 104+ 6F0F 28 08            jr   z, .conv_check_left
+ 105+ 6F11 3E 02            ld   a, 2
+ 106+ 6F13 32 0B 9E         ld   (direction), a         ; Guarda a destra
+ 107+ 6F16 C3 82 6F         jp   movePlayer_right
+ 108+ 6F19
+ 109+ 6F19              .conv_check_left:
+ 110+ 6F19                  ; 2. Controlla se il giocatore preme SINISTRA (bit 0 di D)
+ 111+ 6F19 CB 42            bit  $00, d
+ 112+ 6F1B 28 08            jr   z, .conv_idle_drag
+ 113+ 6F1D 3E 01            ld   a, 1
+ 114+ 6F1F 32 0B 9E         ld   (direction), a         ; Guarda a sinistra
+ 115+ 6F22 C3 3B 6F         jp   movePlayer_left
+ 116+ 6F25
+ 117+ 6F25              .conv_idle_drag:
+ 118+ 6F25                  ; 3. Tasti rilasciati: Willy viene trascinato nella direzione del conveyor
+ 119+ 6F25 3A 2B A1         ld   a, (conveyor_dir)
+ 120+ 6F28 B7               or   a
+ 121+ 6F29 20 08            jr   nz, .conv_drag_right
+ 122+ 6F2B
+ 123+ 6F2B              .conv_drag_left:
+ 124+ 6F2B 3E 01            ld   a, 1
+ 125+ 6F2D 32 0B 9E         ld   (direction), a         ; Guarda a sinistra
+ 126+ 6F30 C3 3B 6F         jp   movePlayer_left
+ 127+ 6F33
+ 128+ 6F33              .conv_drag_right:
+ 129+ 6F33 3E 02            ld   a, 2
+ 130+ 6F35 32 0B 9E         ld   (direction), a         ; Guarda a destra
+ 131+ 6F38 C3 82 6F         jp   movePlayer_right
+ 132+ 6F3B
+ 133+ 6F3B              ; ===============================================================
+ 134+ 6F3B              ; MOVIMENTO SINISTRA
+ 135+ 6F3B              ; ===============================================================
+ 136+ 6F3B              movePlayer_left:
+ 137+ 6F3B                  ; Calcola nuova posizione: X - speed
+ 138+ 6F3B 3A 13 9E         ld   a, (on_ground)
+ 139+ 6F3E B7               or   a
+ 140+ 6F3F 28 05            jr   z, .air_left
+ 141+ 6F41 3A 89 A1         ld   a, (player_speed)
+ 142+ 6F44 18 0A            jr   .speed_left_ok
+ 143+ 6F46              .air_left:
+ 144+ 6F46 3E 02            ld   a, 2
+ 145+ 6F48 21 19 9E         ld   hl, jump_frame
+ 146+ 6F4B CB 46            bit  0, (hl)
+ 147+ 6F4D 28 01            jr   z, .speed_left_ok
+ 148+ 6F4F 3C               inc  a                      ; Alterna 2 e 3 px per frame (Media = 2.5 px/frame)
+ 149+ 6F50              .speed_left_ok:
+ 150+ 6F50 5F               ld   e, a
+ 151+ 6F51
+ 152+ 6F51 79               ld   a, c
+ 153+ 6F52 93               sub  e
+ 154+ 6F53
+ 155+ 6F53                  ; Controllo limite sinistro schermo
+ 156+ 6F53 FE 05            cp   PLAYER_MIN_X
+ 157+ 6F55 38 0D            jr   c, .clamp_left
+ 158+ 6F57
+ 159+ 6F57                  ; -----------------------------------------------------------
+ 160+ 6F57                  ; Collisione con muro (pre-check)
+ 161+ 6F57                  ; -----------------------------------------------------------
+ 162+ 6F57 C5               push bc
+ 163+ 6F58 4F               ld   c, a
+ 164+ 6F59 CD 4E 78         call CheckWillyWallCollision
+ 165+ 6F5C C1               pop  bc
+ 166+ 6F5D
+ 167+ 6F5D                  ; Se collisione: non aggiornare posizione
+ 168+ 6F5D 38 6F            jr   c, save_x
+ 169+ 6F5F
+ 170+ 6F5F                  ; Applica movimento
+ 171+ 6F5F 79               ld   a, c
+ 172+ 6F60 93               sub  e
+ 173+ 6F61 4F               ld   c, a
+ 174+ 6F62
+ 175+ 6F62 18 6A            jr   save_x
+ 176+ 6F64
+ 177+ 6F64              ; ---------------------------------------------------------------
+ 178+ 6F64              ; Clamp sinistra: forzatura al limite minimo
+ 179+ 6F64              ; ---------------------------------------------------------------
+ 180+ 6F64              .clamp_left:
+ 181+ 6F64                  ; Controlla se c'è una stanza a sinistra
+ 182+ 6F64 2A 85 A1         ld   hl, (room_ptr)
+ 183+ 6F67 11 EB 00         ld   de, 235           ; Offset per stanza a sinistra
+ 184+ 6F6A 19               add  hl, de
+ 185+ 6F6B 7E               ld   a, (hl)           ; A = ID stanza a sinistra
+ 186+ 6F6C FE FF            cp   $FF
+ 187+ 6F6E 28 05            jr   z, .no_left_transition
+ 188+ 6F70
+ 189+ 6F70                  ; C'è una stanza a sinistra!
+ 190+ 6F70 0E F5            ld   c, PLAYER_MAX_X   ; Posiziona Willy a destra della nuova stanza
+ 191+ 6F72 C3 AD 72         jp   TriggerRoomChange ; Salta alla transizione (non ritorna qui)
+ 192+ 6F75
+ 193+ 6F75              .no_left_transition:
+ 194+ 6F75 C5               push bc
+ 195+ 6F76 0E 05            ld   c, PLAYER_MIN_X
+ 196+ 6F78 CD 4E 78         call CheckWillyWallCollision
+ 197+ 6F7B C1               pop  bc
+ 198+ 6F7C 38 50            jr   c, save_x         ; Se collide al limite, mantieni la posizione precedente
+ 199+ 6F7E
+ 200+ 6F7E 0E 05            ld   c, PLAYER_MIN_X
+ 201+ 6F80 18 4C            jr   save_x
+ 202+ 6F82
+ 203+ 6F82              ; ===============================================================
+ 204+ 6F82              ; MOVIMENTO DESTRA
+ 205+ 6F82              ; ===============================================================
+ 206+ 6F82              movePlayer_right:
+ 207+ 6F82                  ; Prova movimento X + speed
+ 208+ 6F82 3A 13 9E         ld   a, (on_ground)
+ 209+ 6F85 B7               or   a
+ 210+ 6F86 28 05            jr   z, .air_right
+ 211+ 6F88 3A 89 A1         ld   a, (player_speed)
+ 212+ 6F8B 18 0A            jr   .speed_right_ok
+ 213+ 6F8D              .air_right:
+ 214+ 6F8D 3E 02            ld   a, 2
+ 215+ 6F8F 21 19 9E         ld   hl, jump_frame
+ 216+ 6F92 CB 46            bit  0, (hl)
+ 217+ 6F94 28 01            jr   z, .speed_right_ok
+ 218+ 6F96 3C               inc  a                      ; Alterna 2 e 3 px per frame (Media = 2.5 px/frame)
+ 219+ 6F97              .speed_right_ok:
+ 220+ 6F97 5F               ld   e, a
+ 221+ 6F98
+ 222+ 6F98 79               ld   a, c
+ 223+ 6F99 83               add  a, e
+ 224+ 6F9A
+ 225+ 6F9A                  ; Controllo limite destro
+ 226+ 6F9A FE F5            cp   PLAYER_MAX_X
+ 227+ 6F9C 28 02            jr   z, .ok_right
+ 228+ 6F9E 30 0F            jr   nc, .clamp_right
+ 229+ 6FA0
+ 230+ 6FA0              .ok_right:
+ 231+ 6FA0
+ 232+ 6FA0                  ; -----------------------------------------------------------
+ 233+ 6FA0                  ; Collisione muro a destra
+ 234+ 6FA0                  ; usa bordo destro player (X + 7)
+ 235+ 6FA0                  ; -----------------------------------------------------------
+ 236+ 6FA0 C5               push bc
+ 237+ 6FA1 C6 07            add  a, 7
+ 238+ 6FA3 4F               ld   c, a
+ 239+ 6FA4 CD 4E 78         call CheckWillyWallCollision
+ 240+ 6FA7 C1               pop  bc
+ 241+ 6FA8
+ 242+ 6FA8 38 24            jr   c, save_x
+ 243+ 6FAA
+ 244+ 6FAA                  ; Applica movimento
+ 245+ 6FAA 79               ld   a, c
+ 246+ 6FAB 83               add  a, e
+ 247+ 6FAC 4F               ld   c, a
+ 248+ 6FAD
+ 249+ 6FAD 18 1F            jr   save_x
+ 250+ 6FAF
+ 251+ 6FAF              ; ---------------------------------------------------------------
+ 252+ 6FAF              ; Clamp destro: forzatura al limite massimo
+ 253+ 6FAF              ; ---------------------------------------------------------------
+ 254+ 6FAF              .clamp_right:
+ 255+ 6FAF                  ; Controlla se c'è una stanza a destra
+ 256+ 6FAF 2A 85 A1         ld   hl, (room_ptr)
+ 257+ 6FB2 11 EC 00         ld   de, 236           ; Offset per stanza a destra
+ 258+ 6FB5 19               add  hl, de
+ 259+ 6FB6 7E               ld   a, (hl)           ; A = ID stanza a destra
+ 260+ 6FB7 FE FF            cp   $FF
+ 261+ 6FB9 28 05            jr   z, .no_right_transition
+ 262+ 6FBB
+ 263+ 6FBB                  ; C'è una stanza a destra!
+ 264+ 6FBB 0E 05            ld   c, PLAYER_MIN_X   ; Posiziona Willy a sinistra della nuova stanza
+ 265+ 6FBD C3 AD 72         jp   TriggerRoomChange ; Salta alla transizione
+ 266+ 6FC0
+ 267+ 6FC0              .no_right_transition:
+ 268+ 6FC0 C5               push bc
+ 269+ 6FC1 3E F5            ld   a, PLAYER_MAX_X
+ 270+ 6FC3 C6 07            add  a, 7
+ 271+ 6FC5 4F               ld   c, a
+ 272+ 6FC6 CD 4E 78         call CheckWillyWallCollision
+ 273+ 6FC9 C1               pop  bc
+ 274+ 6FCA 38 02            jr   c, save_x         ; Se collide al limite, mantieni la posizione precedente
+ 275+ 6FCC
+ 276+ 6FCC 0E F5            ld   c, PLAYER_MAX_X
+ 277+ 6FCE
+ 278+ 6FCE              ; ===============================================================
+ 279+ 6FCE              ; Salvataggio posizione finale
+ 280+ 6FCE              ; ===============================================================
+ 281+ 6FCE              save_x:
+ 282+ 6FCE
+ 283+ 6FCE ED 43 04 9E      ld   (PlayerPos), bc
+ 284+ 6FD2
+ 285+ 6FD2              ; ===============================================================
+ 286+ 6FD2              ; Animazione corpo (gambe)
+ 287+ 6FD2              ; ciclo: 0 → 1 → 2 → 0 ...
+ 288+ 6FD2              ; ===============================================================
+ 289+ 6FD2              movePlayer_print:
+ 290+ 6FD2
+ 291+ 6FD2 3A 0A 9E         ld   a, (body_state)
+ 292+ 6FD5 3C               inc  a
+ 293+ 6FD6
+ 294+ 6FD6 FE 03            cp   3
+ 295+ 6FD8 20 02            jr   nz, .save_state
+ 296+ 6FDA
+ 297+ 6FDA 3E 00            ld   a, 0
+ 298+ 6FDC
+ 299+ 6FDC              .save_state:
+ 300+ 6FDC
+ 301+ 6FDC 32 0A 9E         ld   (body_state), a
+ 302+ 6FDF
+ 303+ 6FDF C9               ret
+ 304+ 6FE0
+ 305+ 6FE0              ; -------------------------------------------------------------------
+ 306+ 6FE0              ; LoadPositionPlayeinRoom
+ 307+ 6FE0              ;
+ 308+ 6FE0              ; Inizializza la posizione del player (Willy) quando entra
+ 309+ 6FE0              ; in una nuova stanza.
+ 310+ 6FE0              ;
+ 311+ 6FE0              ; La posizione viene letta direttamente dai dati della stanza
+ 312+ 6FE0              ; (layout/metadata) a partire da room_ptr.
+ 313+ 6FE0              ;
+ 314+ 6FE0              ; Output:
+ 315+ 6FE0              ;   PlayerPos     = posizione iniziale (Y, X)
+ 316+ 6FE0              ;   PlayerPosOld  = copia della posizione iniziale
  317+ 6FE0              ;
- 318+ 6FE0              ; La posizione viene letta direttamente dai dati della stanza
- 319+ 6FE0              ; (layout/metadata) a partire da room_ptr.
- 320+ 6FE0              ;
- 321+ 6FE0              ; Output:
- 322+ 6FE0              ;   PlayerPos     = posizione iniziale (Y, X)
- 323+ 6FE0              ;   PlayerPosOld  = copia della posizione iniziale
- 324+ 6FE0              ;
- 325+ 6FE0              ; Struttura dati stanza:
- 326+ 6FE0              ;   OFFSET_POS_WILLY:
- 327+ 6FE0              ;       +0 = X
- 328+ 6FE0              ;       +1 = Y
- 329+ 6FE0              ; -------------------------------------------------------------------
- 330+ 6FE0              LoadPositionPlayeinRoom:
- 331+ 6FE0                  ; ---------------------------------------------------------------
- 332+ 6FE0                  ; Accede alla struttura dati della stanza corrente (OFFSET_POS_WILLY = 616)
- 333+ 6FE0                  ; ---------------------------------------------------------------
- 334+ 6FE0 2A 85 A1         ld   hl, (room_ptr)
- 335+ 6FE3 11 68 02         ld   de, OFFSET_POS_WILLY
- 336+ 6FE6 19               add  hl, de
- 337+ 6FE7
- 338+ 6FE7                  ; Byte 0: Y * 2
- 339+ 6FE7 7E               ld   a, (hl)
- 340+ 6FE8 CB 3F            srl  a                         ; A = Pixel Y (es. 208 -> 104)
- 341+ 6FEA 57               ld   d, a                      ; D = PlayerY
- 342+ 6FEB
- 343+ 6FEB                  ; Byte 1: Anim frame
- 344+ 6FEB 23               inc  hl
- 345+ 6FEC 7E               ld   a, (hl)
- 346+ 6FED E6 03            and  3                         ; Garanzia valore valido (0..3)
- 347+ 6FEF FE 03            cp   3
- 348+ 6FF1 38 01            jr   c, .valid_anim
- 349+ 6FF3 AF               xor  a
- 350+ 6FF4              .valid_anim:
- 351+ 6FF4 32 0A 9E         ld   (body_state), a
- 352+ 6FF7 32 0D A2         ld   (player_old_body), a
- 353+ 6FFA
- 354+ 6FFA                  ; Byte 2: Direction (0 = right, 1 = left in formato MM)
- 355+ 6FFA 23               inc  hl                        ; Byte 2 (Direction)
- 356+ 6FFB 7E               ld   a, (hl)
- 357+ 6FFC E6 01            and  1
- 358+ 6FFE 28 04            jr   z, .facing_right
- 359+ 7000 3E 01            ld   a, 1                      ; 1 = Sinistra nel motore
- 360+ 7002 18 02            jr   .set_dir
- 361+ 7004              .facing_right:
- 362+ 7004 3E 02            ld   a, 2                      ; 2 = Destra nel motore
- 363+ 7006              .set_dir:
- 364+ 7006 32 0B 9E         ld   (direction), a
- 365+ 7009 32 0C A2         ld   (player_old_dir), a
- 366+ 700C
- 367+ 700C                  ; Byte 4-5: Location in attribute buffer (DEFW) -> AttrAddr (es. 23970)
- 368+ 700C 23               inc  hl                        ; Byte 3 (Airborne)
- 369+ 700D 23               inc  hl                        ; Byte 4 (AttrAddr Low)
- 370+ 700E 4E               ld   c, (hl)
- 371+ 700F 23               inc  hl                        ; Byte 5 (AttrAddr High)
- 372+ 7010 7E               ld   a, (hl)
- 373+ 7011
- 374+ 7011                  ; Col = (AttrAddr - 23552) & 31 -> Pixel X = Col * 8
- 375+ 7011 67               ld   h, a
- 376+ 7012 69               ld   l, c
- 377+ 7013 01 00 A4         ld   bc, -23552
- 378+ 7016 09               add  hl, bc
- 379+ 7017
- 380+ 7017 7D               ld   a, l
- 381+ 7018 E6 1F            and  31
- 382+ 701A 87               add  a, a                      ; *2
- 383+ 701B 87               add  a, a                      ; *4
- 384+ 701C 87               add  a, a                      ; *8 -> Pixel X (es. 16)
- 385+ 701D 4F               ld   c, a                      ; C = PlayerX
- 386+ 701E 42               ld   b, d                      ; B = PlayerY
- 387+ 701F
- 388+ 701F                  ; Salva coordinate (C = X, B = Y)
- 389+ 701F ED 43 04 9E      ld   (PlayerPos), bc
- 390+ 7023 ED 43 06 9E      ld   (PlayerPosOld), bc
- 391+ 7027
- 392+ 7027                  ; Reset completi di stato player e rendering
- 393+ 7027 AF               xor  a
- 394+ 7028 32 0F 9E         ld   (sprite_shift), a
- 395+ 702B 32 0D 9E         ld   (collision_active), a
- 396+ 702E 32 10 A2         ld   (willy_needs_redraw), a
- 397+ 7031 32 1A 9E         ld   (current_input_dir), a
- 398+ 7034 32 2F A1         ld   (conveyor_caught), a
- 399+ 7037 3E FF            ld   a, $FF
- 400+ 7039 32 0A A2         ld   (player_drawn_pos), a
- 401+ 703C 32 0B A2         ld   (player_drawn_pos+1), a
- 402+ 703F C9               ret
- 403+ 7040
- 404+ 7040              ; -------------------------------------------------------------------
- 405+ 7040              ; InitRoomEntryPositions
- 406+ 7040              ; Popola la tabella room_entry_positions con le coordinate di default
- 407+ 7040              ; per tutte le stanze (NUM_ROOMS).
- 408+ 7040              ; -------------------------------------------------------------------
- 409+ 7040              InitRoomEntryPositions:
- 410+ 7040 21 4E 73         ld   hl, RoomsListTable
- 411+ 7043 11 8C A1         ld   de, room_entry_positions
- 412+ 7046 06 04            ld   b, NUM_ROOMS
- 413+ 7048              .loop:
- 414+ 7048 C5               push bc
- 415+ 7049 D5               push de
- 416+ 704A 5E               ld   e, (hl)
- 417+ 704B 23               inc  hl
- 418+ 704C 56               ld   d, (hl)                   ; DE = puntatore alla struttura stanza
- 419+ 704D 23               inc  hl
- 420+ 704E E5               push hl                        ; Salva posizione corrente in RoomsListTable
- 421+ 704F
- 422+ 704F                  ; Calcola indirizzo di OFFSET_POS_WILLY
- 423+ 704F 21 68 02         ld   hl, OFFSET_POS_WILLY
- 424+ 7052 19               add  hl, de                    ; HL = layout + OFFSET_POS_WILLY
- 425+ 7053
- 426+ 7053 7E               ld   a, (hl)                   ; Byte 0: Y * 2
- 427+ 7054 CB 3F            srl  a
- 428+ 7056 F5               push af                        ; Salva PlayerY sullo stack
- 429+ 7057
- 430+ 7057 23               inc  hl                        ; Byte 1
- 431+ 7058 23               inc  hl                        ; Byte 2
- 432+ 7059 23               inc  hl                        ; Byte 3
- 433+ 705A 23               inc  hl                        ; Byte 4 (AttrAddr Low)
- 434+ 705B 4E               ld   c, (hl)
- 435+ 705C 23               inc  hl                        ; Byte 5 (AttrAddr High)
- 436+ 705D 7E               ld   a, (hl)
- 437+ 705E
- 438+ 705E 67               ld   h, a
- 439+ 705F 69               ld   l, c
- 440+ 7060 01 00 A4         ld   bc, -23552
- 441+ 7063 09               add  hl, bc
- 442+ 7064 7D               ld   a, l
- 443+ 7065 E6 1F            and  31
- 444+ 7067 87               add  a, a
- 445+ 7068 87               add  a, a
- 446+ 7069 87               add  a, a                      ; Col * 8 = Pixel X
- 447+ 706A 4F               ld   c, a                      ; C = PlayerX
- 448+ 706B F1               pop  af                        ; A = PlayerY
- 449+ 706C 47               ld   b, a                      ; B = PlayerY
- 450+ 706D
- 451+ 706D E1               pop  hl                        ; Ripristina puntatore RoomsListTable
- 452+ 706E D1               pop  de                        ; DE = room_entry_positions + (i * 2)
- 453+ 706F 79               ld   a, c
- 454+ 7070 12               ld   (de), a                   ; X
- 455+ 7071 13               inc  de
- 456+ 7072 78               ld   a, b
- 457+ 7073 12               ld   (de), a                   ; Y
- 458+ 7074 13               inc  de
- 459+ 7075
- 460+ 7075 C1               pop  bc
- 461+ 7076 10 D0            djnz .loop
- 462+ 7078 C9               ret
- 463+ 7079
+ 318+ 6FE0              ; Struttura dati stanza:
+ 319+ 6FE0              ;   OFFSET_POS_WILLY:
+ 320+ 6FE0              ;       +0 = X
+ 321+ 6FE0              ;       +1 = Y
+ 322+ 6FE0              ; -------------------------------------------------------------------
+ 323+ 6FE0              LoadPositionPlayeinRoom:
+ 324+ 6FE0                  ; ---------------------------------------------------------------
+ 325+ 6FE0                  ; Accede alla struttura dati della stanza corrente (OFFSET_POS_WILLY = 616)
+ 326+ 6FE0                  ; ---------------------------------------------------------------
+ 327+ 6FE0 2A 85 A1         ld   hl, (room_ptr)
+ 328+ 6FE3 11 68 02         ld   de, OFFSET_POS_WILLY
+ 329+ 6FE6 19               add  hl, de
+ 330+ 6FE7
+ 331+ 6FE7                  ; Byte 0: Y * 2
+ 332+ 6FE7 7E               ld   a, (hl)
+ 333+ 6FE8 CB 3F            srl  a                         ; A = Pixel Y (es. 208 -> 104)
+ 334+ 6FEA 57               ld   d, a                      ; D = PlayerY
+ 335+ 6FEB
+ 336+ 6FEB                  ; Byte 1: Anim frame
+ 337+ 6FEB 23               inc  hl
+ 338+ 6FEC 7E               ld   a, (hl)
+ 339+ 6FED E6 03            and  3                         ; Garanzia valore valido (0..3)
+ 340+ 6FEF FE 03            cp   3
+ 341+ 6FF1 38 01            jr   c, .valid_anim
+ 342+ 6FF3 AF               xor  a
+ 343+ 6FF4              .valid_anim:
+ 344+ 6FF4 32 0A 9E         ld   (body_state), a
+ 345+ 6FF7 32 0D A2         ld   (player_old_body), a
+ 346+ 6FFA
+ 347+ 6FFA                  ; Byte 2: Direction (0 = right, 1 = left in formato MM)
+ 348+ 6FFA 23               inc  hl                        ; Byte 2 (Direction)
+ 349+ 6FFB 7E               ld   a, (hl)
+ 350+ 6FFC E6 01            and  1
+ 351+ 6FFE 28 04            jr   z, .facing_right
+ 352+ 7000 3E 01            ld   a, 1                      ; 1 = Sinistra nel motore
+ 353+ 7002 18 02            jr   .set_dir
+ 354+ 7004              .facing_right:
+ 355+ 7004 3E 02            ld   a, 2                      ; 2 = Destra nel motore
+ 356+ 7006              .set_dir:
+ 357+ 7006 32 0B 9E         ld   (direction), a
+ 358+ 7009 32 0C A2         ld   (player_old_dir), a
+ 359+ 700C
+ 360+ 700C                  ; Byte 4-5: Location in attribute buffer (DEFW) -> AttrAddr (es. 23970)
+ 361+ 700C 23               inc  hl                        ; Byte 3 (Airborne)
+ 362+ 700D 23               inc  hl                        ; Byte 4 (AttrAddr Low)
+ 363+ 700E 4E               ld   c, (hl)
+ 364+ 700F 23               inc  hl                        ; Byte 5 (AttrAddr High)
+ 365+ 7010 7E               ld   a, (hl)
+ 366+ 7011
+ 367+ 7011                  ; Col = (AttrAddr - 23552) & 31 -> Pixel X = Col * 8
+ 368+ 7011 67               ld   h, a
+ 369+ 7012 69               ld   l, c
+ 370+ 7013 01 00 A4         ld   bc, -23552
+ 371+ 7016 09               add  hl, bc
+ 372+ 7017
+ 373+ 7017 7D               ld   a, l
+ 374+ 7018 E6 1F            and  31
+ 375+ 701A 87               add  a, a                      ; *2
+ 376+ 701B 87               add  a, a                      ; *4
+ 377+ 701C 87               add  a, a                      ; *8 -> Pixel X (es. 16)
+ 378+ 701D 4F               ld   c, a                      ; C = PlayerX
+ 379+ 701E 42               ld   b, d                      ; B = PlayerY
+ 380+ 701F
+ 381+ 701F                  ; Salva coordinate (C = X, B = Y)
+ 382+ 701F ED 43 04 9E      ld   (PlayerPos), bc
+ 383+ 7023 ED 43 06 9E      ld   (PlayerPosOld), bc
+ 384+ 7027
+ 385+ 7027                  ; Reset completi di stato player e rendering
+ 386+ 7027 AF               xor  a
+ 387+ 7028 32 0F 9E         ld   (sprite_shift), a
+ 388+ 702B 32 0D 9E         ld   (collision_active), a
+ 389+ 702E 32 10 A2         ld   (willy_needs_redraw), a
+ 390+ 7031 32 1A 9E         ld   (current_input_dir), a
+ 391+ 7034 32 2F A1         ld   (conveyor_caught), a
+ 392+ 7037 3E FF            ld   a, $FF
+ 393+ 7039 32 0A A2         ld   (player_drawn_pos), a
+ 394+ 703C 32 0B A2         ld   (player_drawn_pos+1), a
+ 395+ 703F C9               ret
+ 396+ 7040
+ 397+ 7040              ; -------------------------------------------------------------------
+ 398+ 7040              ; InitRoomEntryPositions
+ 399+ 7040              ; Popola la tabella room_entry_positions con le coordinate di default
+ 400+ 7040              ; per tutte le stanze (NUM_ROOMS).
+ 401+ 7040              ; -------------------------------------------------------------------
+ 402+ 7040              InitRoomEntryPositions:
+ 403+ 7040 21 4E 73         ld   hl, RoomsListTable
+ 404+ 7043 11 8C A1         ld   de, room_entry_positions
+ 405+ 7046 06 04            ld   b, NUM_ROOMS
+ 406+ 7048              .loop:
+ 407+ 7048 C5               push bc
+ 408+ 7049 D5               push de
+ 409+ 704A 5E               ld   e, (hl)
+ 410+ 704B 23               inc  hl
+ 411+ 704C 56               ld   d, (hl)                   ; DE = puntatore alla struttura stanza
+ 412+ 704D 23               inc  hl
+ 413+ 704E E5               push hl                        ; Salva posizione corrente in RoomsListTable
+ 414+ 704F
+ 415+ 704F                  ; Calcola indirizzo di OFFSET_POS_WILLY
+ 416+ 704F 21 68 02         ld   hl, OFFSET_POS_WILLY
+ 417+ 7052 19               add  hl, de                    ; HL = layout + OFFSET_POS_WILLY
+ 418+ 7053
+ 419+ 7053 7E               ld   a, (hl)                   ; Byte 0: Y * 2
+ 420+ 7054 CB 3F            srl  a
+ 421+ 7056 F5               push af                        ; Salva PlayerY sullo stack
+ 422+ 7057
+ 423+ 7057 23               inc  hl                        ; Byte 1
+ 424+ 7058 23               inc  hl                        ; Byte 2
+ 425+ 7059 23               inc  hl                        ; Byte 3
+ 426+ 705A 23               inc  hl                        ; Byte 4 (AttrAddr Low)
+ 427+ 705B 4E               ld   c, (hl)
+ 428+ 705C 23               inc  hl                        ; Byte 5 (AttrAddr High)
+ 429+ 705D 7E               ld   a, (hl)
+ 430+ 705E
+ 431+ 705E 67               ld   h, a
+ 432+ 705F 69               ld   l, c
+ 433+ 7060 01 00 A4         ld   bc, -23552
+ 434+ 7063 09               add  hl, bc
+ 435+ 7064 7D               ld   a, l
+ 436+ 7065 E6 1F            and  31
+ 437+ 7067 87               add  a, a
+ 438+ 7068 87               add  a, a
+ 439+ 7069 87               add  a, a                      ; Col * 8 = Pixel X
+ 440+ 706A 4F               ld   c, a                      ; C = PlayerX
+ 441+ 706B F1               pop  af                        ; A = PlayerY
+ 442+ 706C 47               ld   b, a                      ; B = PlayerY
+ 443+ 706D
+ 444+ 706D E1               pop  hl                        ; Ripristina puntatore RoomsListTable
+ 445+ 706E D1               pop  de                        ; DE = room_entry_positions + (i * 2)
+ 446+ 706F 79               ld   a, c
+ 447+ 7070 12               ld   (de), a                   ; X
+ 448+ 7071 13               inc  de
+ 449+ 7072 78               ld   a, b
+ 450+ 7073 12               ld   (de), a                   ; Y
+ 451+ 7074 13               inc  de
+ 452+ 7075
+ 453+ 7075 C1               pop  bc
+ 454+ 7076 10 D0            djnz .loop
+ 455+ 7078 C9               ret
+ 456+ 7079
 # file closed: player.asm
   18  7079                  include "input.asm"
 # file opened: input.asm
