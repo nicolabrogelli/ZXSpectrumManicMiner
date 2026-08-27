@@ -10041,7 +10041,7 @@
    7+ 880E
    8+ 880E              RoomsStart:
    9+ 880E                  include "rooms/CentralCavern.asm"               ; ID 00
-# file opened: CentralCavern.asm
+# file opened: rooms/CentralCavern.asm
    1++880E              ;===========================================================================
    2++880E              ; CentralCavern.asm
    3++880E              ;
@@ -10430,9 +10430,9 @@
  256++8C02 00 70 00 F8
  257++8C06 05 DD 03 8E  	DEFB 5,221,3,142,1,4,0,136
  257++8C0A 01 04 00 88
-# file closed: CentralCavern.asm
+# file closed: rooms/CentralCavern.asm
   10+ 8C0E                  include "rooms/TheColdRoom.asm"                 ; ID 01
-# file opened: TheColdRoom.asm
+# file opened: rooms/TheColdRoom.asm
    1++8C0E              ;===========================================================================
    2++8C0E              ; TheColdRoom.asm
    3++8C0E              ;
@@ -10826,9 +10826,9 @@
  262++9002 00 96 00 86
  263++9006 00 8E 00 7D  	DEFB 0,142,0,125,0,16,0,120
  263++900A 00 10 00 78
-# file closed: TheColdRoom.asm
+# file closed: rooms/TheColdRoom.asm
   11+ 900E                  include "rooms/TheMenagerie.asm"                ; ID 02
-# file opened: TheMenagerie.asm
+# file opened: rooms/TheMenagerie.asm
    1++900E              ;===========================================================================
    2++900E              ; TheMenagerie.asm
    3++900E              ;
@@ -11225,9 +11225,9 @@
  266++9402 00 FE 00 7C
  267++9406 00 10 00 10  	DEFB 0,16,0,16,0,16,0,40
  267++940A 00 10 00 28
-# file closed: TheMenagerie.asm
+# file closed: rooms/TheMenagerie.asm
   12+ 940E                  include "rooms/AbandonedUraniumWorkings.asm"    ; ID 03
-# file opened: AbandonedUraniumWorkings.asm
+# file opened: rooms/AbandonedUraniumWorkings.asm
    1++940E              ;===========================================================================
    2++940E              ; AbandonedUraniumWorkings.asm
    3++940E              ;
@@ -11621,11 +11621,11 @@
  262++9802 00 E0 01 E0
  263++9806 01 F2 03 FA  	DEFB 1,242,3,250,3,127,2,60
  263++980A 03 7F 02 3C
-# file closed: AbandonedUraniumWorkings.asm
+# file closed: rooms/AbandonedUraniumWorkings.asm
   13+ 980E
   14+ 980E
   15+ 980E                  include "data/datasprite.asm"
-# file opened: datasprite.asm
+# file opened: data/datasprite.asm
    1++980E
    2++980E
    3++980E
@@ -11654,7 +11654,7 @@
   18++984E                  ; 9° carattere per i bordi verticali
   19++984E                  ;db %11111111, %10001000, %11111111, %00100010, %11111111, %10001000, %11111111, %00100100
   20++984E
-# file closed: datasprite.asm
+# file closed: data/datasprite.asm
   16+ 984E
   17+ 984E              font_buffer:
   18+ 984E 00          > db 0
@@ -13198,7 +13198,7 @@
   22+ 9E4E
 # file closed: resources.asm
  986  9E4E                  include "data/datavariable.asm"
-# file opened: datavariable.asm
+# file opened: data/datavariable.asm
    1+ 9E4E              ; -------------------------------------------------------------------
    2+ 9E4E              ; Variabili
    3+ 9E4E              ; -------------------------------------------------------------------
@@ -14783,7 +14783,7 @@
  105+ A46E 08           air_deplete_rate:       db 8       ; Frame per decremento di 1 pixel di aria
  106+ A46F
  107+ A46F
-# file closed: datavariable.asm
+# file closed: data/datavariable.asm
  987  A46F
  988  A46F                  SAVESNA "manicminer.sna", start ; sna48-ok
  989  A46F
