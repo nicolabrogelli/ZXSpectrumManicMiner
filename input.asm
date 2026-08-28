@@ -618,6 +618,9 @@ RoomsListTable:
 .TheColdRoomLayout:                dw TheColdRoomLayout                ; 01
 .TheMenagerieLayout:               dw TheMenagerieLayout               ; 02
 .AbandonedUraniumWorkingsLayout:   dw AbandonedUraniumWorkingsLayout   ; 03
+.EugeneLairLayout:                 dw EugeneLairLayout                 ; 04
+.ProcessingPlantLayout:            dw ProcessingPlantLayout            ; 05
+.TheVatLayout:                     dw TheVatLayout                     ; 06
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2
 

@@ -10,6 +10,9 @@ RoomsStart:
     include "rooms/TheColdRoom.asm"                 ; ID 01
     include "rooms/TheMenagerie.asm"                ; ID 02
     include "rooms/AbandonedUraniumWorkings.asm"    ; ID 03
+    include "rooms/EugeneLair.asm"                  ; ID 04
+    include "rooms/ProcessingPlant.asm"             ; ID 05
+    include "rooms/TheVat.asm"                      ; ID 06
     
 
     include "data/datasprite.asm"

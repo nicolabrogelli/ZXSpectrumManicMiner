@@ -517,9 +517,10 @@ Enemy_Update:
 ; -------------------------------------------------------------------
 ; CheckCollision
 ;
-; Controlla se Willy collide con un guardiano attivo (bounding box 16x16).
+; Controlla se Willy collide con un guardiano attivo con rilevamento
+; PIXEL-PERFECT (bit a bit), identico all'originale per ZX Spectrum.
 ; Output:
-;   Carry Set = Collisione con guardiano
+;   Carry Set = Collisione reale (pixel Willy sovrapposto a pixel guardiano)
 ;   Carry Clear = Nessuna collisione
 ; -------------------------------------------------------------------
 CheckCollision:
@@ -528,64 +529,270 @@ CheckCollision:
     push de
     push hl
 
-    ; Se il timer di sicurezza (post-respawn) è attivo, Willy è invulnerabile
+    ; 1. Se il timer di sicurezza (post-respawn) è attivo, Willy è invulnerabile
     ld   a, (willy_safety_timer)
     or   a
-    jr   nz, .no_collision_found
+    jp   nz, .no_collision_found
 
+    ; 2. Prepara i puntatori agli sprite di Willy (Testa e Corpo)
+    ld   a, (direction)
+    cp   1                         ; Sinistra?
+    jr   nz, .willy_right
+
+    ; Willy a Sinistra:
+    ld   hl, Willy + (4 * 8)       ; Testa sinistra (tile 4, offset 32)
+    ld   (willy_head_ptr), hl
+    ld   a, (body_state)           ; 0, 1, 2
+    add  a, 5                      ; tile 5, 6, 7
+    add  a, a : add a, a : add a, a ; * 8
+    ld   e, a
+    ld   d, 0
+    ld   hl, Willy
+    add  hl, de
+    ld   (willy_body_ptr), hl      ; Corpo sinistro
+    jr   .willy_ptrs_ready
+
+.willy_right:
+    ; Willy a Destra:
+    ld   hl, Willy + (0 * 8)       ; Testa destra (tile 0, offset 0)
+    ld   (willy_head_ptr), hl
+    ld   a, (body_state)           ; 0, 1, 2
+    add  a, 1                      ; tile 1, 2, 3
+    add  a, a : add a, a : add a, a ; * 8
+    ld   e, a
+    ld   d, 0
+    ld   hl, Willy
+    add  hl, de
+    ld   (willy_body_ptr), hl      ; Corpo destro
+
+.willy_ptrs_ready:
     ld   ix, ActiveEnemies
     ld   b, 8                      ; 8 slot
 
-.collision_loop:
+.enemy_loop:
     ld   a, (ix+0)
     and  $80                       ; Active?
-    jr   z, .next_enemy
+    jp   z, .next_enemy
 
-    push bc                        ; Salva B (contatore ciclo 8 slot)
+    ; ---------------------------------------------------------------
+    ; PRE-FILTRO BOUNDING BOX RAPIDO:
+    ; ---------------------------------------------------------------
+    ; Calcola DeltaX = WillyX - EnemyX (range valido [-7 .. 15])
+    ld   a, (PlayerPos)            ; WillyX
+    sub  (ix+2)                    ; A = WillyX - EnemyX
+    cp   16
+    jr   c, .x_in_range             ; 0..15 -> in range
+    cp   249                       ; 249..255 = -7..-1
+    jp   c, .next_enemy            ; 16..248 -> fuori range
+.x_in_range:
+    ld   (collision_delta_x), a    ; Salva DeltaX (-7..15)
 
-    ; 1. Controllo Bounding Box X: |WillyX - EnemyX| < 12 (tolleranza collisione)
-    ld   bc, (PlayerPos)           ; C = WillyX, B = WillyY
-    ld   a, (ix+2)                 ; A = EnemyX
+    ; Calcola DeltaY = WillyY - EnemyY (range valido [-15 .. 15])
+    ld   a, (PlayerPos+1)          ; WillyY
+    sub  (ix+3)                    ; A = WillyY - EnemyY
+    cp   16
+    jr   c, .y_in_range             ; 0..15 -> in range
+    cp   241                       ; 241..255 = -15..-1
+    jp   c, .next_enemy            ; 16..240 -> fuori range
+.y_in_range:
+    ld   (collision_delta_y), a    ; Salva DeltaY (-15..15)
 
-    ; Calcola differenza X
-    sub  c                         ; A = EnemyX - WillyX
-    jr   nc, .x_diff_pos
-    neg                            ; A = |EnemyX - WillyX|
-.x_diff_pos:
-    cp   12                        ; Sovrapposizione orizzontale?
-    jr   nc, .no_x_hit             ; Se distanza >= 12 px, nessun contatto
+    ; ---------------------------------------------------------------
+    ; DETERMINA FRAME GRAFICO DEL GUARDIANO (32 byte)
+    ; ---------------------------------------------------------------
+    push bc                        ; Salva contatore nemici (B)
 
-    ; 2. Controllo Bounding Box Y: |WillyY - EnemyY| < 14
-    ld   a, (ix+3)                 ; A = EnemyY
-    sub  b                         ; A = EnemyY - WillyY
-    jr   nc, .y_diff_pos
-    neg                            ; A = |EnemyY - WillyY|
-.y_diff_pos:
-    cp   14                        ; Sovrapposizione verticale?
-    jr   nc, .no_x_hit             ; Se distanza >= 14 px, nessun contatto
+    ld   a, (ix+7)                 ; Anim subframe (0..3)
+    and  3
+    ld   c, a
 
-    ; Collisione trovata!
-    pop  bc                        ; Ripristina stack
-    pop  hl
-    pop  de
-    pop  bc
-    pop  ix
-    scf
-    ret
+    ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
+    cp   1
+    jr   z, .guard_left_frame
+    ; Frame Destra: Frame = Subframe (0..3)
+    ld   a, c
+    jr   .calc_guard_ptr
+.guard_left_frame:
+    ; Frame Sinistra: Frame = 4 + Subframe (4..7)
+    ld   a, 4
+    add  a, c
 
-.no_x_hit:
-    pop  bc                        ; Ripristina B (contatore ciclo)
+.calc_guard_ptr:
+    ; Offset = Frame * 32
+    ld   l, a
+    ld   h, 0
+    add  hl, hl                    ; *2
+    add  hl, hl                    ; *4
+    add  hl, hl                    ; *8
+    add  hl, hl                    ; *16
+    add  hl, hl                    ; *32
+    ld   de, OFFSET_GUARDIAN_GRAPHICS
+    add  hl, de
+    ld   de, (room_ptr)
+    add  hl, de                    ; HL = puntatore ai 32 byte del frame guardiano
+    ld   (guard_sprite_ptr), hl
+
+    ; ---------------------------------------------------------------
+    ; DETERMINA IL RANGE DELLE RIGHE SOVRAPPOSTE
+    ; ---------------------------------------------------------------
+    ld   a, (collision_delta_y)
+    bit  7, a                      ; DeltaY negativo? (Willy più in alto del nemico)
+    jr   nz, .willy_higher
+
+    ; Willy lower or equal (DeltaY >= 0):
+    ; row_enemy_cur = DeltaY, row_willy_cur = 0, num_lines = 16 - DeltaY
+    ld   (row_enemy_cur), a
+    xor  a
+    ld   (row_willy_cur), a
+    ld   a, 16
+    ld   hl, collision_delta_y
+    sub  (hl)
+    ld   (overlap_num_lines), a
+    jr   .check_lines_loop
+
+.willy_higher:
+    ; Willy higher (DeltaY < 0, cioè WillyY < EnemyY):
+    neg                            ; A = -DeltaY (1..15)
+    ld   (row_willy_cur), a        ; row_willy_cur = -DeltaY
+    xor  a
+    ld   (row_enemy_cur), a        ; row_enemy_cur = 0
+    ld   a, 16
+    ld   hl, row_willy_cur
+    sub  (hl)
+    ld   (overlap_num_lines), a
+
+.check_lines_loop:
+    ; ---------------------------------------------------------------
+    ; CONFRONTO PIXEL-PERFECT RIGA PER RIGA
+    ; ---------------------------------------------------------------
+    ld   a, (overlap_num_lines)
+    ld   b, a                      ; B = numero di scanlines da controllare
+
+.scanline_loop:
+    push bc                        ; Salva contatore scanlines
+
+    ; 1. Leggi i 2 byte della scanline corrente del guardiano
+    ld   a, (row_enemy_cur)
+    add  a, a                      ; row * 2
+    ld   e, a
+    ld   d, 0
+    ld   hl, (guard_sprite_ptr)
+    add  hl, de                    ; HL = guard_sprite_ptr + row * 2
+    ld   d, (hl)                   ; D = Enemy Byte 0
+    inc  hl
+    ld   e, (hl)                   ; E = Enemy Byte 1
+
+    ; 2. Estrai la fetta di 8 pixel del guardiano allineata a DeltaX
+    ld   a, (collision_delta_x)
+    bit  7, a
+    jr   nz, .shift_neg_dx         ; DeltaX in [-7..-1]
+
+    ; DeltaX >= 0:
+    cp   9
+    jr   nc, .shift_dx_gt_8        ; DeltaX in [9..15]
+
+    ; DeltaX in [0..8]: shift a sinistra a 16 bit (D, E) per DeltaX volte
+    or   a
+    jr   z, .slice_ready_in_d      ; DeltaX == 0 -> fetta già allineata in D
+    ld   c, a                      ; C = DeltaX (1..8)
+.shift_left_16bit:
+    sla  e
+    rl   d
+    dec  c
+    jr   nz, .shift_left_16bit
+.slice_ready_in_d:
+    ld   a, d                      ; A = fetta guardiano allineata
+    jr   .test_willy_line
+
+.shift_dx_gt_8:
+    ; DeltaX in [9..15]: shift a sinistra del solo byte E per (DeltaX - 8) volte
+    sub  8
+    ld   c, a                      ; C = DeltaX - 8 (1..7)
+.shift_left_e_only:
+    sla  e
+    dec  c
+    jr   nz, .shift_left_e_only
+    ld   a, e                      ; A = fetta guardiano allineata
+    jr   .test_willy_line
+
+.shift_neg_dx:
+    ; DeltaX in [-7..-1]: shift a destra del solo byte D per (-DeltaX) volte
+    neg
+    ld   c, a                      ; C = -DeltaX (1..7)
+.shift_right_d_only:
+    srl  d
+    dec  c
+    jr   nz, .shift_right_d_only
+    ld   a, d                      ; A = fetta guardiano allineata
+
+.test_willy_line:
+    ; Se la fetta del guardiano non ha pixel attivi su questa scanline, passa alla prossima
+    or   a
+    jr   z, .next_scanline
+
+    ; 3. Leggi il byte corrispondente dello sprite di Willy
+    ld   c, a                      ; C = fetta guardiano
+    ld   a, (row_willy_cur)
+    cp   8
+    jr   c, .read_willy_head
+
+    ; Riga corpo (8..15)
+    sub  8
+    ld   l, a
+    ld   h, 0
+    ld   de, (willy_body_ptr)
+    add  hl, de
+    ld   a, (hl)                   ; A = byte corpo Willy
+    jr   .do_pixel_and
+
+.read_willy_head:
+    ; Riga testa (0..7)
+    ld   l, a
+    ld   h, 0
+    ld   de, (willy_head_ptr)
+    add  hl, de
+    ld   a, (hl)                   ; A = byte testa Willy
+
+.do_pixel_and:
+    ; 4. TEST BIT A BIT: (Pixel_Willy AND Pixel_Guardiano)
+    and  c
+    jr   nz, .pixel_collision_detected ; Se != 0, COLLISIONE PIXEL-PERFECT!
+
+.next_scanline:
+    ; Avanza alla prossima riga
+    ld   hl, row_enemy_cur
+    inc  (hl)
+    ld   hl, row_willy_cur
+    inc  (hl)
+
+    pop  bc                        ; Ripristina B (contatore scanlines)
+    dec  b
+    jp   nz, .scanline_loop
+
+    ; Nessun pixel sovrapposto per questo guardiano
+    pop  bc                        ; Ripristina B (contatore nemici)
 
 .next_enemy:
     ld   de, 11
     add  ix, de
     dec  b
-    jr   nz, .collision_loop
+    jp   nz, .enemy_loop
 
 .no_collision_found:
     pop  hl
     pop  de
     pop  bc
     pop  ix
-    or   a
+    or   a                         ; Carry = 0 (Nessuna collisione)
     ret
+
+.pixel_collision_detected:
+    pop  bc                        ; Pulisci stack scanline
+    pop  bc                        ; Pulisci stack nemici
+    pop  hl
+    pop  de
+    pop  bc
+    pop  ix
+    scf                            ; Carry = 1 (COLLISIONE CONFERMATA!)
+    ret
+

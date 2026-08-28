@@ -104,4 +104,12 @@ air_pixels:             db 224     ; Quantità aria rimanente in pixel (28 colon
 air_timer:              db 0       ; Timer frame per il consumo progressivo dell'aria
 air_deplete_rate:       db 8       ; Frame per decremento di 1 pixel di aria
 
-
+; Variabili temporanee per collisione pixel-perfect Willy-Guardiani
+willy_head_ptr:         dw 0
+willy_body_ptr:         dw 0
+guard_sprite_ptr:       dw 0
+collision_delta_x:      db 0
+collision_delta_y:      db 0
+row_enemy_cur:          db 0
+row_willy_cur:          db 0
+overlap_num_lines:      db 0
