@@ -1,0 +1,199 @@
+AttackoftheMutantTelephonesLayout:
+	DEFB 14,14,14,14,14,14,14,0	;Attributes
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,66,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,70,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,65,65,65,65,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,65,65,65
+	DEFB 65,65,65,0,0,0,0,65
+	DEFB 65,69,69,69,69,69,69,69
+	DEFB 65,65,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 66,0,0,0,0,65,65,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 66,0,0,0,0,0,0,14
+	DEFB 14,65,65,0,0,6,6,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 66,0,0,0,0,65,65,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,65,65,65,65,65
+	DEFB 65,65,65,65,0,0,0,0
+	DEFB 70,0,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,66,0,0,0
+	DEFB 0,0,0,66,0,0,0,0
+	DEFB 0,0,0,0,65,0,0,14
+	DEFB 14,0,0,0,0,0,1,1
+	DEFB 1,65,0,0,66,0,0,0
+	DEFB 0,0,0,70,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,70,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,65,65,65,14
+	DEFB 14,65,65,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,65
+	DEFB 65,65,0,0,0,0,0,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,14
+	DEFB 14,65,65,65,65,65,65,65
+	DEFB 65,65,65,65,65,65,65,65
+	DEFB 65,65,65,65,65,65,65,65
+	DEFB 65,65,65,65,65,65,65,14
+	DEFM "Attack of the Mutant Telephones "	;Cavern name
+	DEFB 0,0,0,0,0,0,0,0,0	;Background
+	DEFB 65,255,255,219,110,197,64,0,0	;Floor
+	DEFB 1,255,219,165,36,82,32,8,0	;Crumbling floor
+	DEFB 14,170,85,170,85,170,85,170,85	;Wall
+	DEFB 6,254,102,254,0,0,0,0,0	;Conveyor
+	DEFB 70,16,16,214,56,214,56,84,146	;Nasty 1
+	DEFB 66,16,16,16,16,16,16,16,16	;Nasty 2
+	DEFB 69,255,255,255,255,170,0,0,0	;Extra
+	DEFB 16	;Pixel y-coordinate * 2 (see 32872)
+	DEFB 0	;Animation frame (see 32873)
+	DEFB 0	;Direction and movement flags: facing right (see 32874)
+	DEFB 0	;Airborne status indicator (see 32875)
+	DEFW 23587	;Location in the attribute buffer at 23552: (1,3) (see 32876)
+	DEFB 0	;Jumping animation counter (see 32878)
+	DEFB 0	;Direction (left)
+	DEFW 30725	;Location in the screen buffer at 28672: (8,5)
+	DEFB 2	;Length
+	DEFB 2	;Border colour
+	DEFB 0	;Unused
+	DEFB 3	;Item 1 at (0,24)
+	DEFW 23576
+	DEFB 96
+	DEFB 255
+	DEFB 4	;Item 2 at (1,30)
+	DEFW 23614
+	DEFB 96
+	DEFB 255
+	DEFB 5	;Item 3 at (4,1)
+	DEFW 23681
+	DEFB 96
+	DEFB 255
+	DEFB 6	;Item 4 at (6,19)
+	DEFW 23763
+	DEFB 96
+	DEFB 255
+	DEFB 3	;Item 5 at (13,30)
+	DEFW 23998
+	DEFB 104
+	DEFB 255
+	DEFB 255	;Terminator
+	DEFB 86	;Attribute
+	DEFB 255,255,218,171,234,107,255,255	;Graphic data
+	DEFB 144,9,144,9,255,255,144,9
+	DEFB 144,9,255,255,144,9,144,9
+	DEFB 255,255,144,9,144,9,255,255
+	DEFW 23585	;Location in the attribute buffer at 23552: (1,1)
+	DEFW 24609	;Location in the screen buffer at 24576: (1,1)
+	DEFB 60,90,149,213,213,213,90,60	;Item graphic data
+	DEFB 63	;Air
+	DEFB 128	;Game clock
+	DEFB 70	;Horizontal guardian 1: y=3, initial x=15, 15<=x<=24, speed=normal
+	DEFW 23663
+	DEFB 96
+	DEFB 0
+	DEFB 111
+	DEFB 120
+	DEFB 196	;Horizontal guardian 2: y=7, initial x=14, 14<=x<=18, speed=slow
+	DEFW 23790
+	DEFB 96
+	DEFB 0
+	DEFB 238
+	DEFB 242
+	DEFB 66	;Horizontal guardian 3: y=13, initial x=15, 5<=x<=19, speed=normal
+	DEFW 23983
+	DEFB 104
+	DEFB 7
+	DEFB 165
+	DEFB 179
+	DEFB 255,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
+	DEFB 255	;Terminator
+	DEFB 0,0	;Unused
+	DEFB 67	;Vertical guardian 1: x=12, initial y=8, 2<=y<56, initial y-increment=2
+	DEFB 0
+	DEFB 8
+	DEFB 12
+	DEFB 2
+	DEFB 2
+	DEFB 56
+	DEFB 4	;Vertical guardian 2: x=3, initial y=32, 32<=y<100, initial y-increment=1
+	DEFB 1
+	DEFB 32
+	DEFB 3
+	DEFB 1
+	DEFB 32
+	DEFB 100
+	DEFB 6	;Vertical guardian 3: x=21, initial y=48, 48<=y<100, initial y-increment=1
+	DEFB 2
+	DEFB 48
+	DEFB 21
+	DEFB 1
+	DEFB 48
+	DEFB 100
+	DEFB 66	;Vertical guardian 4: x=26, initial y=48, 4<=y<100, initial y-increment=-3
+	DEFB 3
+	DEFB 48
+	DEFB 26
+	DEFB 253
+	DEFB 4
+	DEFB 100
+	DEFB 255	;Terminator
+	DEFB 0,0,0,0,0,0	;Unused
+	DEFB 0,0,0,0,63,252,99,198	;Guardian graphic data
+	DEFB 235,215,232,23,15,240,7,224
+	DEFB 12,48,11,208,27,216,28,56
+	DEFB 63,252,63,252,63,252,63,252
+	DEFB 60,0,127,192,127,248,99,198
+	DEFB 8,87,8,23,15,247,7,224
+	DEFB 12,48,11,208,27,216,28,56
+	DEFB 63,252,63,252,63,252,63,252
+	DEFB 0,0,0,0,63,252,99,198
+	DEFB 235,215,232,23,15,240,7,224
+	DEFB 12,48,11,208,27,216,28,56
+	DEFB 63,252,63,252,63,252,63,252
+	DEFB 0,60,3,254,31,254,99,198
+	DEFB 234,16,232,16,239,240,7,224
+	DEFB 12,48,11,208,27,216,28,56
+	DEFB 63,252,63,252,63,252,63,252
+	DEFB 12,0,22,0,45,0,76,128
+	DEFB 140,64,140,64,76,128,45,0
+	DEFB 22,0,12,0,55,0,76,0
+	DEFB 127,192,255,192,64,128,46,0
+	DEFB 3,0,3,0,5,128,7,128
+	DEFB 11,64,11,64,7,128,5,128
+	DEFB 3,0,3,0,14,192,3,32
+	DEFB 63,224,63,240,16,32,7,64
+	DEFB 0,192,0,192,0,192,0,192
+	DEFB 0,128,0,128,0,192,0,192
+	DEFB 0,192,0,192,1,208,4,200
+	DEFB 15,252,15,248,0,8,3,176
+	DEFB 0,48,0,104,0,180,0,180
+	DEFB 1,50,1,50,0,180,0,180
+	DEFB 0,104,0,48,0,184,1,50
+	DEFB 3,255,1,255,1,0,0,220

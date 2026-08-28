@@ -15,6 +15,8 @@ RoomsStart:
     include "rooms/TheVat.asm"                      ; ID 06
     include "rooms/MinerWillymeetstheKongBeast.asm" ; ID 07
     include "rooms/WackyAmoebatrons.asm"            ; ID 08
+    include "rooms/TheEndorianForest.asm"           ; ID 09
+    include "rooms/AttackoftheMutantTelephones.asm" ; ID 10
 
     include "data/datasprite.asm"
 

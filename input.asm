@@ -620,6 +620,8 @@ RoomsListTable:
 .TheVatLayout:                     dw TheVatLayout                     ; 06
 .MinerWillymeetstheKongBeastLayout: dw MinerWillymeetstheKongBeastLayout ; 07
 .WackyAmoebatronsLayout:           dw WackyAmoebatronsLayout           ; 08
+.TheEndorianForestLayout:          dw TheEndorianForestLayout          ; 09
+.AttackoftheMutantTelephonesLayout: dw AttackoftheMutantTelephonesLayout ; 10
 
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2

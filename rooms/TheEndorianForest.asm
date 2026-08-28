@@ -1,0 +1,195 @@
+TheEndorianForestLayout:
+	DEFB 22,0,0,0,0,0,0,0	;Attributes
+	DEFB 0,0,0,4,0,68,68,68
+	DEFB 22,0,4,0,4,68,68,68
+	DEFB 68,68,68,68,68,68,68,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,0,0,0,0,4,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,68,68,68,68,68,68,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,68,68,68,68,22
+	DEFB 22,0,0,4,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,68,68,68,68,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 68,2,2,2,2,2,2,2
+	DEFB 22,0,0,0,0,0,0,68
+	DEFB 68,68,68,68,68,68,68,22
+	DEFB 22,68,68,68,68,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,68,68,68,68,68,68,68
+	DEFB 2,2,2,0,0,0,0,22
+	DEFB 22,68,68,68,68,68,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,4,0,0,0,0,0,0
+	DEFB 0,68,68,68,68,68,68,68
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,68,68,22
+	DEFB 22,68,68,68,68,2,2,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,68,68,68,68,68,68,68
+	DEFB 0,0,0,0,0,0,4,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 22,0,0,0,0,0,0,4
+	DEFB 2,2,2,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 5,5,5,5,5,5,5,5
+	DEFB 5,5,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,68,68,68,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,68,68,68,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 5,5,5,5,5,5,5,5
+	DEFB 5,5,5,5,5,5,5,5
+	DEFB 5,5,5,5,5,5,5,5
+	DEFB 5,5,5,5,5,5,5,5
+	
+	DEFM "       The Endorian Forest      "	;Cavern name
+	
+	DEFB 0,0,0,0,0,0,0,0,0	;Background
+	DEFB 68,124,255,239,30,12,8,8,8	;Floor
+	DEFB 2,252,255,135,12,8,8,8,0	;Crumbling floor
+	DEFB 22,74,74,74,82,84,74,42,42	;Wall
+	DEFB 67,240,102,240,102,0,0,0,0	;Conveyor (unused)
+	DEFB 69,68,40,148,81,53,214,88,16	;Nasty 1 (unused)
+	DEFB 4,72,178,93,18,112,174,169,71	;Nasty 2
+	DEFB 5,255,255,202,101,146,40,130,0	;Extra
+	
+	DEFB 64	;Pixel y-coordinate * 2 (see 32872)
+	DEFB 0	;Animation frame (see 32873)
+	DEFB 0	;Direction and movement flags: facing right (see 32874)
+	DEFB 0	;Airborne status indicator (see 32875)
+	DEFW 23681	;Location in the attribute buffer at 23552: (4,1) (see 32876)
+	DEFB 0	;Jumping animation counter (see 32878)
+	
+	DEFB 0	;Direction (left)
+	DEFW 28691	;Location in the screen buffer at 28672: (0,19)
+	DEFB 1	;Length
+	
+	DEFB 2	;Border colour
+	
+	DEFB 0	;Unused
+	
+	DEFB 3	;Item 1 at (2,21)
+	DEFW 23637
+	DEFB 96
+	DEFB 255
+	DEFB 4	;Item 2 at (1,14)
+	DEFW 23598
+	DEFB 96
+	DEFB 255
+	DEFB 5	;Item 3 at (6,12)
+	DEFW 23756
+	DEFB 96
+	DEFB 255
+	DEFB 6	;Item 4 at (8,18)
+	DEFW 23826
+	DEFB 104
+	DEFB 255
+	DEFB 3	;Item 5 at (1,30)
+	DEFW 23614
+	DEFB 96
+	DEFB 255
+	DEFB 255	;Terminator
+	
+	DEFB 30	;Attribute
+	DEFB 255,255,248,143,136,145,170,145	;Graphic data
+	DEFB 170,149,138,133,144,145,213,185
+	DEFB 213,85,209,69,137,57,137,3
+	DEFB 168,171,170,171,138,137,255,255
+	DEFW 23980	;Location in the attribute buffer at 23552: (13,12)
+	DEFW 26796	;Location in the screen buffer at 24576: (13,12)
+	
+	DEFB 8,8,62,95,95,71,97,62	;Item graphic data
+	
+	DEFB 63	;Air
+	
+	DEFB 248 ;Game clock
+	
+	DEFB 70	;Horizontal guardian 1: y=7, initial x=9, 9<=x<=14, speed=normal
+	DEFW 23785
+	DEFB 96
+	DEFB 0
+	DEFB 233
+	DEFB 238
+	DEFB 194	;Horizontal guardian 2: y=10, initial x=12, 8<=x<=14, speed=slow
+	DEFW 23884
+	DEFB 104
+	DEFB 0
+	DEFB 72
+	DEFB 78
+	DEFB 67	;Horizontal guardian 3: y=13, initial x=8, 4<=x<=26, speed=normal
+	DEFW 23976
+	DEFB 104
+	DEFB 0
+	DEFB 164
+	DEFB 186
+	DEFB 5	;Horizontal guardian 4: y=5, initial x=18, 17<=x<=21, speed=normal
+	DEFW 23730
+	DEFB 96
+	DEFB 0
+	DEFB 177
+	DEFB 181
+	DEFB 255	;Terminator
+	
+	DEFB 0,0	;Unused
+	
+	DEFB 255,0,0,0,0,0,0	;Vertical guardian 1 (unused)
+	DEFB 0,0,0,0,0,0,0	;Vertical guardian 2 (unused)
+	DEFB 0,0,0,0,0,0,0	;Vertical guardian 3 (unused)
+	DEFB 0,0,0,0,0,0,0	;Vertical guardian 4 (unused)
+	
+	DEFB 0,0,0,0,0,0,0	;Unused
+	
+	DEFB 112,0,80,0,124,0,52,0	;Guardian graphic data
+	DEFB 62,0,62,0,24,0,60,0
+	DEFB 126,0,126,0,247,0,251,0
+	DEFB 60,0,118,0,110,0,119,0
+	DEFB 28,0,20,0,31,0,13,0
+	DEFB 15,128,15,128,6,0,15,0
+	DEFB 27,128,27,128,27,128,29,128
+	DEFB 15,0,6,0,6,0,7,0
+	DEFB 7,0,5,0,7,192,3,64
+	DEFB 3,224,3,224,1,128,3,192
+	DEFB 7,224,7,224,15,112,15,176
+	DEFB 3,192,7,96,6,224,7,112
+	DEFB 1,192,1,64,1,240,0,208
+	DEFB 0,248,0,248,0,96,0,240
+	DEFB 1,248,3,252,7,254,6,246
+	DEFB 0,248,1,218,3,14,3,132
+	DEFB 3,128,6,128,15,128,11,0
+	DEFB 31,0,31,0,6,0,15,0
+	DEFB 31,128,63,192,127,224,111,96
+	DEFB 31,0,91,128,112,192,33,192
+	DEFB 0,224,1,160,3,224,2,192
+	DEFB 7,192,7,192,1,128,3,192
+	DEFB 7,224,7,224,14,240,13,240
+	DEFB 3,192,6,224,7,96,14,224
+	DEFB 0,56,0,104,0,248,0,176
+	DEFB 1,240,1,240,0,96,0,240
+	DEFB 1,248,1,216,1,216,1,184
+	DEFB 0,240,0,96,0,96,0,224
+	DEFB 0,14,0,26,0,62,0,44
+	DEFB 0,124,0,124,0,24,0,60
+	DEFB 0,126,0,126,0,239,0,223
+	DEFB 0,60,0,110,0,118,0,238
