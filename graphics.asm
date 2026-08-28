@@ -1045,15 +1045,117 @@ Gfx_DeleteCharAtOldPos:
     ret
 
 ; -------------------------------------------------------------------
-; Disegna stringa
-; Input: HL = stringa, B = lunghezza
+; Gfx_PrintDirectText
+; Stampa una stringa direttamente in VRAM senza passare dalla ROM (rst $10).
+; Input:
+;   HL = Puntatore alla stringa di caratteri ASCII
+;   B  = Lunghezza della stringa
+;   D  = Riga (0..23)
+;   E  = Colonna (0..31)
 ; -------------------------------------------------------------------
-Gfx_PrintString:
-    ld   a, (hl)
-    rst  $10
+Gfx_PrintDirectText:
+    push af
+    push bc
+    push de
+    push hl
+    push ix
+
+.char_loop:
+    ld   a, (hl)               ; A = carattere ASCII
     inc  hl
-    djnz Gfx_PrintString
+    push hl
+    push bc
+    push de
+
+    ; 1. Calcola indirizzo bitmap nel font_buffer (font_buffer + A * 8)
+    ld   l, a
+    ld   h, 0
+    add  hl, hl                ; *2
+    add  hl, hl                ; *4
+    add  hl, hl                ; *8
+    ld   bc, font_buffer
+    add  hl, bc
+    push hl
+    pop  ix                    ; IX = font bitmap (8 byte)
+
+    ; 2. Calcola indirizzo VRAM scanline 0 per (Row D, Col E)
+    ; HighByte = $40 + (D & $18)
+    ld   a, d
+    and  $18
+    add  a, $40
+    ld   h, a
+
+    ; LowByte = ((D & 7) * 32) + E
+    ld   a, d
+    and  7
+    add  a, a                  ; *2
+    add  a, a                  ; *4
+    add  a, a                  ; *8
+    add  a, a                  ; *16
+    add  a, a                  ; *32
+    add  a, e                  ; + Col E
+    ld   l, a                  ; HL = VRAM address scanline 0
+
+    ; Copia le 8 scanline direttamente in VRAM
+    ld   a, (ix+0) : ld (hl), a : inc h
+    ld   a, (ix+1) : ld (hl), a : inc h
+    ld   a, (ix+2) : ld (hl), a : inc h
+    ld   a, (ix+3) : ld (hl), a : inc h
+    ld   a, (ix+4) : ld (hl), a : inc h
+    ld   a, (ix+5) : ld (hl), a : inc h
+    ld   a, (ix+6) : ld (hl), a : inc h
+    ld   a, (ix+7) : ld (hl), a
+
+    pop  de
+    pop  bc
+    pop  hl
+
+    inc  e                     ; Prossima colonna
+    djnz .char_loop
+
+    pop  ix
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
     ret
+
+; -------------------------------------------------------------------
+; Gfx_ClearScreenDirect
+; Pulisce integralmente tutta la memoria schermo (6144 pixel + 768 attributi)
+; direttamente in RAM senza mai invocare la ROM.
+; Input: A = Attributo colore di riempimento (es. 0 per nero, $07 per standard)
+; -------------------------------------------------------------------
+Gfx_ClearScreenDirect:
+    push af
+    push bc
+    push de
+    push hl
+    
+    ld   b, a                  ; B = colore attributi
+    
+    ; 1. Pulisce tutti i pixel a zero ($4000..$57FF)
+    ld   hl, $4000
+    ld   (hl), 0
+    ld   de, $4001
+    ld   bc, 6143
+    ldir
+    
+    ; 2. Imposta tutti gli attributi a B ($5800..$5AFF)
+    ld   hl, $5800
+    ld   (hl), b
+    ld   de, $5801
+    ld   bc, 767
+    ldir
+    
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
+    ret
+
+; Per compatibilità
+Gfx_PrintString: EQU Gfx_PrintDirectText
 
 ; -------------------------------------------------------------------
 ; Disegna il nome della stanza sotto la piattaforma di base (Riga 16)
@@ -1240,23 +1342,14 @@ Gfx_DrawTitleScreen:
     ; 1. Bordo hardware e schermo a nero
     xor  a
     out  ($fe), a              ; Bordo a nero
-    ld   hl, ATTR_P
-    ld   (hl), a               ; Paper/Ink = 0 (Nero)
-    call CLS                   ; Pulisce tutti i pixel e gli attributi a nero
-    ld   (hl), $07             ; Ripristina ATTR_P a $07
-    ld   a, $07
-    ld   (ATTR_T), a           ; Ripristina ATTR_T a $07
+    call Gfx_ClearScreenDirect ; Pulisce tutti i pixel e gli attributi a nero
 
     ; 2. Stampa riga 1: Titolo principale (Riga 1, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 1
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_banner_1
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 1
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 1 a Giallo Brillante ($5820)
     ld   hl, $5820
@@ -1268,15 +1361,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r1
 
     ; 3. Stampa riga 3: Sottotitolo (Riga 3, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 3
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_banner_2
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 3
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 3 a Ciano Brillante ($5860)
     ld   hl, $5860
@@ -1288,15 +1377,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r3
 
     ; 4. Stampa riga 4: Separatore (Riga 4, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 4
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_sep_line
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 4
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 4 a Blu ($5880)
     ld   hl, $5880
@@ -1331,15 +1416,11 @@ Gfx_DrawTitleScreen:
     call Gfx_SetEnemyColorAttributes
 
     ; 6. Stampa riga 10: Obiettivo (Riga 10, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 10
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_goal_str
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 10
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 10 a Verde Brillante ($5940)
     ld   hl, $5940
@@ -1351,15 +1432,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r10
 
     ; 7. Stampa riga 12: "PRESS ENTER TO START" (Riga 12, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 12
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_press_enter
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 12
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi iniziali riga 12 a Giallo Brillante ($5980)
     ld   hl, $5980
@@ -1371,15 +1448,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r12
 
     ; 8. Stampa riga 14: Separatore (Riga 14, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 14
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_sep_line
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 14
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 14 a Blu ($59C0)
     ld   hl, $59c0
@@ -1391,15 +1464,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r14
 
     ; 9. Stampa riga 15: Intestazione Controlli (Riga 15, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 15
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_controls_hdr
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 15
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 15 a Bianco Brillante ($59E0)
     ld   hl, $59e0
@@ -1411,15 +1480,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r15
 
     ; 10. Stampa riga 16: Controlli Sinistra / Destra (Riga 16, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 16
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_ctrl_left
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 16
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 16 a Giallo ($5A00)
     ld   hl, $5a00
@@ -1431,15 +1496,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r16
 
     ; 11. Stampa riga 17: Controlli Salto / Start (Riga 17, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 17
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_ctrl_jump
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 17
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 17 a Giallo ($5A20)
     ld   hl, $5a20
@@ -1451,15 +1512,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r17
 
     ; 12. Stampa riga 19: Separatore (Riga 19, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 19
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_sep_line
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 19
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 19 a Blu ($5A60)
     ld   hl, $5a60
@@ -1471,15 +1528,11 @@ Gfx_DrawTitleScreen:
     djnz .attr_r19
 
     ; 13. Stampa riga 20: Copyright (Riga 20, Colonna 0)
-    ld   a, 22
-    rst  $10
-    ld   a, 20
-    rst  $10
-    ld   a, 0
-    rst  $10
     ld   hl, title_copyright
     ld   b, 32
-    call Gfx_PrintString
+    ld   d, 20
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 20 a Ciano ($5A80)
     ld   hl, $5a80
@@ -1538,12 +1591,7 @@ Gfx_DrawGameOverScreen:
     ; 1. Bordo hardware e schermo a nero
     xor  a
     out  ($fe), a              ; Bordo a nero
-    ld   hl, ATTR_P
-    ld   (hl), a               ; Paper/Ink = 0 (Nero)
-    call CLS                   ; Pulisce tutti i pixel e gli attributi a nero
-    ld   (hl), $07             ; Ripristina ATTR_P a $07 (Inchiostro Bianco, Sfondo Nero)
-    ld   a, $07
-    ld   (ATTR_T), a           ; Ripristina ATTR_T a $07
+    call Gfx_ClearScreenDirect ; Pulisce tutti i pixel e gli attributi a nero
 
     ; 2. Disegna Willy (immobile, rivolto a destra) a X=124, Y=96
     ; 2a. Testa di Willy (8x8) a X=124, Y=96
@@ -1572,33 +1620,14 @@ Gfx_DrawGameOverScreen:
     call Gfx_SetEnemyColorAttributes
 
     ; 4. Stampa il Nome della Stanza a riga 16
-    ld   a, 22                 ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 16                 ; Riga 16
-    rst  $10
-    ld   a, 0                  ; Colonna 0
-    rst  $10
-    
-    ld   a, YELLOW             ; Inchiostro Giallo
-    call Gfx_Ink
-    
-    ld   hl, (room_ptr)        ; HL = indirizzo stanza corrente
-    ld   de, 128               ; Offset del nome stanza (32 byte)
-    add  hl, de
-    ld   b, 32
-    call Gfx_PrintString
+    call Gfx_PrintRoomName
 
     ; 5. Stampa la riga di stato a riga 18
-    ld   a, 22                 ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 18                 ; Riga 18
-    rst  $10
-    ld   a, 0                  ; Colonna 0
-    rst  $10
-    
     ld   hl, status_line       ; HL = indirizzo stringa di stato
     ld   b, 32                 ; B = 32 caratteri
-    call Gfx_PrintString
+    ld   d, 18
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; 6. Applica i colori agli attributi di riga 18 ($5A40)
     ld   hl, status_line_attrs
@@ -1681,19 +1710,11 @@ Gfx_DrawGameOverScreen:
     djnz .pause_after_foot
 
     ; 9. Solo DOPO la pausa, fa comparire GAME OVER al centro dello schermo a riga 5, colonna 11
-    ld   a, 22                 ; AT (22)
-    rst  $10
-    ld   a, 5                  ; Riga 5
-    rst  $10
-    ld   a, 11                 ; Colonna 11
-    rst  $10
-    
-    ld   a, RED                ; Inchiostro Rosso
-    call Gfx_Ink
-
     ld   hl, game_over_str
     ld   b, 9
-    call Gfx_PrintString
+    ld   d, 5
+    ld   e, 11
+    call Gfx_PrintDirectText
 
     ; Imposta attributo iniziale per GAME OVER (Rosso Brillante)
     ld   hl, $58ab             ; Riga 5, Colonna 11 ($5800 + 5*32 + 11 = $58AB)
@@ -1705,19 +1726,11 @@ Gfx_DrawGameOverScreen:
     djnz .init_go_attr
 
     ; 10. Fa comparire la domanda "VUOI CONTINUARE? Y/N" a riga 8, colonna 6
-    ld   a, 22                 ; AT (22)
-    rst  $10
-    ld   a, 8                  ; Riga 8
-    rst  $10
-    ld   a, 6                  ; Colonna 6
-    rst  $10
-    
-    ld   a, YELLOW             ; Inchiostro Giallo
-    call Gfx_Ink
-
     ld   hl, game_over_continue_str
     ld   b, 20
-    call Gfx_PrintString
+    ld   d, 8
+    ld   e, 6
+    call Gfx_PrintDirectText
 
     ; Imposta attributo per "VUOI CONTINUARE? Y/N" (Giallo Brillante)
     ld   hl, $5906             ; Riga 8, Colonna 6 ($5800 + 8*32 + 6 = $5906)
@@ -1755,12 +1768,7 @@ Gfx_DrawVictoryScreen:
     ; 1. Bordo hardware e schermo a nero
     xor  a
     out  ($fe), a              ; Bordo a nero
-    ld   hl, ATTR_P
-    ld   (hl), a               ; Paper/Ink = 0 (Nero)
-    call CLS                   ; Pulisce tutti i pixel e gli attributi a nero
-    ld   (hl), $07             ; Ripristina ATTR_P a $07 (Inchiostro Bianco, Sfondo Nero)
-    ld   a, $07
-    ld   (ATTR_T), a           ; Ripristina ATTR_T a $07
+    call Gfx_ClearScreenDirect ; Pulisce tutti i pixel e gli attributi a nero
 
     ; 2. Disegna Willy (immobile, rivolto a destra) a X=104, Y=96
     ; 2a. Testa di Willy (8x8) a X=104, Y=96
@@ -1779,33 +1787,14 @@ Gfx_DrawVictoryScreen:
     call Gfx_SetEnemyColorAttributes
 
     ; 3. Stampa il Nome della Stanza a riga 16
-    ld   a, 22                 ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 16                 ; Riga 16
-    rst  $10
-    ld   a, 0                  ; Colonna 0
-    rst  $10
-    
-    ld   a, YELLOW             ; Inchiostro Giallo
-    call Gfx_Ink
-    
-    ld   hl, (room_ptr)        ; HL = indirizzo stanza corrente
-    ld   de, 128               ; Offset del nome stanza (32 byte)
-    add  hl, de
-    ld   b, 32
-    call Gfx_PrintString
+    call Gfx_PrintRoomName
 
     ; 4. Stampa la riga di stato a riga 18
-    ld   a, 22                 ; Codice di controllo AT (22)
-    rst  $10
-    ld   a, 18                 ; Riga 18
-    rst  $10
-    ld   a, 0                  ; Colonna 0
-    rst  $10
-    
     ld   hl, status_line       ; HL = indirizzo stringa di stato
     ld   b, 32                 ; B = 32 caratteri
-    call Gfx_PrintString
+    ld   d, 18
+    ld   e, 0
+    call Gfx_PrintDirectText
 
     ; 5. Applica i colori agli attributi di riga 18 ($5A40)
     ld   hl, status_line_attrs
@@ -1898,19 +1887,11 @@ Gfx_DrawVictoryScreen:
     djnz .pause_after_walk
 
     ; 8. Stampa la scritta di sottotitolo " YOU HAVE WON!  " a riga 3, colonna 8
-    ld   a, 22                 ; AT (22)
-    rst  $10
-    ld   a, 3                  ; Riga 3
-    rst  $10
-    ld   a, 8                  ; Colonna 8
-    rst  $10
-    
-    ld   a, CYAN               ; Inchiostro Ciano
-    call Gfx_Ink
-
     ld   hl, victory_sub_str
     ld   b, 16
-    call Gfx_PrintString
+    ld   d, 3
+    ld   e, 8
+    call Gfx_PrintDirectText
 
     ; Imposta attributi riga 3 (Ciano Brillante)
     ld   hl, $5868             ; Riga 3, Colonna 8 ($5800 + 3*32 + 8 = $5868)
@@ -1922,19 +1903,11 @@ Gfx_DrawVictoryScreen:
     djnz .init_sub_attr
 
     ; 9. Stampa la scritta "CONGRATULATIONS!" a riga 5, colonna 8
-    ld   a, 22                 ; AT (22)
-    rst  $10
-    ld   a, 5                  ; Riga 5
-    rst  $10
-    ld   a, 8                  ; Colonna 8
-    rst  $10
-    
-    ld   a, YELLOW             ; Inchiostro Giallo
-    call Gfx_Ink
-
     ld   hl, victory_str
     ld   b, 16
-    call Gfx_PrintString
+    ld   d, 5
+    ld   e, 8
+    call Gfx_PrintDirectText
 
     ; Imposta attributo iniziale per "CONGRATULATIONS!" (Giallo Brillante)
     ld   hl, $58a8             ; Riga 5, Colonna 8 ($5800 + 5*32 + 8 = $58A8)
@@ -1946,19 +1919,11 @@ Gfx_DrawVictoryScreen:
     djnz .init_vic_attr
 
     ; 10. Stampa la richiesta "  PLAY AGAIN? Y/N   " a riga 8, colonna 6
-    ld   a, 22                 ; AT (22)
-    rst  $10
-    ld   a, 8                  ; Riga 8
-    rst  $10
-    ld   a, 6                  ; Colonna 6
-    rst  $10
-    
-    ld   a, GREEN              ; Inchiostro Verde
-    call Gfx_Ink
-
     ld   hl, victory_continue_str
     ld   b, 20
-    call Gfx_PrintString
+    ld   d, 8
+    ld   e, 6
+    call Gfx_PrintDirectText
 
     ; Imposta attributo per "  PLAY AGAIN? Y/N   " (Verde Brillante)
     ld   hl, $5906             ; Riga 8, Colonna 6 ($5800 + 8*32 + 6 = $5906)

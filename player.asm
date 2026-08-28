@@ -227,19 +227,6 @@ movePlayer_left:
 ; Clamp sinistra: forzatura al limite minimo
 ; ---------------------------------------------------------------
 .clamp_left:
-    ; Controlla se c'è una stanza a sinistra
-    ld   hl, (room_ptr)
-    ld   de, 235           ; Offset per stanza a sinistra
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza a sinistra
-    cp   $FF
-    jr   z, .no_left_transition
-    
-    ; C'è una stanza a sinistra!
-    ld   c, PLAYER_MAX_X   ; Posiziona Willy a destra della nuova stanza
-    jp   TriggerRoomChange ; Salta alla transizione (non ritorna qui)
-    
-.no_left_transition:
     push bc
     ld   c, PLAYER_MIN_X
     call CheckWillyWallCollision
@@ -301,19 +288,6 @@ movePlayer_right:
 ; Clamp destro: forzatura al limite massimo
 ; ---------------------------------------------------------------
 .clamp_right:
-    ; Controlla se c'è una stanza a destra
-    ld   hl, (room_ptr)
-    ld   de, 236           ; Offset per stanza a destra
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza a destra
-    cp   $FF
-    jr   z, .no_right_transition
-    
-    ; C'è una stanza a destra!
-    ld   c, PLAYER_MIN_X   ; Posiziona Willy a sinistra della nuova stanza
-    jp   TriggerRoomChange ; Salta alla transizione
-    
-.no_right_transition:
     push bc
     ld   a, PLAYER_MAX_X
     add  a, 7
@@ -323,6 +297,7 @@ movePlayer_right:
     jr   c, save_x         ; Se collide al limite, mantieni la posizione precedente
     
     ld   c, PLAYER_MAX_X
+    jr   save_x
 
 ; ===============================================================
 ; Salvataggio posizione finale

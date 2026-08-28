@@ -35,9 +35,8 @@ Main:
     ld   hl, $8400 
     ld   (UDG), hl
 
-    ld   hl, ATTR_P
-    ld   (hl), $07
-    call CLS
+    ld   a, $07
+    call Gfx_ClearScreenDirect
 
     call SetupIM2
 
@@ -224,12 +223,7 @@ Main_loop:
     ; 2. Cancella lo schermo a nero (imposta bordo e schermo a nero)
     xor  a
     out  ($fe), a              ; Imposta colore bordo hardware a nero
-    ld   hl, ATTR_P
-    ld   (hl), a               ; Paper = Nero, Ink = Nero ($00)
-    call CLS                   ; Pulisce il display RAM e imposta gli attributi a nero
-    ld   (hl), $07             ; Ripristina ATTR_P a $07 (Inchiostro Bianco, Sfondo Nero)
-    ld   a, $07
-    ld   (ATTR_T), a           ; Ripristina ATTR_T a $07
+    call Gfx_ClearScreenDirect ; Pulisce il display RAM e imposta gli attributi a nero
 
     ; 3. Pausa a schermo nero (~0.5 secondi per respawn normale)
     ld   b, 25
@@ -349,12 +343,7 @@ ShowTitleScreen:
     ; 5. Pulisce completamente l'intero schermo e gli attributi (cancella totalmente il Title Screen)
     xor  a
     out  ($fe), a              ; Bordo a nero
-    ld   hl, ATTR_P
-    ld   (hl), a               ; Paper/Ink = 0 (Nero)
-    call CLS                   ; Pulisce integralmente tutta la memoria pixel (6144B) e attributi (768B)
-    ld   (hl), $07             ; Ripristina ATTR_P a $07
-    ld   a, $07
-    ld   (ATTR_T), a           ; Ripristina ATTR_T a $07
+    call Gfx_ClearScreenDirect ; Pulisce integralmente tutta la memoria pixel (6144B) e attributi (768B)
 
     ; 6. Ripristina integralmente lo stato iniziale della partita (vite, item, stanze, tempo)
     call ResetFullGameState
@@ -528,12 +517,7 @@ TriggerGameOver:
     ; - Cancella lo schermo a nero prima del caricamento
     xor  a
     out  ($fe), a
-    ld   hl, ATTR_P
-    ld   (hl), a
-    call CLS
-    ld   (hl), $07
-    ld   a, $07
-    ld   (ATTR_T), a
+    call Gfx_ClearScreenDirect
 
     ; - Ricarica e riavvia la stanza corrente mantenendo tutti gli items raccolti
     jp   LoadRoomAndRestart
@@ -774,9 +758,8 @@ TriggerPortalTransition:
     ld   (on_ground), a
 
     ; 5. Pulisci lo schermo e avvia la nuova stanza
-    ld   hl, ATTR_P
-    ld   (hl), $07
-    call CLS
+    ld   a, $07
+    call Gfx_ClearScreenDirect
 
     jp   LoadRoomAndRestart
 
@@ -794,9 +777,8 @@ TriggerPortalTransition:
     ld   (game_objective_completed), a
     ld   a, 1
     ld   (on_ground), a
-    ld   hl, ATTR_P
-    ld   (hl), $07
-    call CLS
+    ld   a, $07
+    call Gfx_ClearScreenDirect
     jp   LoadRoomAndRestart
     ENDIF
 
@@ -925,12 +907,7 @@ ResetFullGameState:
     ; Pulisce completamente lo schermo e ripristina gli attributi di default
     xor  a
     out  ($fe), a              ; Bordo a nero
-    ld   hl, ATTR_P
-    ld   (hl), a               ; Paper/Ink = 0 (Nero)
-    call CLS                   ; Pulisce tutta la memoria pixel (6144B) e attributi (768B)
-    ld   (hl), $07             ; Ripristina ATTR_P a $07 (Inchiostro Bianco, Sfondo Nero)
-    ld   a, $07
-    ld   (ATTR_T), a           ; Ripristina ATTR_T a $07
+    call Gfx_ClearScreenDirect ; Pulisce tutta la memoria pixel (6144B) e attributi (768B)
 
     ; Ripristina il numero di vite iniziali
     ld   a, INITIAL_LIVES

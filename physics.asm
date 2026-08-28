@@ -548,18 +548,6 @@ Phys_ApplyGravity:
     
 .no_ramp_landing:
     pop  bc
-    ; Se Willy sta cadendo oltre il bordo inferiore (new_Y >= 113) e c'è una stanza sotto,
-    ; salta il controllo del terreno a riga 15 ed esegui la transizione verso la nuova stanza!
-    ld   a, b              ; B = new_Y
-    cp   113
-    jr   c, .check_floor_collision
-    
-    ld   hl, (room_ptr)
-    ld   de, 238           ; Offset per stanza sotto
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza sotto
-    cp   $FF
-    jr   nz, .no_collision_checks
 
 .check_floor_collision:
     ; --- CONTROLLO COLLISIONE CON IL TERRENO DURANTE LA CADUTA ---
@@ -644,20 +632,7 @@ Phys_ApplyGravity:
     bit  7, a              ; Se Y è negativo (sotto 0)
     jr   z, .check_max
     
-    ; Willy sta andando sopra il bordo superiore (Y < 0)
-    ; Controlla se c'è una stanza sopra
-    ld   hl, (room_ptr)
-    ld   de, 237           ; Offset per stanza sopra
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza sopra
-    cp   $FF
-    jr   z, .no_up_transition
-    
-    ; C'è una stanza sopra!
-    ld   b, 96             ; Posiziona Willy a Y=96 (sopra il pavimento a riga 14 della nuova stanza)
-    jp   TriggerRoomChange
-    
-.no_up_transition:
+    ; Willy tocca il bordo superiore (Y < 0)
     ld   b, 0
     xor  a
     ld   (velocity_y), a
@@ -667,23 +642,9 @@ Phys_ApplyGravity:
 
 .check_max:
     ld   a, b
-    cp   113               ; Se Y >= 113, Willy sta cadendo sotto il bordo inferiore
+    cp   113               ; Se Y >= 113, Willy tocca il limite inferiore
     jr   c, .save_ok
     
-    ; Willy sta andando sotto il bordo inferiore (Y >= 113)
-    ; Controlla se c'è una stanza sotto
-    ld   hl, (room_ptr)
-    ld   de, 238           ; Offset per stanza sotto
-    add  hl, de
-    ld   a, (hl)           ; A = ID stanza sotto
-    cp   $FF
-    jr   z, .no_down_transition
-    
-    ; C'è una stanza sotto!
-    ld   b, 4              ; Posiziona Willy a Y=4 (in cima alla nuova stanza, evita re-triggering di Y<=0)
-    jp   TriggerRoomChange
-    
-.no_down_transition:
     ld   b, 112
     xor  a
     ld   (velocity_y), a

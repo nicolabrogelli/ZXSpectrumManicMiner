@@ -285,9 +285,8 @@ PerformRoomChangeCommon:
     ld   (velocity_y), a
     
     ; Pulisci lo schermo e ricarica la stanza
-    ld   hl, ATTR_P
-    ld   (hl), $07
-    call CLS
+    ld   a, $07
+    call Gfx_ClearScreenDirect
     
     jp   LoadRoomAndRestart
 
@@ -439,9 +438,8 @@ PerformDirectRoomJump:
     ld   (transition_active), a
     ld   (velocity_y), a
 
-    ld   hl, ATTR_P
-    ld   (hl), $07
-    call CLS
+    ld   a, $07
+    call Gfx_ClearScreenDirect
 
     ld   sp, $fdf0
     jp   LoadRoomAndRestart
@@ -605,9 +603,8 @@ TriggerRoomChange:
     ld   (transition_active), a
     
     ; Pulisci lo schermo
-    ld   hl, ATTR_P
-    ld   (hl), $07
-    call CLS
+    ld   a, $07
+    call Gfx_ClearScreenDirect
     
     ; Reset dello stack pointer prima di riavviare la stanza
     ld   sp, $fdf0
