@@ -13,7 +13,8 @@ RoomsStart:
     include "rooms/EugeneLair.asm"                  ; ID 04
     include "rooms/ProcessingPlant.asm"             ; ID 05
     include "rooms/TheVat.asm"                      ; ID 06
-    
+    include "rooms/MinerWillymeetstheKongBeast.asm" ; ID 07
+    include "rooms/WackyAmoebatrons.asm"            ; ID 08
 
     include "data/datasprite.asm"
 

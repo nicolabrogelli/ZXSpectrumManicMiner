@@ -618,6 +618,9 @@ RoomsListTable:
 .EugeneLairLayout:                 dw EugeneLairLayout                 ; 04
 .ProcessingPlantLayout:            dw ProcessingPlantLayout            ; 05
 .TheVatLayout:                     dw TheVatLayout                     ; 06
+.MinerWillymeetstheKongBeastLayout: dw MinerWillymeetstheKongBeastLayout ; 07
+.WackyAmoebatronsLayout:           dw WackyAmoebatronsLayout           ; 08
+
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2
 

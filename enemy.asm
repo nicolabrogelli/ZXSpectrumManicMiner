@@ -140,16 +140,57 @@ Enemy_LoadRoom:
     ld   hl, (room_ptr)
     ld   de, OFFSET_V_GUARDIANS
     add  hl, de
-    ld   a, (hl)
+
+    ld   b, 4                      ; Fino a 4 guardiani verticali
+.load_v_loop:
+    ld   a, (hl)                   ; Byte 0: Attributo / Colore
     cp   $FF
-    jr   z, .done_v_guardians
+    jr   z, .done_v_guardians      ; $FF = terminatore
     or   a
-    jr   z, .done_v_guardians
+    jr   z, .done_v_guardians      ; 0 = nessun guardiano
 
     ; Slot attivo per guardiano verticale
     ld   (ix+0), $C0               ; Active = 1, Vertical = 1
-    ld   (ix+10), a                ; Color
-    ; (Imposta coordinate verticali se presenti in livelli futuri)
+    ld   (ix+10), a                ; Color / Attributo
+
+    inc  hl
+    ld   a, (hl)                   ; Byte 1: Graphic index (0..3)
+    and  3
+    add  a, 4                      ; Frame 4..7 in OFFSET_GUARDIAN_GRAPHICS
+    ld   (ix+1), a                 ; Frame index (4..7)
+
+    inc  hl
+    ld   a, (hl)                   ; Byte 2: Initial Y (pixel)
+    ld   (ix+3), a                 ; Current Y
+
+    inc  hl
+    ld   a, (hl)                   ; Byte 3: X colonna (0..31)
+    and  31
+    add  a, a : add a, a : add a, a ; * 8 -> X pixel
+    ld   (ix+2), a                 ; Current X
+
+    inc  hl
+    ld   a, (hl)                   ; Byte 4: Direction / Speed
+    and  3
+    jr   nz, .v_step_ok
+    ld   a, 1
+.v_step_ok:
+    ld   (ix+7), a                 ; Speed step (1 o 2 pixel per frame)
+    ld   a, 2                      ; Direction iniziale = 2 (Down)
+    ld   (ix+6), a
+
+    inc  hl
+    ld   a, (hl)                   ; Byte 5: Min Limit Y (pixel)
+    ld   (ix+4), a                 ; Min Limit Y
+
+    inc  hl
+    ld   a, (hl)                   ; Byte 6: Max Limit Y (pixel)
+    ld   (ix+5), a                 ; Max Limit Y
+
+    inc  hl                        ; Prossimo guardiano verticale (7 byte per record)
+    ld   de, 11
+    add  ix, de
+    djnz .load_v_loop
 
 .done_v_guardians:
     pop  ix
@@ -325,26 +366,38 @@ Enemy_DrawSingleSlot:
     push hl
     push ix
 
-    ; 1. Determina il frame di animazione (0..7)
-    ; Nei dati di Manic Miner:
-    ;   Frame 0..3 = Movimento verso DESTRA
-    ;   Frame 4..7 = Movimento verso SINISTRA
+    ; 1. Salva subito le coordinate X e Y dal record IX
+    ld   c, (ix+2)                 ; C = Current X
+    ld   b, (ix+3)                 ; B = Current Y
+
+    ; Controlla se è guardiano verticale
+    ld   a, (ix+0)
+    and  $40                       ; Vertical?
+    jr   nz, .v_frame
+
+    ; Guardiano Orizzontale:
     ld   a, (ix+7)                 ; Anim subframe (0..3)
     and  3
-    ld   b, a                      ; B = Anim subframe
+    ld   e, a                      ; E = Anim subframe
 
     ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
     cp   1                         ; Sinistra?
     jr   z, .left_frames
 
     ; Movimento a Destra: Frame 0..3
-    ld   a, b
+    ld   a, e
     jr   .got_frame_idx
 
 .left_frames:
     ; Movimento a Sinistra: Frame 4..7
     ld   a, 4
-    add  a, b
+    add  a, e
+    jr   .got_frame_idx
+
+.v_frame:
+    ; Guardiano Verticale: usa il frame salvato in (ix+1) (4..7)
+    ld   a, (ix+1)
+    and  7
 
 .got_frame_idx:
     ; Frame index in A (0..7). Calcola Offset = Frame * 32
@@ -360,20 +413,18 @@ Enemy_DrawSingleSlot:
     add  hl, de
     ld   de, (room_ptr)
     add  hl, de                    ; HL = puntatore ai 32 byte del frame bitmap
+
+    ld   a, (ix+10)                ; A = Color Attributo
+    push af                        ; Salva colore nello stack
+
     push hl
     pop  ix                        ; IX = frame bitmap pointer
 
-    ; 2. Coordinate e colore
-    pop  iy                        ; IY = ActiveEnemies slot
-    push iy
-
-    ld   c, (iy+2)                 ; C = Current X
-    ld   b, (iy+3)                 ; B = Current Y
-    ld   a, (iy+10)                ; A = Color Attributo
-
-    ; 3. Disegna sprite 16x16 e imposta attributi colore
+    ; 2. Disegna sprite 16x16 alle coordinate (C=X, B=Y)
     call Gfx_DrawPixelSprite16x16
-    ld   a, (iy+10)                ; A = Color Attributo
+
+    ; 3. Imposta gli attributi colore alle coordinate (C=X, B=Y)
+    pop  af                        ; A = Color Attributo
     call Gfx_SetEnemyColorAttributes
 
     pop  ix
@@ -418,16 +469,16 @@ Enemy_Update:
     and  $80                       ; Active?
     jp   z, .next
 
-    ; 1. Aggiorna Anim State (0..3)
+    ; 1. Determina se orizzontale o verticale
+    ld   a, (ix+0)
+    and  $40                       ; Vertical?
+    jp   nz, .vertical
+
+    ; Aggiorna Anim State per guardiano orizzontale (0..3)
     ld   a, (ix+7)
     inc  a
     and  3
     ld   (ix+7), a
-
-    ; 2. Determina se orizzontale o verticale
-    ld   a, (ix+0)
-    and  $40                       ; Vertical?
-    jp   nz, .vertical
 
 .horizontal:
     ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
@@ -467,40 +518,48 @@ Enemy_Update:
     jp   .next
 
 .vertical:
+    ld   a, (ix+7)                 ; Step in pixel (1 o 2)
+    and  3
+    jr   nz, .v_step_ok
+    ld   a, 1
+.v_step_ok:
+    ld   c, a                      ; C = Step
+
     ld   a, (ix+6)                 ; Direction (1 = Up, 2 = Down)
     cp   1
     jr   nz, .vert_down
 
 .vert_up:
     ld   a, (ix+3)                 ; Current Y
-    sub  2
-    cp   (ix+4)
+    sub  c                         ; Muovi verso l'alto
+    cp   (ix+4)                    ; Min Limit Y
     jr   z, .v_rev_down
     jr   c, .v_rev_down
     ld   (ix+3), a
     jp   .next
 
 .v_rev_down:
-    ld   a, (ix+4)
+    ld   a, (ix+4)                 ; Min Limit Y
     ld   (ix+3), a
-    ld   a, 2
+    ld   a, 2                      ; Cambia direzione a Down
     ld   (ix+6), a
     jp   .next
 
 .vert_down:
     ld   a, (ix+3)                 ; Current Y
-    add  a, 2
-    cp   (ix+5)
+    add  a, c                      ; Muovi verso il basso
+    cp   (ix+5)                    ; Max Limit Y
     jr   z, .v_rev_up
     jr   nc, .v_rev_up
     ld   (ix+3), a
     jp   .next
 
 .v_rev_up:
-    ld   a, (ix+5)
+    ld   a, (ix+5)                 ; Max Limit Y
     ld   (ix+3), a
-    ld   a, 1
+    ld   a, 1                      ; Cambia direzione a Up
     ld   (ix+6), a
+    jp   .next
 
 .next:
     ld   de, 11
@@ -602,6 +661,11 @@ CheckCollision:
     ; ---------------------------------------------------------------
     push bc                        ; Salva contatore nemici (B)
 
+    ; Controlla se è guardiano verticale
+    ld   a, (ix+0)
+    and  $40                       ; Vertical?
+    jr   nz, .col_guard_vert
+
     ld   a, (ix+7)                 ; Anim subframe (0..3)
     and  3
     ld   c, a
@@ -616,6 +680,12 @@ CheckCollision:
     ; Frame Sinistra: Frame = 4 + Subframe (4..7)
     ld   a, 4
     add  a, c
+    jr   .calc_guard_ptr
+
+.col_guard_vert:
+    ; Guardiano verticale: usa il frame salvato in (ix+1) (4..7)
+    ld   a, (ix+1)
+    and  7
 
 .calc_guard_ptr:
     ; Offset = Frame * 32
