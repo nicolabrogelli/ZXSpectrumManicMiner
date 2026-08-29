@@ -160,6 +160,7 @@ Main_loop:
     call Phys_ApplyGravity
     call Enemy_Update
     call Items_CheckCollision
+    call Kong_CheckSwitches
     
     ; Controlla passaggio alla stanza successiva tramite Portale (dopo aver raccolto tutti gli item)
     call CheckPortalTransition

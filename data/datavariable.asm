@@ -77,6 +77,8 @@ room_has_v_guardians:  db 0
 willy_safety_timer:    db 0
 willy_needs_redraw:    db 0
 willy_on_ramp:         db 0 ; 1 = Willy posizionato su rampa (debug)
+kong_switch_left:      db 0 ; 1 = Interruttore sinistro premuto (varco aperto nel muro)
+kong_switch_right:     db 0 ; 1 = Interruttore destro premuto (Kong caduto)
 
 ; Gestione Pavimenti Sgretolabili (Crumbling Floor)
 crumbling_grid:         .512 db 0 ; Griglia 16x32 stadi di sgretolamento (0 = intatto, 1..8 = stadi)

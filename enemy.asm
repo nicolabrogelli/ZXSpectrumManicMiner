@@ -275,13 +275,18 @@ Enemy_LoadRoom:
     ld   (ix+2), 120               ; X = 120 (Colonna 15)
     ld   (ix+3), 0                 ; Y = 0 (Ledge in alto)
     ld   (ix+4), 0                 ; Min Y = 0
-    ld   (ix+5), 88                ; Max Y = 88
+    ld   (ix+5), 88                ; Max Limit Y = 88
     ld   (ix+6), 0                 ; Kong status = 0 (on ledge)
     ld   (ix+7), 0
     ld   (ix+8), $FF               ; Old X
     ld   (ix+9), $FF               ; Old Y
     pop  af
     ld   (ix+10), a                ; Colore Kong
+
+    ; Resetta lo stato degli interruttori di Kong
+    xor  a
+    ld   (kong_switch_left), a
+    ld   (kong_switch_right), a
 
 .not_kong:
     pop  ix
@@ -1137,5 +1142,156 @@ CheckCollision:
     pop  bc
     pop  ix
     scf                            ; Carry = 1 (COLLISIONE CONFERMATA!)
+    ret
+
+; -------------------------------------------------------------------
+; Kong_CheckSwitches
+; Controlla se Willy tocca uno dei due interruttori speciali (tile Extra)
+; nelle caverne di Kong (Miner Willy meets the Kong Beast e Return of the Alien Kong Beast):
+; 1. Interruttore Sinistro (Row 0, Col 6): apre il varco nel muro a (Row 11-12, Col 17) ed estende il percorso del guardiano 2.
+; 2. Interruttore Destro (Row 0, Col 18): fa crollare il pavimento sotto Kong Beast (Row 2, Col 15-16), facendolo cadere (+100 punti).
+; -------------------------------------------------------------------
+Kong_CheckSwitches:
+    push hl
+    push de
+    push bc
+    push ix
+
+    ; 1. Controlla se la stanza corrente è una stanza Kong
+    ld   hl, (room_ptr)
+    ld   de, MinerWillymeetstheKongBeastLayout
+    or   a
+    sbc  hl, de
+    jr   z, .in_kong_room
+
+    ld   hl, (room_ptr)
+    ld   de, ReturnoftheAlienKongBeastLayout
+    or   a
+    sbc  hl, de
+    jp   nz, .done_switches
+
+.in_kong_room:
+    ; Leggi coordinate di Willy
+    ld   bc, (PlayerPos)           ; C = WillyX, B = WillyY
+    ld   a, b
+    cp   16                        ; Willy deve trovarsi nella parte alta (Row 0 o 1)
+    jp   nc, .done_switches
+
+    ; ---------------------------------------------------------------
+    ; 2. CONTROLLO INTERRUTTORE SINISTRO (Row 0, Col 6 -> X = 48)
+    ; ---------------------------------------------------------------
+    ld   a, (kong_switch_left)
+    or   a
+    jr   nz, .check_right_switch
+
+    ; Willy X range [40 .. 56]
+    ld   a, c
+    cp   40
+    jr   c, .check_right_switch
+    cp   57
+    jr   nc, .check_right_switch
+
+    ; --- Willy tocca l'interruttore sinistro! ---
+    ld   a, 1
+    ld   (kong_switch_left), a
+
+    ; A) Mostra l'interruttore azionato a schermo (Row 0, Col 6)
+    ld   h, 0
+    ld   l, 48
+    call Gfx_GetScreenAddr         ; HL = scanline 0 di (Row 0, Col 6)
+    inc  h : inc h : inc h : inc h : inc h
+    ld   (hl), 8
+    inc  h
+    ld   (hl), 6
+    inc  h
+    ld   (hl), 6
+
+    ; B) Rimuovi il muro a (Row 11, Col 17) e (Row 12, Col 17) da unpacked_layout
+    ld   hl, unpacked_layout + (11 * 32 + 17)
+    ld   (hl), 0
+    ld   hl, unpacked_layout + (12 * 32 + 17)
+    ld   (hl), 0
+
+    ; C) Ridisegna le celle (Row 11, Col 17) e (Row 12, Col 17) come sfondo
+    ld   b, 11
+    ld   c, 17
+    ld   ix, (room_ptr)
+    ld   de, OFFSET_TILES
+    add  ix, de
+    call Gfx_DrawTile
+
+    ld   b, 12
+    ld   c, 17
+    ld   ix, (room_ptr)
+    ld   de, OFFSET_TILES
+    add  ix, de
+    call Gfx_DrawTile
+
+    ; D) Estendi il limite destro del guardiano 2 (Slot 1 di ActiveEnemies) a Col 28 (X = 224)
+    ld   hl, ActiveEnemies + 11 + 5
+    ld   (hl), 224
+
+.check_right_switch:
+    ; ---------------------------------------------------------------
+    ; 3. CONTROLLO INTERRUTTORE DESTRO (Row 0, Col 18 -> X = 144)
+    ; ---------------------------------------------------------------
+    ld   a, (kong_switch_right)
+    or   a
+    jr   nz, .done_switches
+
+    ; Willy X range [136 .. 152]
+    ld   a, c
+    cp   136
+    jr   c, .done_switches
+    cp   153
+    jr   nc, .done_switches
+
+    ; --- Willy tocca l'interruttore destro! ---
+    ld   a, 1
+    ld   (kong_switch_right), a
+
+    ; A) Mostra l'interruttore azionato a schermo (Row 0, Col 18)
+    ld   h, 0
+    ld   l, 144
+    call Gfx_GetScreenAddr         ; HL = scanline 0 di (Row 0, Col 18)
+    inc  h : inc h : inc h : inc h : inc h
+    ld   (hl), 8
+    inc  h
+    ld   (hl), 6
+    inc  h
+    ld   (hl), 6
+
+    ; B) Rimuovi il pavimento sotto Kong a (Row 2, Col 15) e (Row 2, Col 16) da unpacked_layout
+    ld   hl, unpacked_layout + (2 * 32 + 15)
+    ld   (hl), 0
+    ld   hl, unpacked_layout + (2 * 32 + 16)
+    ld   (hl), 0
+
+    ; C) Ridisegna le celle (Row 2, Col 15) e (Row 2, Col 16) come sfondo
+    ld   b, 2
+    ld   c, 15
+    ld   ix, (room_ptr)
+    ld   de, OFFSET_TILES
+    add  ix, de
+    call Gfx_DrawTile
+
+    ld   b, 2
+    ld   c, 16
+    ld   ix, (room_ptr)
+    ld   de, OFFSET_TILES
+    add  ix, de
+    call Gfx_DrawTile
+
+    ; D) Fai cadere il Kong Beast (Slot 3 di ActiveEnemies) e aggiungi 100 punti
+    ld   ix, ActiveEnemies + 33
+    ld   (ix+6), 1                 ; Status = 1 (falling)
+    ld   (ix+3), 0                 ; Y = 0
+    call Score_AddItemPoints
+
+.done_switches:
+    pop  ix
+    pop  bc
+    pop  de
+    pop  hl
     ret
 
