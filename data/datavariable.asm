@@ -73,6 +73,7 @@ player_drawn_pos:      db $ff, $ff
 player_old_dir:        db $ff
 player_old_body:       db $ff
 enemy_was_updated:     db 1
+room_has_v_guardians:  db 0
 willy_safety_timer:    db 0
 willy_needs_redraw:    db 0
 willy_on_ramp:         db 0 ; 1 = Willy posizionato su rampa (debug)

@@ -141,6 +141,21 @@ Enemy_LoadRoom:
     ld   de, OFFSET_V_GUARDIANS
     add  hl, de
 
+    ld   a, (hl)
+    cp   $FF
+    jr   z, .no_v_guardians
+    or   a
+    jr   z, .no_v_guardians
+    ld   a, 1
+    ld   (room_has_v_guardians), a
+    jr   .has_v_guardians
+
+.no_v_guardians:
+    xor  a
+    ld   (room_has_v_guardians), a
+    jr   .done_v_guardians
+
+.has_v_guardians:
     ld   b, 4                      ; Fino a 4 guardiani verticali
 .load_v_loop:
     ld   a, (hl)                   ; Byte 0: Attributo / Colore
@@ -155,9 +170,8 @@ Enemy_LoadRoom:
 
     inc  hl
     ld   a, (hl)                   ; Byte 1: Graphic index (0..3)
-    and  3
-    add  a, 4                      ; Frame 4..7 in OFFSET_GUARDIAN_GRAPHICS
-    ld   (ix+1), a                 ; Frame index (4..7)
+    and  3                         ; Frame 0..3 nella prima metà dei dati grafici
+    ld   (ix+1), a                 ; Frame index (0..3)
 
     inc  hl
     ld   a, (hl)                   ; Byte 2: Initial Y (pixel)
@@ -380,24 +394,29 @@ Enemy_DrawSingleSlot:
     and  3
     ld   e, a                      ; E = Anim subframe
 
+    ld   a, (room_has_v_guardians)
+    or   a
+    jr   nz, .h_use_second_half    ; Se ci sono guardiani verticali, i guardiani orizzontali usano la SECONDA METÀ (frame 4..7)!
+
     ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
     cp   1                         ; Sinistra?
     jr   z, .left_frames
 
-    ; Movimento a Destra: Frame 0..3
+    ; Movimento a Destra: Frame 0..3 (prima metà)
     ld   a, e
     jr   .got_frame_idx
 
+.h_use_second_half:
 .left_frames:
-    ; Movimento a Sinistra: Frame 4..7
+    ; Movimento a Sinistra (o orizzontale in stanze con guardiani verticali): Frame 4..7 (seconda metà)
     ld   a, 4
     add  a, e
     jr   .got_frame_idx
 
 .v_frame:
-    ; Guardiano Verticale: usa il frame salvato in (ix+1) (4..7)
+    ; Guardiano Verticale: usa il frame salvato in (ix+1) (0..3, prima metà)
     ld   a, (ix+1)
-    and  7
+    and  3
 
 .got_frame_idx:
     ; Frame index in A (0..7). Calcola Offset = Frame * 32
@@ -670,22 +689,27 @@ CheckCollision:
     and  3
     ld   c, a
 
+    ld   a, (room_has_v_guardians)
+    or   a
+    jr   nz, .col_h_second_half    ; Se ci sono guardiani verticali, orizzontali usano la seconda metà (frame 4..7)
+
     ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
     cp   1
     jr   z, .guard_left_frame
-    ; Frame Destra: Frame = Subframe (0..3)
+    ; Frame Destra: Frame = Subframe (0..3, prima metà)
     ld   a, c
     jr   .calc_guard_ptr
+.col_h_second_half:
 .guard_left_frame:
-    ; Frame Sinistra: Frame = 4 + Subframe (4..7)
+    ; Frame Sinistra (o stanza con guardiani verticali): Frame = 4 + Subframe (4..7, seconda metà)
     ld   a, 4
     add  a, c
     jr   .calc_guard_ptr
 
 .col_guard_vert:
-    ; Guardiano verticale: usa il frame salvato in (ix+1) (4..7)
+    ; Guardiano verticale: usa il frame salvato in (ix+1) (0..3, prima metà)
     ld   a, (ix+1)
-    and  7
+    and  3
 
 .calc_guard_ptr:
     ; Offset = Frame * 32
