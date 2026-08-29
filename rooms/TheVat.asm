@@ -90,23 +90,23 @@ TheVatLayout:
 	
 	DEFB 0	;Unused
 	
-	DEFB 19	;Item 1 at (3,30)
+	DEFB 3	;Item 1 at (3,30)
 	DEFW 23678
 	DEFB 96
 	DEFB 255
-	DEFB 20	;Item 2 at (6,20)
+	DEFB 4	;Item 2 at (6,20)
 	DEFW 23764
 	DEFB 96
 	DEFB 255
-	DEFB 21	;Item 3 at (7,27)
+	DEFB 5	;Item 3 at (7,27)
 	DEFW 23803
 	DEFB 96
 	DEFB 255
-	DEFB 22	;Item 4 at (10,19)
+	DEFB 6	;Item 4 at (10,19)
 	DEFW 23891
 	DEFB 104
 	DEFB 255
-	DEFB 19	;Item 5 at (11,30)
+	DEFB 3	;Item 5 at (11,30)
 	DEFW 23934
 	DEFB 104
 	DEFB 255

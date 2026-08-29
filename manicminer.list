@@ -10205,7 +10205,7 @@
    7+ 88AA
    8+ 88AA              RoomsStart:
    9+ 88AA                  include "rooms/CentralCavern.asm"               ; ID 00
-# file opened: rooms/CentralCavern.asm
+# file opened: CentralCavern.asm
    1++88AA              ;===========================================================================
    2++88AA              ; CentralCavern.asm
    3++88AA              ;
@@ -10594,9 +10594,9 @@
  256++8C9E 00 70 00 F8
  257++8CA2 05 DD 03 8E  	DEFB 5,221,3,142,1,4,0,136
  257++8CA6 01 04 00 88
-# file closed: rooms/CentralCavern.asm
+# file closed: CentralCavern.asm
   10+ 8CAA                  include "rooms/TheColdRoom.asm"                 ; ID 01
-# file opened: rooms/TheColdRoom.asm
+# file opened: TheColdRoom.asm
    1++8CAA              ;===========================================================================
    2++8CAA              ; TheColdRoom.asm
    3++8CAA              ;
@@ -10990,9 +10990,9 @@
  262++909E 00 96 00 86
  263++90A2 00 8E 00 7D  	DEFB 0,142,0,125,0,16,0,120
  263++90A6 00 10 00 78
-# file closed: rooms/TheColdRoom.asm
+# file closed: TheColdRoom.asm
   11+ 90AA                  include "rooms/TheMenagerie.asm"                ; ID 02
-# file opened: rooms/TheMenagerie.asm
+# file opened: TheMenagerie.asm
    1++90AA              ;===========================================================================
    2++90AA              ; TheMenagerie.asm
    3++90AA              ;
@@ -11389,9 +11389,9 @@
  266++949E 00 FE 00 7C
  267++94A2 00 10 00 10  	DEFB 0,16,0,16,0,16,0,40
  267++94A6 00 10 00 28
-# file closed: rooms/TheMenagerie.asm
+# file closed: TheMenagerie.asm
   12+ 94AA                  include "rooms/AbandonedUraniumWorkings.asm"    ; ID 03
-# file opened: rooms/AbandonedUraniumWorkings.asm
+# file opened: AbandonedUraniumWorkings.asm
    1++94AA              ;===========================================================================
    2++94AA              ; AbandonedUraniumWorkings.asm
    3++94AA              ;
@@ -11785,9 +11785,9 @@
  262++989E 00 E0 01 E0
  263++98A2 01 F2 03 FA  	DEFB 1,242,3,250,3,127,2,60
  263++98A6 03 7F 02 3C
-# file closed: rooms/AbandonedUraniumWorkings.asm
+# file closed: AbandonedUraniumWorkings.asm
   13+ 98AA                  include "rooms/EugeneLair.asm"                  ; ID 04
-# file opened: rooms/EugeneLair.asm
+# file opened: EugeneLair.asm
    1++98AA              ;===========================================================================
    2++98AA              ; EugeneLair.asm
    3++98AA              ;
@@ -12181,9 +12181,9 @@
  262++9C9E 03 F8 01 F0
  263++9CA2 01 EE 00 FF  	DEFB 1,238,0,255,0,251,0,251
  263++9CA6 00 FB 00 FB
-# file closed: rooms/EugeneLair.asm
+# file closed: EugeneLair.asm
   14+ 9CAA                  include "rooms/ProcessingPlant.asm"             ; ID 05
-# file opened: rooms/ProcessingPlant.asm
+# file opened: ProcessingPlant.asm
    1++9CAA              ProcessingPlantLayout:
    2++9CAA 16 00 00 00  	DEFB 22,0,0,0,0,0,0,0	;Attributes
    2++9CAE 00 00 00 00
@@ -12509,9 +12509,9 @@
  195++A0A2 00 50 00 50  	DEFB 0,80,0,80,0,80,0,248
  195++A0A6 00 50 00 F8
  196++A0AA
-# file closed: rooms/ProcessingPlant.asm
+# file closed: ProcessingPlant.asm
   15+ A0AA                  include "rooms/TheVat.asm"                      ; ID 06
-# file opened: rooms/TheVat.asm
+# file opened: TheVat.asm
    1++A0AA              TheVatLayout:
    2++A0AA 4D 00 00 00  	DEFB 77,0,0,0,0,0,0,0	;Attributes
    2++A0AE 00 00 00 00
@@ -12691,23 +12691,23 @@
   90++A31E
   91++A31E 00           	DEFB 0	;Unused
   92++A31F
-  93++A31F 13           	DEFB 19	;Item 1 at (3,30)
+  93++A31F 03           	DEFB 3	;Item 1 at (3,30)
   94++A320 7E 5C        	DEFW 23678
   95++A322 60           	DEFB 96
   96++A323 FF           	DEFB 255
-  97++A324 14           	DEFB 20	;Item 2 at (6,20)
+  97++A324 04           	DEFB 4	;Item 2 at (6,20)
   98++A325 D4 5C        	DEFW 23764
   99++A327 60           	DEFB 96
  100++A328 FF           	DEFB 255
- 101++A329 15           	DEFB 21	;Item 3 at (7,27)
+ 101++A329 05           	DEFB 5	;Item 3 at (7,27)
  102++A32A FB 5C        	DEFW 23803
  103++A32C 60           	DEFB 96
  104++A32D FF           	DEFB 255
- 105++A32E 16           	DEFB 22	;Item 4 at (10,19)
+ 105++A32E 06           	DEFB 6	;Item 4 at (10,19)
  106++A32F 53 5D        	DEFW 23891
  107++A331 68           	DEFB 104
  108++A332 FF           	DEFB 255
- 109++A333 13           	DEFB 19	;Item 5 at (11,30)
+ 109++A333 03           	DEFB 3	;Item 5 at (11,30)
  110++A334 7E 5D        	DEFW 23934
  111++A336 68           	DEFB 104
  112++A337 FF           	DEFB 255
@@ -12833,9 +12833,9 @@
  190++A4A2 00 22 00 42  	DEFB 0,34,0,66,0,129,0,0
  190++A4A6 00 81 00 00
  191++A4AA
-# file closed: rooms/TheVat.asm
+# file closed: TheVat.asm
   16+ A4AA                  include "rooms/MinerWillymeetstheKongBeast.asm" ; ID 07
-# file opened: rooms/MinerWillymeetstheKongBeast.asm
+# file opened: MinerWillymeetstheKongBeast.asm
    1++A4AA              MinerWillymeetstheKongBeastLayout:
    2++A4AA 72 00 05 00  	DEFB 114,0,5,0,0,0,6,0	;Attributes
    2++A4AE 00 00 06 00
@@ -13156,9 +13156,9 @@
  188++A8A2 01 12 01 0A  	DEFB 1,18,1,10,0,204,0,48
  188++A8A6 00 CC 00 30
  189++A8AA
-# file closed: rooms/MinerWillymeetstheKongBeast.asm
+# file closed: MinerWillymeetstheKongBeast.asm
   17+ A8AA                  include "rooms/WackyAmoebatrons.asm"            ; ID 08
-# file opened: rooms/WackyAmoebatrons.asm
+# file opened: WackyAmoebatrons.asm
    1++A8AA              WackyAmoebatronsLayout:
    2++A8AA 16 00 00 16  	DEFB 22,0,0,22,0,0,0,0	;Attributes
    2++A8AE 00 00 00 00
@@ -13489,9 +13489,9 @@
  198++ACA2 01 86 02 4D  	DEFB 1,134,2,77,3,205,1,134
  198++ACA6 03 CD 01 86
  199++ACAA
-# file closed: rooms/WackyAmoebatrons.asm
+# file closed: WackyAmoebatrons.asm
   18+ ACAA                  include "rooms/TheEndorianForest.asm"           ; ID 09
-# file opened: rooms/TheEndorianForest.asm
+# file opened: TheEndorianForest.asm
    1++ACAA              TheEndorianForestLayout:
    2++ACAA 16 00 00 00  	DEFB 22,0,0,0,0,0,0,0	;Attributes
    2++ACAE 00 00 00 00
@@ -13817,9 +13817,9 @@
  195++B0A2 00 3C 00 6E  	DEFB 0,60,0,110,0,118,0,238
  195++B0A6 00 76 00 EE
  196++B0AA
-# file closed: rooms/TheEndorianForest.asm
+# file closed: TheEndorianForest.asm
   19+ B0AA                  include "rooms/AttackoftheMutantTelephones.asm" ; ID 10
-# file opened: rooms/AttackoftheMutantTelephones.asm
+# file opened: AttackoftheMutantTelephones.asm
    1++B0AA              AttackoftheMutantTelephonesLayout:
    2++B0AA 0E 0E 0E 0E  	DEFB 14,14,14,14,14,14,14,0	;Attributes
    2++B0AE 0E 0E 0E 00
@@ -14146,9 +14146,9 @@
  199++B4A2 03 FF 01 FF  	DEFB 3,255,1,255,1,0,0,220
  199++B4A6 01 00 00 DC
  200++B4AA
-# file closed: rooms/AttackoftheMutantTelephones.asm
+# file closed: AttackoftheMutantTelephones.asm
   20+ B4AA                  include "rooms/ReturnoftheAlienKongBeast.asm"   ; ID 11
-# file opened: rooms/ReturnoftheAlienKongBeast.asm
+# file opened: ReturnoftheAlienKongBeast.asm
    1++B4AA              ReturnoftheAlienKongBeastLayout:
    2++B4AA 65 00 05 00  	DEFB 101,0,5,0,0,0,6,0	;Attributes
    2++B4AE 00 00 06 00
@@ -14456,9 +14456,9 @@
  176++B8A2 01 12 01 0A  	DEFB 1,18,1,10,0,204,0,48
  176++B8A6 00 CC 00 30
  177++B8AA
-# file closed: rooms/ReturnoftheAlienKongBeast.asm
+# file closed: ReturnoftheAlienKongBeast.asm
   21+ B8AA                  include "rooms/OreRefinery.asm"                 ; ID 12
-# file opened: rooms/OreRefinery.asm
+# file opened: OreRefinery.asm
    1++B8AA              OreRefineryLayout:
    2++B8AA 16 16 16 16  	DEFB 22,22,22,22,22,22,22,22	;Attributes
    2++B8AE 16 16 16 16
@@ -14789,9 +14789,9 @@
  201++BCA2 00 78 00 FC  	DEFB 0,120,0,252,0,0,0,0
  201++BCA6 00 00 00 00
  202++BCAA
-# file closed: rooms/OreRefinery.asm
+# file closed: OreRefinery.asm
   22+ BCAA                  include "rooms/SkylabLandingBay.asm"            ; ID 13
-# file opened: rooms/SkylabLandingBay.asm
+# file opened: SkylabLandingBay.asm
    1++BCAA              SkylabLandingBayLayout:
    2++BCAA 68 08 08 08  	DEFB 104,8,8,8,8,8,8,8	;Attributes
    2++BCAE 08 08 08 08
@@ -15110,9 +15110,9 @@
  189++C0A2 00 20 08 00  	DEFB 0,32,8,0,2,192,7,96
  189++C0A6 02 C0 07 60
  190++C0AA
-# file closed: rooms/SkylabLandingBay.asm
+# file closed: SkylabLandingBay.asm
   23+ C0AA                  include "rooms/TheBanck.asm"                    ; ID 14
-# file opened: rooms/TheBanck.asm
+# file opened: TheBanck.asm
    1++C0AA              TheBanckLayout:
    2++C0AA 0E 00 00 00  	DEFB 14,0,0,0,0,0,14,14	;Attributes
    2++C0AE 00 00 0E 0E
@@ -15442,9 +15442,9 @@
  199++C4A2 00 00 00 00  	DEFB 0,0,0,0,0,0,0,0
  199++C4A6 00 00 00 00
  200++C4AA
-# file closed: rooms/TheBanck.asm
+# file closed: TheBanck.asm
   24+ C4AA                  include "rooms/TheSixteenthCavern.asm"          ; ID 15
-# file opened: rooms/TheSixteenthCavern.asm
+# file opened: TheSixteenthCavern.asm
    1++C4AA              TheSixteenthCavernLayout:
    2++C4AA 65 00 00 00  	DEFB 101,0,0,0,0,0,0,0	;Attributes
    2++C4AE 00 00 00 00
@@ -15767,9 +15767,9 @@
  192++C8A2 01 F8 00 F0  	DEFB 1,248,0,240,1,80,2,72
  192++C8A6 01 50 02 48
  193++C8AA
-# file closed: rooms/TheSixteenthCavern.asm
+# file closed: TheSixteenthCavern.asm
   25+ C8AA                  include "rooms/TheWarehouse.asm"                ; ID 16
-# file opened: rooms/TheWarehouse.asm
+# file opened: TheWarehouse.asm
    1++C8AA              TheWarehouseLayout:
    2++C8AA 16 00 00 00  	DEFB 22,0,0,0,0,0,0,0	;Attributes
    2++C8AE 00 00 00 00
@@ -16092,9 +16092,9 @@
  194++CCA2 08 01 0C 01  	DEFB 8,1,12,1,12,3,0,3
  194++CCA6 0C 03 00 03
  195++CCAA
-# file closed: rooms/TheWarehouse.asm
+# file closed: TheWarehouse.asm
   26+ CCAA                  include "rooms/AmoebatronsRevenge.asm"          ; ID 17
-# file opened: rooms/AmoebatronsRevenge.asm
+# file opened: AmoebatronsRevenge.asm
    1++CCAA              AmoebatronsRevengeLayout:
    2++CCAA 16 00 00 00  	DEFB 22,0,0,0,0,0,0,0	;Attributes
    2++CCAE 00 00 00 00
@@ -16417,9 +16417,9 @@
  192++D0A2 01 86 02 4D  	DEFB 1,134,2,77,3,205,1,134
  192++D0A6 03 CD 01 86
  193++D0AA
-# file closed: rooms/AmoebatronsRevenge.asm
+# file closed: AmoebatronsRevenge.asm
   27+ D0AA                  include "rooms/SolarPowerGenerator.asm"         ; ID 18
-# file opened: rooms/SolarPowerGenerator.asm
+# file opened: SolarPowerGenerator.asm
    1++D0AA              SolarPowerGeneratorLayout:
    2++D0AA 16 16 16 24  	DEFB 22,22,22,36,36,36,36,36	;Attributes
    2++D0AE 24 24 24 24
@@ -16756,9 +16756,9 @@
  207++D4A2 07 88 06 22  	DEFB 7,136,6,34,6,85,0,34
  207++D4A6 06 55 00 22
  208++D4AA
-# file closed: rooms/SolarPowerGenerator.asm
+# file closed: SolarPowerGenerator.asm
   28+ D4AA                  include "rooms/TheFInalBarrier.asm"             ; ID 19
-# file opened: rooms/TheFInalBarrier.asm
+# file opened: TheFInalBarrier.asm
    1++D4AA              TheFinalBarrierLayout:
    2++D4AA 2C 22 22 22  	DEFB 44,34,34,34,34,34,44,40	;Attributes
    2++D4AE 22 22 2C 28
@@ -17077,10 +17077,10 @@
  186++D8A2 01 86 02 CD  	DEFB 1,134,2,205,2,73,1,134
  186++D8A6 02 49 01 86
  187++D8AA
-# file closed: rooms/TheFInalBarrier.asm
+# file closed: TheFInalBarrier.asm
   29+ D8AA
   30+ D8AA                  include "data/datasprite.asm"
-# file opened: data/datasprite.asm
+# file opened: datasprite.asm
    1++D8AA
    2++D8AA
    3++D8AA
@@ -17109,7 +17109,7 @@
   18++D8EA                  ; 9° carattere per i bordi verticali
   19++D8EA                  ;db %11111111, %10001000, %11111111, %00100010, %11111111, %10001000, %11111111, %00100100
   20++D8EA
-# file closed: data/datasprite.asm
+# file closed: datasprite.asm
   31+ D8EA
   32+ D8EA              font_buffer:
   33+ D8EA 00          > db 0
@@ -18653,7 +18653,7 @@
   37+ DEEA
 # file closed: resources.asm
  962  DEEA                  include "data/datavariable.asm"
-# file opened: data/datavariable.asm
+# file opened: datavariable.asm
    1+ DEEA              ; -------------------------------------------------------------------
    2+ DEEA              ; Variabili
    3+ DEEA              ; -------------------------------------------------------------------
@@ -20247,7 +20247,7 @@
  114+ E514 00           row_willy_cur:          db 0
  115+ E515 00           overlap_num_lines:      db 0
  116+ E516
-# file closed: data/datavariable.asm
+# file closed: datavariable.asm
  963  E516
  964  E516                  SAVESNA "manicminer.sna", start ; sna48-ok
  965  E516
