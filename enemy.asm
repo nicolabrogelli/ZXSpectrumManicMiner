@@ -343,15 +343,16 @@ Enemy_RenderRoom:
     ld   ix, ActiveEnemies
     ld   b, 8              ; 8 slot
 .erase_loop:
-    ld   a, (ix+0)         ; Flags
-    and  $80               ; Active?
-    jr   z, .next_erase
-    
-    ; Se Old X == $FF (nuova stanza o non ancora disegnato), non c'è nulla da cancellare
+    ; Se Old X == $FF (non ancora disegnato o già cancellato), non c'è nulla da cancellare
     ld   a, (ix+8)         ; Old X
     cp   $FF
     jr   z, .next_erase
-    
+
+    ; Controlla se lo slot è diventato inattivo (es. Kong caduto e morto)
+    ld   a, (ix+0)         ; Flags
+    and  $80               ; Active?
+    jr   z, .do_erase_inactive_slot
+
     ; Controlla se la posizione è cambiata o se l'animazione/stato si è aggiornato
     ld   a, (ix+8)         ; Old X
     cp   (ix+2)            ; Current X
@@ -381,6 +382,30 @@ Enemy_RenderRoom:
     call Gfx_RestoreEnemyColorAttributes
 
     pop  bc
+    jr   .next_erase
+
+.do_erase_inactive_slot:
+    push bc
+    
+    ld   c, (ix+8)         ; C = Old X
+    ld   b, (ix+9)         ; B = Old Y
+    call CheckEnemyWillyOverlap
+
+    ; Cancella il nemico nella VECCHIA posizione
+    ld   c, (ix+8)         ; C = Old X
+    ld   b, (ix+9)         ; B = Old Y
+    call Gfx_ErasePixelSprite16x16
+    ld   c, (ix+8)         ; C = Old X
+    ld   b, (ix+9)         ; B = Old Y
+    call Gfx_RestoreEnemyColorAttributes
+
+    ; Segna che questo slot non ha più alcuno sprite residuo a schermo
+    ld   a, $FF
+    ld   (ix+8), a
+    ld   (ix+9), a
+
+    pop  bc
+    jr   .next_erase
 
 .next_erase:
     ld   de, 11
