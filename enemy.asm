@@ -66,7 +66,7 @@ Enemy_LoadRoom:
     cp   $FF
     jr   z, .done_h_guardians      ; $FF = terminatore
     or   a
-    jr   z, .done_h_guardians      ; 0 = terminatore
+    jr   z, .skip_h_guardian       ; 0 = slot inutilizzato -> salta al prossimo slot!
 
     ; Slot attivo
     ld   (ix+0), $80               ; Active = 1, Horizontal (Bit 6 = 0)
@@ -133,6 +133,13 @@ Enemy_LoadRoom:
     inc  hl                        ; Prossimo guardiano
     ld   de, 11
     add  ix, de
+    jr   .next_h_loop
+
+.skip_h_guardian:
+    ld   de, 7
+    add  hl, de                    ; Salta 7 byte dei dati stanza
+
+.next_h_loop:
     djnz .load_h_loop
 
 .done_h_guardians:
@@ -229,6 +236,47 @@ Enemy_LoadRoom:
     ld   (ix+10), 23               ; Paper 2 (Red), Ink 7 (White) -> 23
 
 .not_eugene:
+    ; 5. Controlla se la stanza corrente ha il boss Kong Beast (Caverna 07 o Caverna 11)
+    ld   hl, (room_ptr)
+    ld   de, MinerWillymeetstheKongBeastLayout
+    or   a
+    sbc  hl, de
+    jr   z, .is_kong_room1
+
+    ld   hl, (room_ptr)
+    ld   de, ReturnoftheAlienKongBeastLayout
+    or   a
+    sbc  hl, de
+    jr   nz, .not_kong
+
+.is_kong_room2:
+    ld   a, 70                     ; Kong colore in Return of the Alien Kong: Bright 1, Paper 0, Ink 6 (Giallo) -> 70
+    jr   .init_kong_slot
+
+.is_kong_room1:
+    ld   a, 68                     ; Kong colore in Miner Willy meets the Kong Beast: Bright 1, Paper 0, Ink 4 (Verde) -> 68
+
+.init_kong_slot:
+    push af
+    ld   a, 1
+    ld   (room_has_v_guardians), a ; Segnala che i nemici orizzontali usano la seconda metà (frame 4..7)
+
+    ; Inizializza Kong Beast nello Slot 3 (offset 33) di ActiveEnemies
+    ld   ix, ActiveEnemies + 33
+    ld   (ix+0), $A0               ; Active = 1, Kong = 1 (Bit 7 + Bit 5)
+    ld   (ix+1), 0                 ; Frame iniziale = 0
+    ld   (ix+2), 120               ; X = 120 (Colonna 15)
+    ld   (ix+3), 0                 ; Y = 0 (Ledge in alto)
+    ld   (ix+4), 0                 ; Min Y = 0
+    ld   (ix+5), 88                ; Max Y = 88
+    ld   (ix+6), 0                 ; Kong status = 0 (on ledge)
+    ld   (ix+7), 0
+    ld   (ix+8), $FF               ; Old X
+    ld   (ix+9), $FF               ; Old Y
+    pop  af
+    ld   (ix+10), a                ; Colore Kong
+
+.not_kong:
     pop  ix
     pop  bc
     pop  de
@@ -406,6 +454,11 @@ Enemy_DrawSingleSlot:
     ld   c, (ix+2)                 ; C = Current X
     ld   b, (ix+3)                 ; B = Current Y
 
+    ; Controlla se è Kong Beast ($A0)
+    ld   a, (ix+0)
+    cp   $A0
+    jr   z, .kong_frame
+
     ; Controlla se è guardiano verticale
     ld   a, (ix+0)
     and  $40                       ; Vertical?
@@ -433,6 +486,12 @@ Enemy_DrawSingleSlot:
     ; Movimento a Sinistra (o orizzontale in stanze con guardiani verticali): Frame 4..7 (seconda metà)
     ld   a, 4
     add  a, e
+    jr   .got_frame_idx
+
+.kong_frame:
+    ; Kong Beast: usa Frame 0..3 (salvato in (ix+1)) da OFFSET_GUARDIAN_GRAPHICS
+    ld   a, (ix+1)
+    and  3
     jr   .got_frame_idx
 
 .v_frame:
@@ -524,7 +583,11 @@ Enemy_Update:
     and  $80                       ; Active?
     jp   z, .next
 
-    ; 1. Determina se orizzontale o verticale
+    ; 1. Determina se orizzontale, verticale o boss Kong
+    ld   a, (ix+0)
+    cp   $A0                       ; Kong Beast?
+    jp   z, .kong_update
+
     ld   a, (ix+0)
     and  $40                       ; Vertical?
     jp   nz, .vertical
@@ -686,6 +749,45 @@ Enemy_Update:
     ld   (ix+10), a
     jp   .next
 
+.kong_update:
+    ; Kong Beast: mentre è sul cornicione (status = 0), alterna Frame 0 e 1 sincronizzato con counter
+    ld   a, (ix+6)                 ; Status (0 = on ledge, 1 = falling, 2 = dead)
+    cp   2
+    jp   z, .next                  ; Morto -> non aggiornare
+
+    or   a
+    jr   nz, .kong_falling
+
+    ; Sulla piattaforma in alto (Y=0): alterna frame 0 e 1 ogni 8 frame
+    ld   (ix+3), 0                 ; Y = 0
+    ld   a, (counter)
+    rrca : rrca : rrca
+    and  1
+    ld   (ix+1), a                 ; Frame 0 o 1
+    jp   .next
+
+.kong_falling:
+    ; Kong sta cadendo verso il basso (Y aumenta di 2 pixel per frame)
+    ld   a, (ix+3)
+    add  a, 2
+    cp   88
+    jr   c, .kong_still_falling
+    ; Kong ha raggiunto il fondo: disattiva
+    ld   (ix+3), 88
+    ld   (ix+6), 2                 ; Status = dead
+    ld   (ix+0), 0                 ; Disattiva slot
+    jp   .next
+
+.kong_still_falling:
+    ld   (ix+3), a
+    ; Alterna frame 2 e 3 durante la caduta
+    ld   a, (counter)
+    rrca : rrca
+    and  1
+    add  a, 2
+    ld   (ix+1), a                 ; Frame 2 o 3
+    jp   .next
+
 .next:
     ld   de, 11
     add  ix, de
@@ -786,6 +888,11 @@ CheckCollision:
     ; ---------------------------------------------------------------
     push bc                        ; Salva contatore nemici (B)
 
+    ; Controlla se è Kong Beast ($A0)
+    ld   a, (ix+0)
+    cp   $A0
+    jr   z, .col_kong_frame
+
     ; Controlla se è guardiano verticale
     ld   a, (ix+0)
     and  $40                       ; Vertical?
@@ -810,6 +917,12 @@ CheckCollision:
     ; Frame Sinistra (o stanza con guardiani verticali): Frame = 4 + Subframe (4..7, seconda metà)
     ld   a, 4
     add  a, c
+    jr   .calc_guard_ptr
+
+.col_kong_frame:
+    ; Kong usa Frame 0..3 (salvato in (ix+1)) da OFFSET_GUARDIAN_GRAPHICS
+    ld   a, (ix+1)
+    and  3
     jr   .calc_guard_ptr
 
 .col_guard_vert:
