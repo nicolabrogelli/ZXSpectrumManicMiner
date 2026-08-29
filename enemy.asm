@@ -537,6 +537,12 @@ Enemy_Update:
     jp   .next
 
 .vertical:
+    ; Aggiorna Anim Frame per guardiano verticale (cicla 0..3)
+    ld   a, (ix+1)
+    inc  a
+    and  3
+    ld   (ix+1), a
+
     ld   a, (ix+7)                 ; Step in pixel (1 o 2)
     and  3
     jr   nz, .v_step_ok
