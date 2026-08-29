@@ -1782,8 +1782,12 @@ Phys_CheckNastyCollision:
 
 ; -------------------------------------------------------------------
 ; Phys_CheckCrumblingTrigger
-; Controlla se Willy è sopra una tile Crumbling Floor (Tile 2) e innesca
-; lo sgretolamento progressivo.
+; Controlla se Willy è sopra una tile Crumbling Floor (Tile 2) e fa avanzare
+; lo sgretolamento di 1 pixel (traslazione verso il basso) per ciascuna cella calpestata.
+; Nel gioco originale Manic Miner (routine 35515 e 35770):
+; - Lo sgretolamento avanza di 1 scanline per ogni frame in cui Willy tocca il blocco.
+; - Se Willy si allontana, il blocco si ferma allo stadio raggiunto.
+; - Quando raggiunge 8 scanline sgretolate, il blocco scompare (Background) e Willy precipita.
 ; -------------------------------------------------------------------
 Phys_CheckCrumblingTrigger:
     push bc
@@ -1812,8 +1816,8 @@ Phys_CheckCrumblingTrigger:
     cp   2
     jr   nz, .check_col2
     
-    ; Attiva sgretolamento per Col1
-    call .activate_crumble_cell
+    ; Fa avanzare lo sgretolamento di 1 scanline per Col1
+    call .advance_crumble_cell
     
 .check_col2:
     ; Piede destro: Col2 = (PlayerX + 7) / 8
@@ -1828,13 +1832,19 @@ Phys_CheckCrumblingTrigger:
     srl  a : srl  a : srl  a   ; A = Col2 (0..31)
     ld   c, a                  ; C = Col2
     
+    ; Se Col2 == Col1, la cella è la stessa ed è già stata avanzata in questo frame
+    ld   a, (PlayerPos)        ; A = PlayerX
+    srl  a : srl  a : srl  a   ; A = Col1
+    cp   c
+    jr   z, .done_trigger
+    
     ld   a, b
     call GetCellFromUnpacked
     cp   2
     jr   nz, .done_trigger
     
-    ; Attiva sgretolamento per Col2
-    call .activate_crumble_cell
+    ; Fa avanzare lo sgretolamento di 1 scanline per Col2
+    call .advance_crumble_cell
     
 .done_trigger:
     pop  hl
@@ -1842,138 +1852,56 @@ Phys_CheckCrumblingTrigger:
     pop  bc
     ret
 
-.activate_crumble_cell:
+.advance_crumble_cell:
     ; Input: B = Row, C = Col
     push bc
     push de
     push hl
     
-    ld   l, b                  ; HL = Row
+    ; 1. Calcola offset in crumbling_grid: HL = Row * 32 + Col
+    ld   l, b
     ld   h, 0
     add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
     ld   e, c
     ld   d, 0
-    add  hl, de                ; HL = Row * 32 + Col
+    add  hl, de
     ld   de, crumbling_grid
     add  hl, de
     
-    ld   a, (hl)               ; Controlla se già attivo
-    or   a
-    jr   nz, .already_active
+    ; 2. Avanza di 1 stadio
+    ld   a, (hl)               ; A = Stage (0..8)
+    cp   8
+    jr   nc, .done_advance     ; Già completamente sgretolato
     
-    ld   (hl), 1               ; Inizia dallo stadio 1
-    ld   hl, crumbling_active_count
-    inc  (hl)
+    inc  a                     ; Avanza di 1 scanline (1..8)
+    ld   (hl), a
+    ld   e, a                  ; E = nuovo Stage (1..8)
     
-.already_active:
+    ; 3. Ridisegna la tile nello stadio corrente (trasla il bitmap verso il basso di 1 pixel)
+    push hl
+    call Gfx_DrawCrumblingTile ; Input: B = Row, C = Col, E = Stage (1..8)
     pop  hl
-    pop  de
-    pop  bc
-    ret
-
-; -------------------------------------------------------------------
-; Phys_UpdateCrumblingFloors
-; Aggiorna l'animazione di tutti i blocchi sgretolabili attivi.
-; Quando un blocco completa lo sgretolamento (stadio > 8), viene
-; definitivamente rimosso dalla fisica (unpacked_layout) e dallo schermo.
-; -------------------------------------------------------------------
-Phys_UpdateCrumblingFloors:
-    ld   a, (crumbling_active_count)
-    or   a
-    ret  z                     ; Nessun blocco attivo -> uscita immediata
     
-    ; Avanza l'animazione ogni 2 frame (approx 25Hz per 8 stadi = ~0.32s)
-    ld   hl, crumbling_anim_timer
-    inc  (hl)
+    ; 4. Se lo stadio ha raggiunto 8, rimuovi definitivamente da unpacked_layout
     ld   a, (hl)
-    and  1
-    ret  nz
+    cp   8
+    jr   c, .done_advance
     
-    push hl
-    push de
-    push bc
-    push ix
-    
-    ld   ix, crumbling_grid
-    ld   bc, 512               ; 512 celle
-    ld   d, 0                  ; D = Row (0..15)
-    ld   e, 0                  ; E = Col (0..31)
-    
-.loop:
-    ld   a, (ix+0)             ; A = Stage (0..8)
-    or   a
-    jr   z, .next
-    
-    inc  a                     ; Avanza di 1 stadio
-    ld   (ix+0), a
-    
-    cp   9
-    jr   nc, .finish_crumble
-    
-    ; Stadio 1..8: ridisegna la tile nello stadio corrente
-    push bc
-    push de
-    ld   b, d                  ; B = Row
-    ld   c, e                  ; C = Col
-    ld   e, a                  ; E = Stage (1..8)
-    call Gfx_DrawCrumblingTile
-    pop  de
-    pop  bc
-    jr   .next
-    
-.finish_crumble:
-    ; Blocco completamente sgretolato (stadio > 8)
-    ld   (ix+0), 0             ; Reset in crumbling_grid
-    
-    ; 1. Rimuovi definitivamente da unpacked_layout (imposta a 0 = Background)
-    push bc
-    push de
-    push hl
-    ld   l, d                  ; L = Row
+    ; Rimuovi da unpacked_layout (imposta a 0 = Background)
+    ld   l, b                  ; L = Row
     ld   h, 0
     add  hl, hl : add hl, hl : add hl, hl : add hl, hl : add hl, hl
-    ld   c, e
-    ld   b, 0
-    add  hl, bc
-    ld   bc, unpacked_layout
-    add  hl, bc
-    ld   (hl), 0               ; 0 = non più solido
+    ld   e, c
+    ld   d, 0
+    add  hl, de
+    ld   de, unpacked_layout
+    add  hl, de
+    ld   (hl), 0               ; 0 = Background (non più solido!)
+
+.done_advance:
     pop  hl
     pop  de
     pop  bc
-    
-    ; 2. Cancella la tile a schermo (Stage 8 = 0 su tutte le linee e attributo di sfondo)
-    push bc
-    push de
-    ld   b, d                  ; B = Row
-    ld   c, e                  ; C = Col
-    ld   e, 8                  ; Stage 8
-    call Gfx_DrawCrumblingTile
-    pop  de
-    pop  bc
-    
-    ; 3. Decrementa contatore blocchi attivi
-    ld   hl, crumbling_active_count
-    dec  (hl)
-    
-.next:
-    inc  ix
-    inc  e
-    ld   a, e
-    cp   32
-    jr   c, .col_ok
-    ld   e, 0
-    inc  d
-.col_ok:
-    dec  bc
-    ld   a, b
-    or   c
-    jr   nz, .loop
-    
-    pop  ix
-    pop  bc
-    pop  de
-    pop  hl
     ret
 
 ; -------------------------------------------------------------------

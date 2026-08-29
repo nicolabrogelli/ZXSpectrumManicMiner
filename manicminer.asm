@@ -124,11 +124,8 @@ Main_loop:
     
     ; 2. Rendering del giocatore (ridisegna Willy in primo piano se mosso o se coperto da un guardiano)
     call Gfx_UpdatePlayer
-
-    ; 3. Aggiorna animazione e rimozione dei pavimenti sgretolabili (Crumbling Floor)
-    call Phys_UpdateCrumblingFloors
     
-    ; 4. Aggiorna animazione lampeggio del portale (se attivo)
+    ; 3. Aggiorna animazione lampeggio del portale (se attivo)
     call Gfx_AnimatePortal
 
     ; 5b. Aggiorna consumo aria (morte se esaurita)

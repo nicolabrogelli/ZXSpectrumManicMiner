@@ -319,6 +319,11 @@ Gfx_GetBackgroundByte:
     cp   b
     jr   nc, .blank            ; Se stage >= scanline_offset (1..8), linea cancellata!
 
+    ; La linea richiesta corrisponde alla linea originale traslata (ScanlineOffset - stage)
+    sub  b                     ; A = stage - B
+    neg                        ; A = B - stage
+    ld   b, a                  ; B = offset scanline originale nel tile (1..8)
+
 .crumble_intact:
     ld   a, 2                  ; Tile 2
 
@@ -2639,12 +2644,19 @@ Gfx_DrawCrumblingTile:
     ; 3. Loop su 8 scanline (line = 0..7)
     ld   d, 0                  ; D = line index (0..7)
 .line_loop:
-    ld   a, d                  ; A = current line
-    cp   e                     ; Confronta current line con Stage (in E)
+    ld   a, d                  ; A = current line (0..7)
+    sub  e                     ; A = line - Stage
     jr   c, .erase_line        ; Se line < Stage, scrivi 0 (cancellata)
-    
-    ; Linea visibile: scrivi byte bitmap dal tile
+
+    ; Linea visibile traslata verso il basso: A = offset scanline originale (0..7)
+    push de
+    push ix
+    ld   e, a
+    ld   d, 0
+    add  ix, de
     ld   a, (ix+0)
+    pop  ix
+    pop  de
     ld   (hl), a
     jr   .next_scanline
 
@@ -2654,7 +2666,6 @@ Gfx_DrawCrumblingTile:
 
 .next_scanline:
     inc  h                     ; Prossima scanline sullo schermo
-    inc  ix                    ; Prossima scanline nel tile
     inc  d                     ; line++
     ld   a, d
     cp   8
