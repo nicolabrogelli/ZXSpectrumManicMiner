@@ -20,6 +20,12 @@ RoomsStart:
     include "rooms/ReturnoftheAlienKongBeast.asm"   ; ID 11
     include "rooms/OreRefinery.asm"                 ; ID 12
     include "rooms/SkylabLandingBay.asm"            ; ID 13 
+    include "rooms/TheBanck.asm"                    ; ID 14
+    include "rooms/TheSixteenthCavern.asm"          ; ID 15
+    include "rooms/TheWarehouse.asm"                ; ID 16
+    include "rooms/AmoebatronsRevenge.asm"          ; ID 17
+    include "rooms/SolarPowerGenerator.asm"         ; ID 18
+    include "rooms/TheFInalBarrier.asm"             ; ID 19
 
     include "data/datasprite.asm"
 

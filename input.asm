@@ -625,6 +625,12 @@ RoomsListTable:
 .ReturnoftheAlienKongBeastLayout:  dw ReturnoftheAlienKongBeastLayout  ; 11
 .OreRefineryLayout:                dw OreRefineryLayout                ; 12
 .SkylabLandingBayLayout:           dw SkylabLandingBayLayout           ; 13
+.TheBanckLayout:                   dw TheBanckLayout                   ; 14
+.TheSixteenthCavernLayout:         dw TheSixteenthCavernLayout         ; 15
+.TheWarehouseLayout:               dw TheWarehouseLayout               ; 16
+.AmoebatronsRevengeLayout:         dw AmoebatronsRevengeLayout         ; 17
+.SolarPowerGeneratorLayout:        dw SolarPowerGeneratorLayout        ; 18
+.TheFinalBarrierLayout:            dw TheFinalBarrierLayout            ; 19
 
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2

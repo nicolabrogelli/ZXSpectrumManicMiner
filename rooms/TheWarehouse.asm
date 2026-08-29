@@ -1,0 +1,194 @@
+TheWarehouseLayout:
+	DEFB 22,0,0,0,0,0,0,0	;Attributes
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,22,22,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,6,0
+	DEFB 0,6,0,0,0,6,0,0
+	DEFB 6,0,0,0,0,0,6,0
+	DEFB 6,0,0,0,0,0,0,22
+	DEFB 22,4,4,68,68,68,68,68
+	DEFB 68,68,0,0,68,68,68,68
+	DEFB 68,68,68,0,0,68,68,68
+	DEFB 0,68,68,0,0,4,4,22
+	DEFB 22,68,68,33,68,68,68,68
+	DEFB 68,68,0,0,68,68,68,68
+	DEFB 68,68,68,0,0,68,68,68
+	DEFB 68,68,68,0,0,68,68,22
+	DEFB 22,68,68,68,68,68,68,68
+	DEFB 68,68,0,0,68,68,68,0
+	DEFB 68,68,68,0,0,68,68,68
+	DEFB 68,68,33,0,0,68,68,22
+	DEFB 22,68,68,0,0,68,68,68
+	DEFB 68,68,0,0,68,68,32,32
+	DEFB 32,32,32,0,0,68,68,68
+	DEFB 68,68,68,0,0,68,68,22
+	DEFB 22,0,68,0,0,68,68,68
+	DEFB 68,68,0,0,68,68,68,68
+	DEFB 68,68,68,0,0,68,68,68
+	DEFB 68,68,68,0,0,68,68,22
+	DEFB 22,68,68,0,0,68,68,68
+	DEFB 68,68,0,0,68,68,68,68
+	DEFB 68,68,68,0,68,68,33,68
+	DEFB 68,68,68,0,0,68,68,22
+	DEFB 22,68,68,0,0,68,68,68
+	DEFB 68,33,0,0,68,68,68,68
+	DEFB 68,68,68,68,68,68,68,68
+	DEFB 68,68,0,0,0,68,68,22
+	DEFB 22,68,68,0,0,68,68,68
+	DEFB 68,68,0,0,68,68,68,68
+	DEFB 68,68,68,68,68,68,68,68
+	DEFB 68,68,68,0,0,68,68,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,22
+	DEFB 22,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,4,4,4,4,22
+	DEFB 22,4,4,4,4,4,4,4
+	DEFB 4,4,4,4,4,4,4,4
+	DEFB 4,4,4,4,4,4,4,4
+	DEFB 4,4,4,4,4,4,4,22
+	DEFM "         The Warehouse          "	;Cavern name
+	DEFB 0,0,0,0,0,0,0,0,0	;Background
+	DEFB 4,255,255,219,110,197,64,0,0	;Floor
+	DEFB 68,255,170,85,170,85,170,85,170	;Crumbling floor
+	DEFB 22,255,153,187,255,255,153,187,255	;Wall
+	DEFB 32,240,102,240,102,0,0,0,0	;Conveyor
+	DEFB 6,68,40,148,81,53,214,88,16	;Nasty 1
+	DEFB 33,66,215,254,101,166,125,238,215	;Nasty 2
+	DEFB 0,0,0,0,0,0,0,0,0	;   Extra (unused)
+	DEFB 48  ;Pixel y-coordinate * 2 (see 32872)
+	DEFB 3	;Animation frame (see 32873)
+	DEFB 1	;Direction and movement flags: facing left (see 32874)
+	DEFB 0	;Airborne status indicator (see 32875)
+	DEFW 23649	;Location in the attribute buffer at 23552: (3,1) (see 32876)
+	DEFB 0	;Jumping animation counter (see 32878)
+	DEFB 1	;Direction (right)
+	DEFW 30734	;Location in the screen buffer at 28672: (8,14)
+	DEFB 5	;Length
+	DEFB 2	;Border colour
+	DEFB 0	;Unused
+	DEFB 35	;Item 1 at (5,24)
+	DEFW 23736
+	DEFB 96
+	DEFB 255
+	DEFB 36	;Item 2 at (7,15)
+	DEFW 23791
+	DEFB 96
+	DEFB 255
+	DEFB 37	;Item 3 at (9,1)
+	DEFW 23841
+	DEFB 104
+	DEFB 255
+	DEFB 38	;Item 4 at (10,19)
+	DEFW 23891
+	DEFB 104
+	DEFB 255
+	DEFB 35	;Item 5 at (11,26)
+	DEFW 23930
+	DEFB 104
+	DEFB 255
+	DEFB 255	;Terminator
+	DEFB 76	;Attribute
+	DEFB 255,255,128,1,191,253,160,5	;Graphic data
+	DEFB 165,165,165,165,165,165,165,165
+	DEFB 165,165,165,165,175,245,165,165
+	DEFB 165,165,165,165,165,165,255,255
+	DEFW 23613	;Location in the attribute buffer at 23552: (1,29)
+	DEFW 24637	;Location in the screen buffer at 24576: (1,29)
+	DEFB 48,72,136,144,104,4,10,4	;Item graphic data
+	DEFB 63	;Air
+	DEFB 128	;Game clock
+	DEFB 194	;Horizontal guardian 1: y=13, initial x=5, 5<=x<=8, speed=slow
+	DEFW 23973
+	DEFB 104
+	DEFB 0
+	DEFB 165
+	DEFB 168
+	DEFB 5	;Horizontal guardian 2: y=13, initial x=12, 12<=x<=25, speed=normal
+	DEFW 23980
+	DEFB 104
+	DEFB 0
+	DEFB 172
+	DEFB 185
+	DEFB 255,0,0,0,0,0,0	;Horizontal guardian 3 (unused)
+	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
+	DEFB 255	;Terminator
+	DEFB 0,0	;Unused
+	DEFB 65	;Vertical guardian 1: x=3, initial y=64, 64<=y<102, initial y-increment=2
+	DEFB 0
+	DEFB 64
+	DEFB 3
+	DEFB 2
+	DEFB 64
+	DEFB 102
+	DEFB 6	;Vertical guardian 2: x=10, initial y=64, 3<=y<96, initial y-increment=-3
+	DEFB 1
+	DEFB 64
+	DEFB 10
+	DEFB 253
+	DEFB 3
+	DEFB 96
+	DEFB 71	;Vertical guardian 3: x=19, initial y=48, 0<=y<64, initial y-increment=1
+	DEFB 2
+	DEFB 48
+	DEFB 19
+	DEFB 1
+	DEFB 0
+	DEFB 64
+	DEFB 67	;Vertical guardian 4: x=27, initial y=0, 4<=y<96, initial y-increment=4
+	DEFB 3
+	DEFB 0
+	DEFB 27
+	DEFB 4
+	DEFB 4
+	DEFB 96
+	DEFB 255	;Terminator
+	DEFB 0,0,0,0,0,0	;Unused
+	DEFB 85,85,255,255,255,255,8,16	;Guardian graphic data
+	DEFB 8,16,8,16,248,31,85,85
+	DEFB 255,255,255,255,8,16,8,16
+	DEFB 8,16,88,21,255,255,255,255
+	DEFB 0,0,85,85,255,255,255,255
+	DEFB 8,16,248,31,8,16,63,254
+	DEFB 56,30,8,16,95,245,255,255
+	DEFB 255,255,0,0,255,255,0,0
+	DEFB 0,0,0,0,255,255,85,85
+	DEFB 255,255,255,255,8,16,56,30
+	DEFB 63,254,8,16,248,31,95,245
+	DEFB 255,255,255,255,0,0,0,0
+	DEFB 0,0,85,85,255,255,248,31
+	DEFB 8,16,85,85,255,255,255,255
+	DEFB 120,29,248,31,248,31,8,16
+	DEFB 85,85,255,255,255,255,0,0
+	DEFB 126,0,153,0,255,0,219,0
+	DEFB 231,0,126,0,36,0,36,0
+	DEFB 36,0,66,0,66,0,66,0
+	DEFB 129,0,129,0,195,0,195,0
+	DEFB 0,0,31,128,38,64,63,192
+	DEFB 54,192,57,192,31,128,16,128
+	DEFB 32,64,32,64,64,32,64,32
+	DEFB 128,16,128,48,192,48,192,0
+	DEFB 0,0,0,0,0,0,7,224
+	DEFB 9,144,15,240,13,176,14,112
+	DEFB 7,224,8,16,16,8,32,4
+	DEFB 64,2,128,1,192,3,192,3
+	DEFB 0,0,1,248,2,100,3,252
+	DEFB 3,108,3,156,1,248,1,8
+	DEFB 2,4,2,4,4,2,4,2
+	DEFB 8,1,12,1,12,3,0,3

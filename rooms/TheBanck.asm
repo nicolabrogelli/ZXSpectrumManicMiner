@@ -1,0 +1,199 @@
+TheBanckLayout:
+	DEFB 14,0,0,0,0,0,14,14	;Attributes
+	DEFB 14,14,14,14,14,14,14,14
+	DEFB 14,14,14,14,14,14,14,14
+	DEFB 14,14,14,14,14,14,14,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 69,69,69,69,69,69,69,69
+	DEFB 69,69,69,69,69,69,69,69
+	DEFB 65,65,65,65,65,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 66,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,66,6,6,14
+	DEFB 14,65,65,65,65,65,0,0
+	DEFB 70,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,66,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 65,65,0,0,66,6,6,14
+	DEFB 14,0,0,0,0,0,0,1
+	DEFB 0,0,0,0,65,65,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,66,6,6,14
+	DEFB 14,0,0,65,65,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,65,65,0,0,0,0
+	DEFB 0,0,0,0,66,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,65,65,0,66,6,6,14
+	DEFB 14,65,65,0,0,0,0,0
+	DEFB 0,0,0,0,65,65,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,70,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,65,65,0,0,0,0
+	DEFB 0,0,0,0,0,6,6,14
+	DEFB 14,0,0,0,0,65,65,65
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,65
+	DEFB 65,0,0,0,0,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,65,65,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,6,6,14
+	DEFB 14,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,6,6,14
+	DEFB 14,65,65,65,65,65,65,65
+	DEFB 65,65,65,65,65,65,65,65
+	DEFB 65,65,65,65,65,65,65,65
+	DEFB 65,65,65,65,65,65,65,14
+
+	DEFM "            The Bank            "	;Cavern name
+
+	DEFB 0,0,0,0,0,0,0,0,0	;Background
+	DEFB 65,255,255,221,119,170,85,34,0	;Floor
+	DEFB 1,255,219,165,36,82,32,8,0	;Crumbling floor
+	DEFB 14,170,85,170,85,170,85,170,85	;Wall
+	DEFB 69,254,102,254,0,0,0,0,0	;Conveyor
+	DEFB 70,16,16,214,56,214,56,84,146	;Nasty 1
+	DEFB 66,16,16,16,16,16,16,16,16	;Nasty 2
+	DEFB 6,255,255,24,24,24,24,24,24	;Extra
+
+	DEFB 208	;Pixel y-coordinate * 2 (see 32872)
+	DEFB 0	;Animation frame (see 32873)
+	DEFB 0	;Direction and movement flags: facing right (see 32874)
+	DEFB 0	;Airborne status indicator (see 32875)
+	DEFW 23970	;Location in the attribute buffer at 23552: (13,2) (see 32876)
+	DEFB 0	;Jumping animation counter (see 32878)
+
+	DEFB 0	;Direction (left)
+	DEFW 28776	;Location in the screen buffer at 28672: (3,8)
+	DEFB 16	;Length
+
+	DEFB 2	;Border colour
+
+	DEFB 0	;Unused
+
+	DEFB 3	;Item 1 at (2,25)
+	DEFW 23641
+	DEFB 96
+	DEFB 255
+	DEFB 4	;Item 2 at (6,12)
+	DEFW 23756
+	DEFB 96
+	DEFB 255
+	DEFB 5	;Item 3 at (14,26)
+	DEFW 24026
+	DEFB 104
+	DEFB 255
+	DEFB 255	;Item 4 at (6,19) (unused)
+	DEFW 23763
+	DEFB 96
+	DEFB 255
+	DEFB 3	;Item 5 at (13,30) (unused)
+	DEFW 23998
+	DEFB 104
+	DEFB 255
+	DEFB 255	;Terminator
+
+	DEFB 86	;Attribute
+	DEFB 255,255,128,1,128,1,128,1	;Graphic data
+	DEFB 128,1,136,1,170,1,156,61
+	DEFB 255,71,156,1,170,1,136,1
+	DEFB 128,1,128,1,128,1,255,255
+	DEFW 23649	;Location in the attribute buffer at 23552: (3,1)
+	DEFW 24673	;Location in the screen buffer at 24576: (3,1)
+
+	DEFB 124,56,100,222,142,222,130,124	;Item graphic data
+
+	DEFB 63	;Air
+
+	DEFB 252	;Game clock
+
+	DEFB 69	;Horizontal guardian 1: y=13, initial x=17, 17<=x<=19, speed=normal
+	DEFW 23985
+	DEFB 104
+	DEFB 0
+	DEFB 177
+	DEFB 179
+	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 2 (unused)
+	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 3 (unused)
+	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
+	DEFB 255	;Terminator
+
+	DEFB 0,0	;Unused
+
+	DEFB 6	;Vertical guardian 1: x=9, initial y=40, 36<=y<102, initial y-increment=2
+	DEFB 0
+	DEFB 40
+	DEFB 9
+	DEFB 2
+	DEFB 36
+	DEFB 102
+	DEFB 7	;Vertical guardian 2: x=15, initial y=64, 36<=y<102, initial y-increment=1
+	DEFB 1
+	DEFB 64
+	DEFB 15
+	DEFB 1
+	DEFB 36
+	DEFB 102
+	DEFB 68	;Vertical guardian 3: x=21, initial y=80, 32<=y<104, initial y-increment=-3
+	DEFB 3
+	DEFB 80
+	DEFB 21
+	DEFB 253
+	DEFB 32
+	DEFB 104
+	DEFB 255,0,0,0,0,0,0	;Vertical guardian 4 (unused)
+	DEFB 255	;Terminator
+
+	DEFB 0,0,0,0,0,0	;Unused
+
+	DEFB 97,134,159,249,159,249,97,134	;Guardian graphic data
+	DEFB 3,192,255,255,128,1,170,169
+	DEFB 159,253,181,89,144,13,181,89
+	DEFB 159,253,170,169,128,1,255,255
+	DEFB 29,184,34,244,34,244,29,184
+	DEFB 3,192,255,255,213,85,191,255
+	DEFB 234,173,176,7,229,77,176,7
+	DEFB 234,173,191,255,213,85,255,255
+	DEFB 7,224,8,16,8,16,7,224
+	DEFB 3,192,255,255,255,255,213,87
+	DEFB 224,3,202,167,231,243,202,167
+	DEFB 224,3,213,87,255,255,255,255
+	DEFB 29,184,47,68,47,68,29,184
+	DEFB 3,192,255,255,170,171,192,1
+	DEFB 149,83,207,249,154,179,207,249
+	DEFB 149,83,192,1,170,171,255,255
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,255,192,129,192
+	DEFB 255,192,130,64,254,64,255,192
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,63,240,32,112
+	DEFB 63,240,32,144,63,144,63,240
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 15,252,8,28,15,252,8,36
+	DEFB 15,228,15,252,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,0,0,0,0
+	DEFB 0,0,0,0,3,255,2,7
+	DEFB 3,255,2,9,3,249,3,255
+	DEFB 0,0,0,0,0,0,0,0
