@@ -207,6 +207,28 @@ Enemy_LoadRoom:
     djnz .load_v_loop
 
 .done_v_guardians:
+    ; 4. Controlla se la stanza corrente è Eugene's Lair (Caverna 04)
+    ld   hl, (room_ptr)
+    ld   de, EugeneLairLayout
+    or   a
+    sbc  hl, de
+    jr   nz, .not_eugene
+
+    ; Inizializza Eugene nello Slot 4 (offset 44) di ActiveEnemies
+    ld   ix, ActiveEnemies + 44
+    ld   (ix+0), $E0               ; Active = 1, Vertical = 1, Eugene = 1
+    ld   (ix+1), 0                 ; Frame = 0
+    ld   (ix+2), 120               ; X = 120 (Colonna 15)
+    ld   (ix+3), 88                ; Initial Y = 88
+    ld   (ix+4), 0                 ; Min Limit Y = 0
+    ld   (ix+5), 88                ; Max Limit Y = 88
+    ld   (ix+6), 1                 ; Direction = 1 (Up)
+    ld   (ix+7), 1                 ; Speed = 1
+    ld   (ix+8), $FF               ; Old X = $FF
+    ld   (ix+9), $FF               ; Old Y = $FF
+    ld   (ix+10), 23               ; Paper 2 (Red), Ink 7 (White) -> 23
+
+.not_eugene:
     pop  ix
     pop  bc
     pop  de
@@ -414,9 +436,22 @@ Enemy_DrawSingleSlot:
     jr   .got_frame_idx
 
 .v_frame:
-    ; Guardiano Verticale: usa il frame salvato in (ix+1) (0..3, prima metà)
+    ; Controlla se è Eugene (Flag $20)
+    ld   a, (ix+0)
+    and  $20
+    jr   nz, .eugene_frame
+
+    ; Guardiano Verticale standard: usa il frame salvato in (ix+1) (0..3, prima metà)
     ld   a, (ix+1)
     and  3
+    jr   .got_frame_idx
+
+.eugene_frame:
+    ; Eugene usa la grafica speciale a OFFSET_EXTRA_GRAPHIC (736)
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_EXTRA_GRAPHIC
+    add  hl, de                    ; HL = puntatore ai 32 byte di Eugene
+    jr   .got_sprite_ptr
 
 .got_frame_idx:
     ; Frame index in A (0..7). Calcola Offset = Frame * 32
@@ -433,6 +468,7 @@ Enemy_DrawSingleSlot:
     ld   de, (room_ptr)
     add  hl, de                    ; HL = puntatore ai 32 byte del frame bitmap
 
+.got_sprite_ptr:
     ld   a, (ix+10)                ; A = Color Attributo
     push af                        ; Salva colore nello stack
 
@@ -537,6 +573,11 @@ Enemy_Update:
     jp   .next
 
 .vertical:
+    ; Controlla se è il boss Eugene (Bit 5 di Flags)
+    ld   a, (ix+0)
+    and  $20
+    jr   nz, .eugene_update
+
     ; Aggiorna Anim Frame per guardiano verticale (cicla 0..3)
     ld   a, (ix+1)
     inc  a
@@ -584,6 +625,65 @@ Enemy_Update:
     ld   (ix+3), a
     ld   a, 1                      ; Cambia direzione a Up
     ld   (ix+6), a
+    jp   .next
+
+.eugene_update:
+    ; 1. Tutti gli item raccolti?
+    ld   a, (game_objective_completed)
+    or   a
+    jr   nz, .eugene_descend_to_portal
+
+    ; --- Items non ancora tutti raccolti: Eugene pattuglia tra Y=0 e Y=88 ---
+    ld   (ix+10), 23               ; Colore bianco su rosso (Paper 2, Ink 7)
+
+    ld   a, (ix+6)                 ; Direction (1 = Up, 2 = Down)
+    cp   1
+    jr   nz, .eugene_move_down
+
+.eugene_move_up:
+    ld   a, (ix+3)                 ; Current Y
+    or   a
+    jr   z, .eugene_rev_down
+    dec  a
+    ld   (ix+3), a
+    jp   .next
+
+.eugene_rev_down:
+    xor  a
+    ld   (ix+3), a
+    ld   a, 2
+    ld   (ix+6), a                 ; Cambia direzione a Down
+    jp   .next
+
+.eugene_move_down:
+    ld   a, (ix+3)
+    cp   88
+    jr   nc, .eugene_rev_up
+    inc  a
+    ld   (ix+3), a
+    jp   .next
+
+.eugene_rev_up:
+    ld   a, 88
+    ld   (ix+3), a
+    ld   a, 1
+    ld   (ix+6), a                 ; Cambia direzione a Up
+    jp   .next
+
+.eugene_descend_to_portal:
+    ; --- Tutti gli item raccolti: Eugene scende al portale (Y=88) e cambia colore con game_clock ---
+    ld   a, (ix+3)                 ; Current Y
+    cp   88
+    jr   nc, .eugene_at_portal
+    inc  a
+    ld   (ix+3), a
+
+.eugene_at_portal:
+    ; Colore lampeggiante arcobaleno sincronizzato con counter / game_clock:
+    ld   a, (counter)              ; Leggi timer interrupt frame
+    rrca : rrca : and 7            ; Ink 0..7
+    or   16                        ; Paper 2 (Rosso)
+    ld   (ix+10), a
     jp   .next
 
 .next:
@@ -713,9 +813,22 @@ CheckCollision:
     jr   .calc_guard_ptr
 
 .col_guard_vert:
-    ; Guardiano verticale: usa il frame salvato in (ix+1) (0..3, prima metà)
+    ; Controlla se è Eugene (Flag $20)
+    ld   a, (ix+0)
+    and  $20
+    jr   nz, .col_eugene_frame
+
+    ; Guardiano verticale standard: usa il frame salvato in (ix+1) (0..3, prima metà)
     ld   a, (ix+1)
     and  3
+    jr   .calc_guard_ptr
+
+.col_eugene_frame:
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_EXTRA_GRAPHIC
+    add  hl, de
+    ld   (guard_sprite_ptr), hl
+    jr   .guard_ptr_ready
 
 .calc_guard_ptr:
     ; Offset = Frame * 32
@@ -731,6 +844,8 @@ CheckCollision:
     ld   de, (room_ptr)
     add  hl, de                    ; HL = puntatore ai 32 byte del frame guardiano
     ld   (guard_sprite_ptr), hl
+
+.guard_ptr_ready:
 
     ; ---------------------------------------------------------------
     ; DETERMINA IL RANGE DELLE RIGHE SOVRAPPOSTE
