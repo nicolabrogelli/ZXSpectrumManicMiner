@@ -70,6 +70,11 @@ Enemy_LoadRoom:
 
     ; Slot attivo
     ld   (ix+0), $80               ; Active = 1, Horizontal (Bit 6 = 0)
+    bit  7, a
+    jr   z, .h_speed_normal
+    set  4, (ix+0)                 ; Bit 4 = Slow speed (indicato dal bit 7 di Byte 0)
+.h_speed_normal:
+    and  $7F                       ; Rimuove bit 7 (velocità) per isolare l'attributo colore ed evitare il FLASH hardware
     ld   (ix+10), a                ; Color / Attributo
 
     inc  hl
@@ -140,7 +145,8 @@ Enemy_LoadRoom:
     add  hl, de                    ; Salta 7 byte dei dati stanza
 
 .next_h_loop:
-    djnz .load_h_loop
+    dec  b
+    jp   nz, .load_h_loop
 
 .done_h_guardians:
     ; 3. Carica guardiani verticali (se presenti a OFFSET_V_GUARDIANS)
@@ -173,6 +179,7 @@ Enemy_LoadRoom:
 
     ; Slot attivo per guardiano verticale
     ld   (ix+0), $C0               ; Active = 1, Vertical = 1
+    and  $7F                       ; Rimuove bit 7
     ld   (ix+10), a                ; Color / Attributo
 
     inc  hl
@@ -592,6 +599,14 @@ Enemy_Update:
     and  $40                       ; Vertical?
     jp   nz, .vertical
 
+    ; Se il guardiano è marcato come lento (Bit 4 di Flags), aggiorna la posizione solo ogni 2 frame
+    bit  4, (ix+0)
+    jr   z, .h_speed_ok
+    ld   a, (counter)
+    and  1
+    jp   nz, .next                 ; Salta l'aggiornamento sui frame dispari
+
+.h_speed_ok:
     ; Aggiorna Anim State per guardiano orizzontale (0..3)
     ld   a, (ix+7)
     inc  a

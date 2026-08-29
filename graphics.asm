@@ -3065,7 +3065,8 @@ Gfx_SetEnemyColorAttributes:
     push de
     push bc
     
-    ld   d, a              ; D = Colore Gfx_Ink (salvato)
+    and  $7F               ; Rimuove bit 7 (FLASH hardware / velocità) per preservare solo BRIGHT, PAPER, INK
+    ld   d, a              ; D = Colore Gfx_Ink / Attributo (salvato)
     
     ; Se Y è fuori dai limiti della griglia di gioco, non fare nulla
     ld   a, b
