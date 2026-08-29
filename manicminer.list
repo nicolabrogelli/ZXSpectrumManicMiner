@@ -1182,15 +1182,15 @@
  733+ 60CF
  734+ 60CF              .cell_is_empty:
  735+ 60CF                  ; --- LA CELLA È SPAZIO VUOTO ---
- 736+ 60CF                  ; Leggi l'attributo originale di sfondo della stanza, preserva il Paper e imposta Ink Bianco Brillante
+ 736+ 60CF                  ; Leggi l'attributo originale di sfondo della stanza, preserva il Paper/Bright e imposta Ink Bianco
  737+ 60CF E5               push hl
  738+ 60D0 C5               push bc
  739+ 60D1 CD 9D 6C         call Gfx_GetCellAttribute  ; Input: H = Row, B = Col -> Output: A = attributo originale sfondo
  740+ 60D4 C1               pop  bc
  741+ 60D5 E1               pop  hl
  742+ 60D6
- 743+ 60D6 E6 F8            and  $f8                   ; Preserva il Paper dello sfondo (es. Blue in TheColdRoom, Black in CentralCavern)
- 744+ 60D8 F6 47            or   (WHITE | $40)         ; Imposta Ink Bianco Brillante per Willy
+ 743+ 60D6 E6 F8            and  $f8                   ; Preserva il Paper, Bright e Flash dello sfondo della stanza
+ 744+ 60D8 F6 07            or   WHITE                 ; Imposta Ink Bianco (7) per Willy senza forzare Bright 1
  745+ 60DA 5F               ld   e, a
  746+ 60DB
  747+ 60DB E5               push hl

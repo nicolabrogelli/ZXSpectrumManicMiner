@@ -733,15 +733,15 @@ Gfx_ApplyPlayerTileLayers:
 
 .cell_is_empty:
     ; --- LA CELLA È SPAZIO VUOTO ---
-    ; Leggi l'attributo originale di sfondo della stanza, preserva il Paper e imposta Ink Bianco Brillante
+    ; Leggi l'attributo originale di sfondo della stanza, preserva il Paper/Bright e imposta Ink Bianco
     push hl
     push bc
     call Gfx_GetCellAttribute  ; Input: H = Row, B = Col -> Output: A = attributo originale sfondo
     pop  bc
     pop  hl
 
-    and  $f8                   ; Preserva il Paper dello sfondo (es. Blue in TheColdRoom, Black in CentralCavern)
-    or   (WHITE | $40)         ; Imposta Ink Bianco Brillante per Willy
+    and  $f8                   ; Preserva il Paper, Bright e Flash dello sfondo della stanza
+    or   WHITE                 ; Imposta Ink Bianco (7) per Willy senza forzare Bright 1
     ld   e, a
 
     push hl
