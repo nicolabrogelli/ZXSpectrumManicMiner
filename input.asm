@@ -622,6 +622,9 @@ RoomsListTable:
 .WackyAmoebatronsLayout:           dw WackyAmoebatronsLayout           ; 08
 .TheEndorianForestLayout:          dw TheEndorianForestLayout          ; 09
 .AttackoftheMutantTelephonesLayout: dw AttackoftheMutantTelephonesLayout ; 10
+.ReturnoftheAlienKongBeastLayout:  dw ReturnoftheAlienKongBeastLayout  ; 11
+.OreRefineryLayout:                dw OreRefineryLayout                ; 12
+.SkylabLandingBayLayout:           dw SkylabLandingBayLayout           ; 13
 
 RoomsListTableEnd:
 NUM_ROOMS EQU (RoomsListTableEnd - RoomsListTable) / 2

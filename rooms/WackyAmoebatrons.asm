@@ -95,9 +95,9 @@ WackyAmoebatronsLayout:
 	DEFB 96
 	DEFB 255
 	DEFB 255,255,255,255,255	;Item 2 (unused)
-	DEFB 0,255,255,255,255	;Item 3 (unused)
-	DEFB 0,255,255,255,255	;Item 4 (unused)
-	DEFB 0,255,255,255,255	;Item 5 (unused)
+	DEFB 255,255,255,255,255	;Item 3 (unused)
+	DEFB 255,255,255,255,255	;Item 4 (unused)
+	DEFB 255,255,255,255,255	;Item 5 (unused)
 	DEFB 255	;Terminator
 	
 	DEFB 14	;Attribute

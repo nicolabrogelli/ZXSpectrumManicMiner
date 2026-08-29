@@ -84,6 +84,8 @@ ResetItemsTable:
     ld   a, (hl)
     cp   $FF
     jr   z, .next_room             ; $FF = fine lista item della stanza
+    or   a
+    jr   z, .next_room             ; 0 = fine lista item della stanza
     inc  hl                        ; +1 (Attr Address Low)
     inc  hl                        ; +2 (Attr Address High)
     inc  hl                        ; +3 (Anim mask)
@@ -120,6 +122,8 @@ Items_ResetCurrentRoomItems:
     ld   a, (hl)
     cp   $FF
     jr   z, .done                  ; $FF = fine lista item della stanza
+    or   a
+    jr   z, .done                  ; 0 = fine lista item della stanza
     inc  hl                        ; +1 (Attr Address Low)
     inc  hl                        ; +2 (Attr Address High)
     inc  hl                        ; +3 (Anim mask)
@@ -185,6 +189,8 @@ Items_DrawRoom:
     ld   a, (hl)                   ; Byte 0: Color
     cp   $FF
     jr   z, .done                  ; $FF = fine lista item
+    or   a
+    jr   z, .done                  ; 0 = fine lista item (nessun colore / slot vuoto)
 
     ld   e, a                      ; E = Color
     inc  hl

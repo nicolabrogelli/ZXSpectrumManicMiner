@@ -17,6 +17,9 @@ RoomsStart:
     include "rooms/WackyAmoebatrons.asm"            ; ID 08
     include "rooms/TheEndorianForest.asm"           ; ID 09
     include "rooms/AttackoftheMutantTelephones.asm" ; ID 10
+    include "rooms/ReturnoftheAlienKongBeast.asm"   ; ID 11
+    include "rooms/OreRefinery.asm"                 ; ID 12
+    include "rooms/SkylabLandingBay.asm"            ; ID 13 
 
     include "data/datasprite.asm"
 
