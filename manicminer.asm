@@ -727,6 +727,9 @@ CheckVictoryCondition: EQU CheckPortalTransition
 ; - Se era l'ultima stanza disponibile: scatena la vittoria (Victory Screen).
 ; -------------------------------------------------------------------
 TriggerPortalTransition:
+    ; 0. Animazione di fine livello: svuota l'aria residua convertendola in punteggio (+1 per pixel)
+    call Air_DepleteCountdown
+
     ; 1. Determina l'ID della stanza corrente
     call DetermineCurrentRoomID    ; (current_room) = ID stanza (0..NUM_ROOMS-1)
     
@@ -779,6 +782,68 @@ TriggerPortalTransition:
     call Gfx_ClearScreenDirect
     jp   LoadRoomAndRestart
     ENDIF
+
+; -------------------------------------------------------------------
+; Air_DepleteCountdown
+; Animazione originale di completamento livello (Manic Miner):
+; - Esegue il conto alla rovescia di tutti i pixel di aria rimanenti (air_pixels).
+; - Ad ogni pixel decrementato:
+;   * Aggiorna la barra dell'aria a schermo (Gfx_UpdateAirBar).
+;   * Aggiunge 1 punto allo score del giocatore (Score_Add1Point).
+;   * Produce un impulso sonoro sul buzzer dello speaker (porta $FE) con frequenza proporzionale all'aria.
+; -------------------------------------------------------------------
+Air_DepleteCountdown:
+    push af
+    push bc
+    push de
+    push hl
+
+.countdown_loop:
+    ld   a, (air_pixels)
+    or   a
+    jr   z, .done_countdown        ; Barra dell'aria azzerata -> fine animazione
+
+    dec  a
+    ld   (air_pixels), a           ; Decrementa 1 pixel di aria
+    
+    ; Aggiorna la barra grafica dell'aria
+    call Gfx_UpdateAirBar
+
+    ; Aggiungi 1 punto allo score
+    call Score_Add1Point
+
+    ; Genera l'effetto sonoro originale di Manic Miner:
+    ; Pitch dipendente dai pixel di aria rimanenti (frequenza crescente man mano che si svuota)
+    ld   a, (air_pixels)
+    cpl
+    and  63
+    rlca
+    inc  a
+    ld   d, a                      ; D = ritardo semionda audio
+
+    ld   c, 3                      ; Durata impulso
+.audio_loop:
+    xor  a
+    out  ($fe), a
+    ld   b, d
+.w1: djnz .w1
+
+    ld   a, $18
+    out  ($fe), a
+    ld   b, d
+.w2: djnz .w2
+
+    dec  c
+    jr   nz, .audio_loop
+
+    jr   .countdown_loop
+
+.done_countdown:
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
+    ret
 
 ; -------------------------------------------------------------------
 ; CheckAllItemsCollected

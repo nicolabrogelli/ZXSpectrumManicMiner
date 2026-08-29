@@ -628,6 +628,47 @@ CheckActiveItemAtCell:
     ret
 
 ; -------------------------------------------------------------------
+; Score_Add1Point
+; Aggiunge 1 punto allo Score del giocatore (usato nel countdown dell'aria a fine livello).
+; Aggiorna automaticamente l'High Score se Score > HighScore.
+; -------------------------------------------------------------------
+Score_Add1Point:
+    push af
+    push bc
+    push de
+    push hl
+
+    ; Aggiungi 1 punto (byte 0 in BCD rappresenta unità e decine)
+    ld   a, (player_score + 0)
+    add  a, $01
+    daa
+    ld   (player_score + 0), a
+
+    ; Riporto al byte 1 (centinaia / migliaia)
+    ld   a, (player_score + 1)
+    adc  a, 0
+    daa
+    ld   (player_score + 1), a
+
+    ; Riporto al byte 2 (decine / centinaia di migliaia)
+    ld   a, (player_score + 2)
+    adc  a, 0
+    daa
+    ld   (player_score + 2), a
+
+    ; Controlla se player_score ha superato high_score
+    call Score_CheckAndUpdateHighScore
+
+    ; Aggiorna visualizzazione a schermo
+    call Gfx_UpdateScoreDisplay
+
+    pop  hl
+    pop  de
+    pop  bc
+    pop  af
+    ret
+
+; -------------------------------------------------------------------
 ; Score_AddItemPoints
 ; Aggiunge 100 punti allo Score del giocatore quando raccoglie un item.
 ; Aggiorna automaticamente l'High Score se Score > HighScore.
