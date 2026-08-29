@@ -54,7 +54,7 @@ Phys_CheckSolid:
     cp   4
     jr   z, .solid
     
-    ; Nelle caverne The Endorian Forest e Attack of the Mutant Telephones, il tile Extra (7) si comporta come pavimento solido (Floor)
+    ; Nelle caverne The Endorian Forest, Attack of the Mutant Telephones e Ore Refinery, il tile Extra (7) si comporta come pavimento solido (Floor)
     cp   7
     jr   nz, .not_solid
     
@@ -66,6 +66,12 @@ Phys_CheckSolid:
     
     ld   hl, (room_ptr)
     ld   de, AttackoftheMutantTelephonesLayout
+    or   a
+    sbc  hl, de
+    jr   z, .solid
+
+    ld   hl, (room_ptr)
+    ld   de, OreRefineryLayout
     or   a
     sbc  hl, de
     jr   z, .solid
