@@ -351,174 +351,22 @@ ShowTitleScreen:
 
 ; -------------------------------------------------------------------
 ; TriggerGameOver
-; Scatena la schermata di Game Over per la stanza corrente.
-; - Pulisce gli elementi di gioco della stanza (piattaforme, nemici, Willy, item).
-; - Esegue l'animazione del Piede (discesa fluida ed atterraggio sotto BotteSprite).
-; - Fa comparire la scritta GAME OVER al centro dello schermo dopo la pausa ed anima i suoi colori.
-; - Fa comparire la domanda "VUOI CONTINUARE? Y/N" a riga 8.
-; - Mantiene visibile il Nome della Stanza corrente e la Riga di Stato (Item ed Orario).
-; - Se il giocatore preme 'Y': riprende la partita dal punto esatto in cui era arrivato,
-;   mantenendo lo stato della stanza e tutti gli oggetti (items) raccolti.
-; - Se il giocatore preme 'N' (o ENTER): esegue il normale flusso del Game Over (Title Screen).
+; Scatena la sequenza originale di Game Over:
+; - Verifica e aggiorna l'High Score se il punteggio corrente e superiore.
+; - Esegue l'animazione originale del Piede che schiaccia Willy sul Piedistallo
+;   con suono beeper originale e lampeggio dello schermo.
+; - Mostra "Game" e "Over" con effetto arcobaleno (glistening).
+; - Ritorna alla schermata iniziale del titolo (Title Screen).
 ; -------------------------------------------------------------------
 TriggerGameOver:
-    ; 1. Disegna la schermata di Game Over ed esegue l'animazione del Piede, GAME OVER e prompt continua
+    ; 1. Verifica ed aggiorna eventuale nuovo High Score
+    call Score_CheckAndUpdateHighScore
+
+    ; 2. Esegue la sequenza grafica e sonora originale di Game Over
     call Gfx_DrawGameOverScreen
 
-    ; 2. Attende il rilascio dei tasti Y, N ed ENTER se erano già premuti
-.wait_keys_release:
-    halt
-    ; Controlla tasto Y (Porta $DF, bit 4)
-    ld   bc, $dffe
-    in   a, (c)
-    bit  4, a
-    jr   z, .wait_keys_release
-
-    ; Controlla tasto N (Porta $7F, bit 3)
-    ld   bc, $7ffe
-    in   a, (c)
-    bit  3, a
-    jr   z, .wait_keys_release
-
-    ; Controlla tasto ENTER (Porta $BF, bit 0)
-    ld   bc, $bffe
-    in   a, (c)
-    bit  0, a
-    jr   z, .wait_keys_release
-
-    ; 3. Attesa della scelta del giocatore con animazione ciclo colore su GAME OVER
-    ld   c, 0                  ; C = contatore frame per animazione colore
-.wait_choice_loop:
-    halt
-
-    ; Animazione ciclo colore per GAME OVER (Riga 5, Colonna 11..19, $58AB)
-    inc  c
-    ld   a, c
-    srl  a
-    srl  a                     ; Cambia colore ogni 4 frame (~80ms)
-    and  7
-    ld   e, a
-    ld   d, 0
-    ld   hl, game_over_color_table
-    add  hl, de
-    ld   a, (hl)               ; A = nuovo colore attributo
-    ld   hl, $58ab             ; Indirizzo attributi riga 5, col 11 ($5800 + 5*32 + 11 = $58AB)
-    ld   b, 9
-.color_cycle_loop:
-    ld   (hl), a
-    inc  hl
-    djnz .color_cycle_loop
-
-    ; Controlla se il tasto Y è premuto (Porta $DF, bit 4 = 0)
-    ld   bc, $dffe
-    in   a, (c)
-    bit  4, a
-    jr   z, .continue_chosen
-
-    ; Controlla se il tasto N è premuto (Porta $7F, bit 3 = 0)
-    ld   bc, $7ffe
-    in   a, (c)
-    bit  3, a
-    jr   z, .quit_chosen
-
-    ; Controlla se il tasto ENTER è premuto (Porta $BF, bit 0 = 0)
-    ld   bc, $bffe
-    in   a, (c)
-    bit  0, a
-    jr   z, .quit_chosen
-
-    jr   .wait_choice_loop
-
-.quit_chosen:
-    ; 4a. Attende il rilascio di N ed ENTER per evitare doppi scatti
-.wait_quit_release:
-    halt
-    ld   bc, $7ffe
-    in   a, (c)
-    bit  3, a
-    jr   z, .wait_quit_release
-    ld   bc, $bffe
-    in   a, (c)
-    bit  0, a
-    jr   z, .wait_quit_release
-
-    ; 5a. Esegue il normale flusso del Game Over (ritorno a Title Screen)
+    ; 3. Ritorna al Title Screen originale
     jp   ShowTitleScreen
-
-.continue_chosen:
-    ; 4b. Attende il rilascio del tasto Y per evitare doppi scatti
-.wait_continue_release:
-    halt
-    ld   bc, $dffe
-    in   a, (c)
-    bit  4, a
-    jr   z, .wait_continue_release
-
-    ; 5b. Ripristina lo stato per continuare la partita:
-    ; - Ripristina tutti gli item della stanza corrente al valore $FF (tutti da raccogliere)
-    call Items_ResetCurrentRoomItems
-
-    ; - Ripristina le vite di Willy al valore iniziale
-    ld   a, INITIAL_LIVES
-    ld   (willy_lives), a
-
-    ; - Sincronizza i contatori temporali con counter hardware per evitare salti dopo la pausa a schermo
-    ld   hl, (counter)
-    ld   (last_frame_counter), hl
-
-    ; - Reimposta la fisica e le variabili di stato di Willy
-    xor  a
-    ld   (velocity_y), a
-    ld   (jump_pressed), a
-    ld   (coyote_timer), a
-    ld   (jump_frame), a
-    ld   (jump_dir), a
-    ld   (body_state), a
-    ld   (w_warp_state), a
-    ld   (w_key_prev), a
-    ld   (enter_key_prev), a
-    ld   (collision_active), a
-    ld   (flags), a
-    ld   (ramp_entry_guard), a
-    ld   (willy_on_ramp), a
-    ld   (willy_needs_redraw), a
-    ld   a, $ff
-    ld   (digit_key_prev), a
-    ld   (player_drawn_pos+1), a
-    ld   (player_old_dir), a
-    ld   (player_old_body), a
-    ld   a, 1
-    ld   (q_prev), a
-    ld   (a_prev), a
-    ld   (on_ground), a
-    ld   (enemy_was_updated), a
-    
-    ; - Timer di sicurezza post-respawn (invulnerabilità)
-    ld   a, RESPAWN_SAFETY_TIME
-    ld   (willy_safety_timer), a
-
-    ; - Ripristina lo stato audio
-    ld   a, 18
-    ld   (Audio_jump_sound_note), a
-    xor  a
-    ld   (Audio_jump_sound_timer), a
-    IF ENABLE_MUSIC != 0
-    ld   (Audio_music_note_idx), a
-    ld   a, 1
-    ld   (Audio_music_frame_counter), a
-    ENDIF
-
-    ; - Riposiziona Willy nel punto di default definito nella stanza
-    xor  a
-    ld   (transition_active), a
-
-    ; - Cancella lo schermo a nero prima del caricamento
-    xor  a
-    out  ($fe), a
-    call Gfx_ClearScreenDirect
-
-    ; - Ricarica e riavvia la stanza corrente mantenendo tutti gli items raccolti
-    jp   LoadRoomAndRestart
 
 ; -------------------------------------------------------------------
 ; TriggerVictory

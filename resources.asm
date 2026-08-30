@@ -28,6 +28,7 @@ RoomsStart:
     include "rooms/TheFInalBarrier.asm"             ; ID 19
 
     include "data/datasprite.asm"
+    include "data/datalandscape.asm"
 
 font_buffer:
     .1024 db 0

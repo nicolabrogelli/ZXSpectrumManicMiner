@@ -1555,15 +1555,11 @@ Gfx_DrawTitleScreen:
     pop  af
     ret
 
-game_over_str:
-    db "GAME OVER"
+game_over_game_str:
+    db "Game"
 
-game_over_continue_str:
-    ;db "VUOI CONTINUARE? Y/N"
-    db "   CONTINUE? Y/N    "
-
-game_over_color_table:
-    db $42, $46, $47, $45, $44, $43, $46, $42
+game_over_over_str:
+    db "Over"
 
 victory_str:
     db "CONGRATULATIONS!"
@@ -1578,13 +1574,50 @@ victory_color_table:
     db $46, $44, $45, $47, $46, $43, $45, $47
 
 ; -------------------------------------------------------------------
+; Gfx_DrawSprite16x16_Overwrite
+; Disegna uno sprite 16x16 in modalita sovrascrittura (overwrite)
+; a una coordinata allineata al byte (2 byte per scanline).
+; Input:
+;   DE = Puntatore ai dati dello sprite (32 byte)
+;   HL = Indirizzo video iniziale scanline 0
+; -------------------------------------------------------------------
+Gfx_DrawSprite16x16_Overwrite:
+    push bc
+    push de
+    push hl
+    ld   b, 16                 ; 16 scanline
+.scanline_loop:
+    ld   a, (de)
+    ld   (hl), a
+    inc  de
+    inc  hl
+    ld   a, (de)
+    ld   (hl), a
+    inc  de
+    dec  hl
+    call Gfx_IncScreenLine
+    djnz .scanline_loop
+    pop  hl
+    pop  de
+    pop  bc
+    ret
+
+; -------------------------------------------------------------------
 ; Gfx_DrawGameOverScreen
-; Esegue la sequenza animata di Game Over:
-; 1. Pulisce lo schermo a nero, mostra Willy (Y=96), BotteSprite (Y=112, Rosso), Nome Stanza (riga 16) e Status Line (riga 18).
-; 2. Animazione di discesa fluida di PiedeSprite dall'alto (Y=0) fino a fermarsi sopra Willy (Y=80), prima del bordo alto della Botte.
-; 3. Breve pausa con PiedeSprite fermo sopra Willy.
-; 4. Stampa la scritta GAME OVER al centro dello schermo (riga 5) solo dopo la pausa.
-; 5. Stampa la richiesta "VUOI CONTINUARE? Y/N" a riga 8.
+; Esegue la sequenza originale di Game Over di Manic Miner:
+; 1. Pulisce i primi due terzi dello schermo (righe 0..15, $4000..$4FFF, 4096B)
+;    e imposta gli attributi iniziali a Bright 1, Paper 0 (Nero), Ink 7 (Bianco) ($5800..$59FF, 512B).
+;    Il terzo inferiore dello schermo (righe 16..23) rimane visibile come nell'originale.
+; 2. Disegna Willy immobile sul piedistallo a riga 12, colonna 15 (indirizzo $488F, X=120, Y=96).
+; 3. Disegna il Piedistallo (Plinth) sotto Willy a riga 14, colonna 15 (indirizzo $48CF, X=120, Y=112).
+; 4. Ciclo di discesa del Piede (Boot):
+;    - Distance varia da 0 a $C4 (196) con passo 4 (Y = 0, 2, 4, ... 98).
+;    - Disegna il Piede (PiedeSprite) a (X=120, Y=Distance/2) sovrascrivendo senza cancellare la parte superiore,
+;      creando il celebre effetto della gamba che si allunga verso il basso e schiaccia Willy!
+;    - Effetto sonoro beeper a frequenza crescente (pitch delay = 255 - distance, 64 impulsi).
+;    - Lampeggio degli attributi dei primi due terzi (Paper cicla tra Nero, Blu, Rosso, Magenta con Bright 1 e Ink 7).
+; 5. Stampa la scritta "Game" a riga 6, colonna 10 e "Over" a riga 6, colonna 18 (ai lati della gamba).
+; 6. Animazione ciclica arcobaleno (glistening) delle lettere di "Game" e "Over" per ~1.5 secondi.
 ; -------------------------------------------------------------------
 Gfx_DrawGameOverScreen:
     push af
@@ -1593,158 +1626,150 @@ Gfx_DrawGameOverScreen:
     push hl
     push ix
 
-    ; 1. Bordo hardware e schermo a nero
+    di                         ; Disabilita interrupt durante l'effetto sonoro beeper
+
+    ; 1. Bordo a nero
     xor  a
-    out  ($fe), a              ; Bordo a nero
-    call Gfx_ClearScreenDirect ; Pulisce tutti i pixel e gli attributi a nero
+    out  ($fe), a
 
-    ; 2. Disegna Willy (immobile, rivolto a destra) a X=124, Y=96
-    ; 2a. Testa di Willy (8x8) a X=124, Y=96
-    ld   bc, $607c             ; B = Y = 96 ($60), C = X = 124 ($7C)
-    ld   ix, Willy + (0 * 8)   ; HEAD_GRAPH_RIGHT
-    call Gfx_DrawPixelSprite8x8
-
-    ; 2b. Corpo di Willy (8x8) a X=124, Y=104
-    ld   bc, $687c             ; B = Y = 104 ($68), C = X = 124 ($7C)
-    ld   ix, Willy + (1 * 8)   ; Body right frame 0
-    call Gfx_DrawPixelSprite8x8
-
-    ; 2c. Imposta attributi colore di Willy (Bianco Brillante) a X=124, Y=96
-    ld   bc, $607c             ; B = Y = 96, C = X = 124
-    ld   a, WHITE | $40        ; Bianco Brillante
-    call Gfx_SetEnemyColorAttributes
-
-    ; 3. Disegna BotteSprite (immobile, colore Rosso) a X=120, Y=112
-    ld   bc, $7078             ; B = Y = 112 ($70), C = X = 120 ($78)
-    ld   ix, BotteSprite       ; Frame 1 di BotteSprite
-    call Gfx_DrawPixelSprite16x16
-
-    ; 3b. Imposta attributi colore per BotteSprite (Rosso Brillante) a X=120, Y=112
-    ld   bc, $7078             ; B = Y = 112, C = X = 120
-    ld   a, RED | $40          ; Rosso Brillante
-    call Gfx_SetEnemyColorAttributes
-
-    ; 4. Stampa il Nome della Stanza a riga 16
-    call Gfx_PrintRoomName
-
-    ; 5. Stampa la riga di stato a riga 18
-    ld   hl, status_line       ; HL = indirizzo stringa di stato
-    ld   b, 32                 ; B = 32 caratteri
-    ld   d, 18
-    ld   e, 0
-    call Gfx_PrintDirectText
-
-    ; 6. Applica i colori agli attributi di riga 18 ($5A40)
-    ld   hl, status_line_attrs
-    ld   de, $5a40             ; Indirizzo attributi riga 18
-    ld   bc, 32
+    ; 2. Pulisce i primi due terzi dello schermo display file ($4000..$4FFF, 4096 byte)
+    ld   hl, $4000
+    ld   de, $4001
+    ld   bc, $0fff
+    ld   (hl), 0
     ldir
 
-    ; 7. Animazione: Discesa fluida di PiedeSprite dall'alto (Y=0) fino a Y=96 (alla parte alta della Botte)
-    ld   b, 0                  ; B = Y iniziale (0)
-.foot_descent_loop:
-    push bc                    ; Salva B = Y corrente
-    
-    ; 7a. Cancella l'intero blocco 16x16 della posizione precedente (Y - 2) se Y > 0
-    ld   a, b
-    or   a
-    jr   z, .skip_clear_prev
-    sub  2                     ; Y precedente (passo 2 pixel)
-    ld   b, a
-    ld   c, 120                ; X = 120
-    call Gfx_Clear16x16_Black
-    
-    ; Pulisce l'attributo della riga lasciata indietro (Row = (Y - 2) / 8)
-    ld   a, b
-    srl  a
-    srl  a
-    srl  a                     ; A = Row da azzerare
-    ld   l, a
-    ld   h, 0
-    add  hl, hl                ; * 2
-    add  hl, hl                ; * 4
-    add  hl, hl                ; * 8
-    add  hl, hl                ; * 16
-    add  hl, hl                ; * 32
-    ld   de, $580f             ; $5800 + 15
-    add  hl, de
+    ; 3. Imposta gli attributi dei primi due terzi a Bright 1, Ink 7, Paper 0 ($47) ($5800..$59FF, 512 byte)
+    ld   hl, $5800
+    ld   de, $5801
+    ld   bc, $01ff
+    ld   (hl), $47
+    ldir
+
+    ; 4. Disegna Willy a riga 12, colonna 15 (indirizzo $488F, Y=96, X=120)
+    ld   hl, $488f
+    ld   de, WillyGameOverSprite
+    call Gfx_DrawSprite16x16_Overwrite
+
+    ; 5. Disegna il Piedistallo a riga 14, colonna 15 (indirizzo $48CF, Y=112, X=120)
+    ld   hl, $48cf
+    ld   de, PlinthSprite
+    call Gfx_DrawSprite16x16_Overwrite
+
+    ; 6. Animazione di discesa del Piede con audio e lampeggio attributi
     xor  a
-    ld   (hl), a               ; Col 15 = 0
-    inc  hl
-    ld   (hl), a               ; Col 16 = 0
+    ld   (game_over_distance), a
 
-.skip_clear_prev:
-    pop  bc                    ; Ripristina B = Y corrente
-    push bc
+.boot_descent_loop:
+    ; 6a. Calcola indirizzo schermo per (X=120, Y = distance / 2)
+    ld   a, (game_over_distance)
+    srl  a                     ; A = Y (0..98)
+    ld   h, a                  ; H = Y
+    ld   l, 120                ; L = X = 120
+    call Gfx_GetScreenAddr     ; HL = indirizzo schermo
 
-    ; Quando il Piede raggiunge Y = 96, cancella lo sprite di Willy a (124, 96) prima di disegnare il Piede
-    ld   a, b
-    cp   96
-    jr   nz, .draw_foot
-    push bc
-    ld   c, 120
-    ld   b, 96
-    call Gfx_Clear16x16_Black
-    pop  bc
+    ; 6b. Disegna PiedeSprite in modalita overwrite (lascia indietro la striscia dei pantaloni)
+    ld   de, PiedeSprite
+    call Gfx_DrawSprite16x16_Overwrite
 
-.draw_foot:
-    ; 7b. Disegna PiedeSprite alla coordinata corrente (X=120, Y)
-    ld   c, 120
-    ld   ix, PiedeSprite
-    call Gfx_DrawPixelSprite16x16
+    ; 6c. Effetto sonoro beeper a frequenza crescente
+    ld   a, (game_over_distance)
+    cpl                        ; A = 255 - distance (determina il pitch)
+    ld   e, a                  ; E = pitch delay
+    xor  a
+    ld   bc, $0040             ; C = 64 impulsi (durata della nota)
+.sound_pulse_loop:
+    out  ($fe), a
+    xor  $18                   ; Toggle speaker ($10) e mic/border ($08)
+    ld   b, e
+.pitch_delay_loop:
+    djnz .pitch_delay_loop
+    dec  c
+    jr   nz, .sound_pulse_loop
 
-    ; 7c. Imposta colore Giallo Brillante per PiedeSprite
-    ld   c, 120
-    ld   a, YELLOW | $40
-    call Gfx_SetEnemyColorAttributes
+    ; 6d. Ciclo colori attributi sui primi due terzi ($5800..$59FF, 512 byte)
+    ld   hl, $5800
+    ld   de, $5801
+    ld   bc, $01ff
+    ld   a, (game_over_distance)
+    and  $0c                   ; bit 2 e 3
+    rlca                       ; sposta nei bit 3 e 4 (Paper 0..3: Nero, Blu, Rosso, Magenta)
+    or   $47                   ; Bright 1, Ink 7 (Bianco)
+    ld   (hl), a
+    ldir
 
-    ; 7d. Pausa per movimento fluido a 50Hz
-    halt
+    ; 6e. Avanza distance di 4 (scende di 2 pixel)
+    ld   a, (game_over_distance)
+    add  a, 4
+    ld   (game_over_distance), a
+    cp   $c4                   ; Si ferma a $C4 (196 -> Y=98, quando tocca il piedistallo)
+    jr   nz, .boot_descent_loop
 
-    pop  bc                    ; B = Y corrente
-    ld   a, b
-    add  a, 2                  ; Avanza di 2 pixel
-    ld   b, a
-    cp   98                    ; Si ferma a Y = 96 (incluso, il ciclo termina quando B=98)
-    jr   c, .foot_descent_loop
-
-    ; 8. Breve pausa con PiedeSprite fermato sulla parte alta della Botte (~0.7s)
-    ld   b, 35
-.pause_after_foot:
-    halt
-    djnz .pause_after_foot
-
-    ; 9. Solo DOPO la pausa, fa comparire GAME OVER al centro dello schermo a riga 5, colonna 11
-    ld   hl, game_over_str
-    ld   b, 9
-    ld   d, 5
-    ld   e, 11
+    ; 7. Stampa "Game" e "Over" ai lati della gamba a riga 6
+    ld   hl, game_over_game_str
+    ld   b, 4
+    ld   d, 6
+    ld   e, 10
     call Gfx_PrintDirectText
 
-    ; Imposta attributo iniziale per GAME OVER (Rosso Brillante)
-    ld   hl, $58ab             ; Riga 5, Colonna 11 ($5800 + 5*32 + 11 = $58AB)
-    ld   b, 9
-    ld   a, RED | $40
-.init_go_attr:
-    ld   (hl), a
-    inc  hl
-    djnz .init_go_attr
-
-    ; 10. Fa comparire la domanda "VUOI CONTINUARE? Y/N" a riga 8, colonna 6
-    ld   hl, game_over_continue_str
-    ld   b, 20
-    ld   d, 8
-    ld   e, 6
+    ld   hl, game_over_over_str
+    ld   b, 4
+    ld   d, 6
+    ld   e, 18
     call Gfx_PrintDirectText
 
-    ; Imposta attributo per "VUOI CONTINUARE? Y/N" (Giallo Brillante)
-    ld   hl, $5906             ; Riga 8, Colonna 6 ($5800 + 8*32 + 6 = $5906)
-    ld   b, 20
-    ld   a, YELLOW | $40
-.init_continue_attr:
-    ld   (hl), a
-    inc  hl
-    djnz .init_continue_attr
+    ; 8. Animazione ciclica arcobaleno (glisten) sui caratteri di "Game" e "Over" (~1.57s)
+    ld   bc, $0000             ; B = 0 (ritardo 256 cicli), C = contatore colore
+    ld   d, 6                  ; D = 6 iterazioni esterne
+.glisten_loop:
+    djnz .glisten_loop
+
+    ld   a, c
+    and  7
+    or   $40                   ; Bright 1, Paper 0, Ink
+    ld   ($58ca), a            ; 'G' (riga 6, colonna 10)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58cb), a            ; 'a' (riga 6, colonna 11)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58cc), a            ; 'm' (riga 6, colonna 12)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58cd), a            ; 'e' (riga 6, colonna 13)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58d2), a            ; 'O' (riga 6, colonna 18)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58d3), a            ; 'v' (riga 6, colonna 19)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58d4), a            ; 'e' (riga 6, colonna 20)
+
+    inc  a
+    and  7
+    or   $40
+    ld   ($58d5), a            ; 'r' (riga 6, colonna 21)
+
+    dec  c
+    jr   nz, .glisten_loop
+    dec  d
+    jr   nz, .glisten_loop
+
+    ei                         ; Riabilita interrupt
 
     pop  ix
     pop  hl
@@ -2713,6 +2738,24 @@ Gfx_DrawRoom:
     push hl
     push ix
     
+    ; 1. Se la stanza corrente e The Final Barrier (ID 19), disegna il paesaggio
+    ld   a, (current_room)
+    cp   19
+    jr   nz, .unpack_and_draw
+
+    ; Copia 2048 byte del bitmap grafico del paesaggio a $4000..$47FF (righe 0..7)
+    ld   hl, LandscapeGraphicData
+    ld   de, $4000
+    ld   bc, $0800
+    ldir
+
+    ; Copia 256 byte di attributi colore originali a $5800..$58FF (righe 0..7)
+    ld   hl, TheFinalBarrierLayout
+    ld   de, $5800
+    ld   bc, $0100
+    ldir
+
+.unpack_and_draw:
     call UnpackRoomLayout      ; Decodifica le 512 celle in unpacked_layout (0..7)
     
     ld   hl, unpacked_layout   ; HL punta a unpacked_layout
@@ -2722,6 +2765,22 @@ Gfx_DrawRoom:
 .col_loop:
     ld   a, (hl)               ; A = tile index (0..7)
     inc  hl
+
+    ; Se siamo in The Final Barrier (stanza 19) e nelle righe superiori (0..7):
+    ; non ridisegnare il Tile 0 (Background) per non cancellare la bitmap del paesaggio
+    ld   d, a                  ; Salva tile index in D
+    ld   a, (current_room)
+    cp   19
+    jr   nz, .draw_current_tile
+    ld   a, b
+    cp   8
+    jr   nc, .draw_current_tile ; Nelle righe 8..15 disegna sempre tutti i tile
+    ld   a, d
+    or   a
+    jr   z, .skip_tile_draw    ; Nelle righe 0..7 salta Tile 0
+
+.draw_current_tile:
+    ld   a, d                  ; A = tile index (0..7)
     
     ; IX = room_ptr + OFFSET_TILES + A * 9
     push hl
@@ -2742,7 +2801,8 @@ Gfx_DrawRoom:
     
     call Gfx_DrawTile          ; Disegna il tile a (Row B, Col C)
     pop  hl
-    
+
+.skip_tile_draw:
     inc  c
     ld   a, c
     cp   32
@@ -3329,8 +3389,30 @@ Gfx_DrawConveyorsAndRamps:
 
 Gfx_SetSpriteColor16x16: EQU Gfx_SetEnemyColorAttributes
 
+; -------------------------------------------------------------------
+; Sprite originali Manic Miner per la sequenza di Game Over
+; -------------------------------------------------------------------
+
+; Sprite del Piede / Boot da The Menagerie ($BAE0) - 32 byte (16x16)
 PiedeSprite:
-    .32 db 255
+    db 42,192, 53,64, 63,192, 9,0
+    db 9,0, 31,128, 16,128, 16,128
+    db 17,128, 34,64, 32,184, 89,36
+    db 68,66, 68,2, 68,2, 255,255
+
+; Sprite del Piedistallo / Plinth da The Cold Room ($B6E0) - 32 byte (16x16)
+PlinthSprite:
+    db 255,255, 114,78, 138,81, 170,85
+    db 74,82, 18,72, 34,68, 42,84
+    db 42,84, 42,84, 42,84, 42,84
+    db 42,84, 42,84, 42,84, 42,84
+
+; Sprite di Willy rivolto a destra centrato sul blocco 16x16 ($8240) - 32 byte
+WillyGameOverSprite:
+    db $00,$60, $03,$E0, $07,$C0, $03,$40, $03,$E0, $03,$C0, $01,$80, $03,$C0
+    db $07,$E0, $07,$E0, $0F,$70, $0F,$B0, $03,$C0, $07,$60, $06,$E0, $07,$70
+
+; Mantenuti per compatibilita
 BotteSprite:
     .32 db 0
 VecchiaSprite:

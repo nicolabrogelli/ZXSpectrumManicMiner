@@ -94,6 +94,7 @@ portal_anim_frame:          db 0       ; Frame ciclo colori portale attivo (0..7
 portal_static_color:        db 0       ; Attributo colore originale del portale statico
 portal_row:                 db 0       ; Riga del portale nella stanza corrente (0..15)
 portal_col:                 db 0       ; Colonna del portale nella stanza corrente (0..31)
+game_over_distance:         db 0       ; Distanza/offset discesa Piede durante Game Over
 
 Audio_jump_sound_note:    db 18   ; 18 = inactive (0..17 are active notes)
 Audio_jump_sound_timer:   db 0
