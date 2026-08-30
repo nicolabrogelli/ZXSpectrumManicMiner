@@ -742,3 +742,77 @@ Score_CheckAndUpdateHighScore:
 
 .done_check:
     ret
+
+; -------------------------------------------------------------------
+; Items_Animate
+;
+; Esegue l'animazione originale degli Item di Manic Miner:
+; cicla il colore INK attraverso Magenta (3), Verde (4), Ciano (5), Giallo (6)
+; mantenendo inalterati i bit di PAPER e BRIGHT, esattamente come nella routine
+; originale $8F63.
+; -------------------------------------------------------------------
+Items_Animate:
+    push hl
+    push de
+    push bc
+    push iy
+
+    ld   a, (num_room_items)
+    or   a
+    jr   z, .anim_done
+
+    ld   iy, current_room_items
+
+.anim_loop:
+    ld   a, (iy+2)                 ; A = colore corrente (0 = raccolto, $FF = fine)
+    cp   $FF
+    jr   z, .anim_done
+    or   a
+    jr   z, .next_anim_item
+
+    ; Routine originale $8F63 di Manic Miner:
+    ; Cicla l'Ink attraverso Magenta (3) -> Giallo (6) -> Ciano (5) -> Verde (4) -> Magenta (3)
+    and  $F8                       ; Preserva Paper e Bright
+    or   $03                       ; Base Ink = 3
+    ld   b, a                      ; B = (Paper & $F8) | 3
+    ld   a, (iy+2)
+    and  $03                       ; Isola offset rotazione
+    add  a, b                      ; A = Nuovo attributo
+    ld   (iy+2), a                 ; Salva nella cache
+    ld   b, a                      ; B = Nuovo attributo
+
+    ; Calcola indirizzo attributi: $5800 + Row * 32 + Col
+    ld   e, (iy+0)                 ; E = Col (0..31)
+    ld   d, 0
+    ld   h, 0
+    ld   l, (iy+1)                 ; HL = Row (0..15)
+    add  hl, hl
+    add  hl, hl
+    add  hl, hl
+    add  hl, hl
+    add  hl, hl                    ; Row * 32
+    add  hl, de                    ; Row * 32 + Col (Offset 0..511)
+
+    ; Aggiorna items_grid
+    push hl
+    ld   de, items_grid
+    add  hl, de
+    ld   (hl), b
+    pop  hl
+
+    ; Aggiorna memoria attributi VRAM ($5800)
+    ld   de, $5800
+    add  hl, de                    ; HL = Indirizzo attributi a schermo
+    ld   (hl), b                   ; Scrive l'attributo aggiornato a schermo
+
+.next_anim_item:
+    ld   bc, 5
+    add  iy, bc
+    jr   .anim_loop
+
+.anim_done:
+    pop  iy
+    pop  bc
+    pop  de
+    pop  hl
+    ret

@@ -83,23 +83,23 @@ TheWarehouseLayout:
 	DEFB 5	;Length
 	DEFB 2	;Border colour
 	DEFB 0	;Unused
-	DEFB 35	;Item 1 at (5,24)
+	DEFB 3	;Item 1 at (5,24)
 	DEFW 23736
 	DEFB 96
 	DEFB 255
-	DEFB 36	;Item 2 at (7,15)
+	DEFB 3	;Item 2 at (7,15)
 	DEFW 23791
 	DEFB 96
 	DEFB 255
-	DEFB 37	;Item 3 at (9,1)
+	DEFB 3	;Item 3 at (9,1)
 	DEFW 23841
 	DEFB 104
 	DEFB 255
-	DEFB 38	;Item 4 at (10,19)
+	DEFB 3	;Item 4 at (10,19)
 	DEFW 23891
 	DEFB 104
 	DEFB 255
-	DEFB 35	;Item 5 at (11,26)
+	DEFB 3	;Item 5 at (11,26)
 	DEFW 23930
 	DEFB 104
 	DEFB 255
