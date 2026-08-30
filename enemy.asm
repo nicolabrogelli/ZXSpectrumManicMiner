@@ -520,9 +520,9 @@ Enemy_DrawSingleSlot:
 
 .h_use_second_half:
 .left_frames:
-    ; Movimento a Sinistra (o orizzontale in stanze con guardiani verticali): Frame 4..7 (seconda metà)
-    ld   a, 4
-    add  a, e
+    ; Movimento a Sinistra (o orizzontale in stanze con guardiani verticali): Frame 7..4 (seconda metà invertita)
+    ld   a, 7
+    sub  e
     jr   .got_frame_idx
 
 .kong_frame:
@@ -959,9 +959,9 @@ CheckCollision:
     jr   .calc_guard_ptr
 .col_h_second_half:
 .guard_left_frame:
-    ; Frame Sinistra (o stanza con guardiani verticali): Frame = 4 + Subframe (4..7, seconda metà)
-    ld   a, 4
-    add  a, c
+    ; Frame Sinistra (o stanza con guardiani verticali): Frame = 7 - Subframe (7..4)
+    ld   a, 7
+    sub  c
     jr   .calc_guard_ptr
 
 .col_kong_frame:
