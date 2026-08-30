@@ -155,6 +155,9 @@ Main_loop:
     call Input_CheckCtrl
     call MovePlayer
     call Phys_ApplyGravity
+    IF ENABLE_FALL_DEATH != 0
+    jp   c, .willy_dies
+    ENDIF
     call Enemy_Update
     call Items_CheckCollision
     call Items_Animate

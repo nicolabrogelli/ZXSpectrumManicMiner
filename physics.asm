@@ -561,9 +561,28 @@ Phys_ApplyGravity:
     ENDIF
     xor  a
     ld   (velocity_y), a
+
+    ; --- CONTROLLO MORTE PER CADUTA SU RAMPA ---
+    ld   a, (jump_start_y)
+    ld   d, a
+    xor  a
     ld   (jump_start_y), a  ; Reset jump Y
     ld   (jump_dir), a
     ld   (jump_frame), a
+
+    ld   a, b               ; A = ramp_Y
+    sub  d                  ; A = ramp_Y - jump_start_y
+    jr   c, .safe_ramp_landing
+    jr   z, .safe_ramp_landing
+
+    cp   MAX_SAFE_FALL_HEIGHT + 1
+    jr   c, .safe_ramp_landing
+
+    ; Caduta fatale su rampa!
+    scf
+    ret
+
+.safe_ramp_landing:
     jp   .end
 
 .ramp_top_exit:
@@ -632,7 +651,7 @@ Phys_ApplyGravity:
     add  a, a              ; *2
     add  a, a              ; *4
     add  a, a              ; *8
-    sub  16             ; A = PlayerY di atterraggio
+    sub  16                ; A = PlayerY di atterraggio
     
     ld   bc, (PlayerPos)   ; Ripristina C = PlayerX
     ld   b, a              ; B = Nuovo PlayerY
@@ -642,9 +661,28 @@ Phys_ApplyGravity:
     ld   (on_ground), a
     xor  a
     ld   (velocity_y), a
-    ld   (jump_start_y), a  ; Reset jump Y
+
+    ; --- CONTROLLO MORTE PER CADUTA ---
+    ld   a, (jump_start_y)
+    ld   d, a              ; D = jump_start_y (quota di inizio caduta/salto)
+    xor  a
+    ld   (jump_start_y), a ; Reset jump Y
     ld   (jump_dir), a
     ld   (jump_frame), a
+
+    ld   a, b              ; A = landing_Y (in B)
+    sub  d                 ; A = landing_Y - jump_start_y
+    jr   c, .safe_floor_landing ; Se landing_Y < jump_start_y (atterrato più in alto), sicuro!
+    jr   z, .safe_floor_landing ; Se landing_Y == jump_start_y, sicuro!
+
+    cp   MAX_SAFE_FALL_HEIGHT + 1
+    jr   c, .safe_floor_landing
+
+    ; Caduta fatale!
+    scf                    ; Carry Set = Morte per caduta
+    ret
+
+.safe_floor_landing:
     jp   .end
     
 .no_collision_checks:
@@ -676,8 +714,25 @@ Phys_ApplyGravity:
     ld   b, 112
     xor  a
     ld   (velocity_y), a
-    ld   (jump_start_y), a
     ld   (jump_dir), a
+    ld   (jump_frame), a
+    ld   (PlayerPos), bc
+
+    ld   a, (jump_start_y)
+    ld   d, a
+    xor  a
+    ld   (jump_start_y), a
+
+    ld   a, b              ; A = 112
+    sub  d
+    jr   c, .save_ok
+    jr   z, .save_ok
+    cp   MAX_SAFE_FALL_HEIGHT + 1
+    jr   c, .save_ok
+
+    ; Caduta fatale nel baratro sul fondo!
+    scf
+    ret
 
 .save_ok:
     ld   (PlayerPos), bc
@@ -691,6 +746,7 @@ Phys_ApplyGravity:
     xor  a
     ld   (coyote_timer), a
     call Phys_CheckCrumblingTrigger
+    or   a                 ; Carry Clear = Willy vivo
     ret
 
 .in_air_decay:
@@ -705,9 +761,11 @@ Phys_ApplyGravity:
     ; Decrementa jump_pressed se > 0
     ld   a, (jump_pressed)
     or   a
-    ret  z
+    jr   z, .ret_alive
     dec  a
     ld   (jump_pressed), a
+.ret_alive:
+    or   a                 ; Carry Clear = Willy vivo
     ret
 
 ; -------------------------------------------------------------------

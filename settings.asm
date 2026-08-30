@@ -42,6 +42,19 @@ ENABLE_GUARDIAN_DEBUG_BARS EQU 1
 ENABLE_NASTY_COLLISION_DEATH EQU 1
     ENDIF
 
+; --- Morte per caduta dall'alto (Fall Death) ---
+; 1 = Abilita la morte quando Willy cade da una piattaforma o scende da un'altezza eccessiva (> 40 pixel / 5 blocchi)
+; 0 = Disabilita la morte per caduta
+    IFNDEF ENABLE_FALL_DEATH
+ENABLE_FALL_DEATH EQU 1
+    ENDIF
+
+; --- Altezza massima di caduta sicura (in pixel) ---
+; Nel gioco originale, la caduta massima sicura è di 5 blocchi (40 pixel, pari a counter < 12)
+    IFNDEF MAX_SAFE_FALL_HEIGHT
+MAX_SAFE_FALL_HEIGHT EQU 40
+    ENDIF
+
 ; --- Animazione delle icone delle vite ---
 ; 1 = Abilita l'animazione camminante per le icone delle vite in basso a schermo
 ; 0 = Icone delle vite statiche
