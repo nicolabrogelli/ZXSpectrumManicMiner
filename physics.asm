@@ -98,15 +98,6 @@ Phys_CheckSolid:
 
 
 ; -------------------------------------------------------------------
-; Tabella spostamento verticale salto originale Manic Miner (18 frame)
-; Salita: 4, 4, 3, 3, 2, 2, 1, 1 (20 pixel totali)
-; Culmine: 0, 0
-; Discesa: 1, 1, 2, 2, 3, 3, 4, 4 (20 pixel totali)
-; -------------------------------------------------------------------
-JumpDeltaYTable:
-    db -4, -4, -3, -3, -2, -2, -1, -1, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4
-
-; -------------------------------------------------------------------
 ; Applica gravità e gestisce salto
 ; -------------------------------------------------------------------
 Phys_ApplyGravity:
@@ -344,8 +335,6 @@ Phys_ApplyGravity:
     ld   (coyote_timer), a ; Inizializza tempo coyote per consentire il salto da bordo!
     ld   a, (PlayerPos+1)  ; A = PlayerY
     ld   (jump_start_y), a ; Salva la quota Y di inizio caduta per i controlli di provenienza rampa
-    ld   a, 18
-    ld   (jump_frame), a   ; Inizia direttamente la caduta a regime (4 px/frame)
     jp   .in_air
     
 .still_on_ground:
@@ -375,59 +364,119 @@ Phys_ApplyGravity:
     jp   .in_air
 
 .in_air:
-    ld   a, (jump_frame)
-    cp   18
-    jr   nc, .falling_terminal
-
-    ; Parabola di salto originale (frame 0..17):
-    ld   e, a
-    ld   d, 0
-    ld   hl, JumpDeltaYTable
-    add  hl, de
-    ld   a, (hl)           ; A = DeltaY (-4, -3, -2, -1, 0, 1, 2, 3, 4)
-    ld   d, a              ; D = DeltaY
-
-    ; Incrementa jump_frame
+    ; Incrementa jump_frame per mantenere coerente la gravità frazionaria del salto
     ld   a, (jump_frame)
     inc  a
     ld   (jump_frame), a
+    
+    ; Leggi il preset della gravità
+    ld   b, a                  ; Salva jump_frame in B
+    ld   a, (room_gravity_preset)
+    
+    ; Controlla il preset
+    or   a                     ; cp 0 (Gravità 0.5)
+    jr   z, .grav_0_5
+    dec  a                     ; cp 1 (Gravità 0.75 - Standard)
+    jr   z, .grav_0_75
+    dec  a                     ; cp 2 (Gravità 1.0)
+    jr   z, .grav_1_0
+    dec  a                     ; cp 3 (Gravità 0.25)
+    jr   z, .grav_0_25
+    dec  a                     ; cp 4 (Gravità 0.0)
+    jr   z, .skip_gravity
+    dec  a                     ; cp 5 (Gravità 0.875 - Intermedia tra 0.75 e 1.0)
+    jr   z, .grav_0_85
+    dec  a                     ; cp 6 (Gravità 0.625 - Intermedia tra 0.5 e 0.75)
+    jr   z, .grav_0_65
+    
+    ; Default a 0.75 se valore sconosciuto
+    jr   .grav_0_75
 
-    ; velocity_y = -DeltaY (positivo in salita, 0 culmine, negativo in discesa)
-    xor  a
-    sub  d
-    ld   (velocity_y), a
+.grav_0_5:
+    ld   a, b                  ; Ripristina jump_frame
+    and  1
+    jr   nz, .skip_gravity     ; Salta se bit 0 è impostato (media 0.5)
+    jr   .apply_gravity
 
-    ; Applica movimento verticale: new_Y = PlayerY + DeltaY
-    ld   bc, (PlayerPos)
-    ld   a, b
-    add  a, d              ; A = new_Y
-    ld   b, a              ; B = new_Y
-    jr   .check_vertical_state
+.grav_0_75:
+    ld   a, b                  ; Ripristina jump_frame
+    and  3
+    cp   3
+    jr   z, .skip_gravity      ; Salta se frame è 3 (media 0.75)
+    jr   .apply_gravity
 
-.falling_terminal:
-    ; Caduta a regime (4 pixel a frame verso il basso, velocità terminale MM):
-    ld   a, -4
-    ld   (velocity_y), a
-    ld   bc, (PlayerPos)
-    ld   a, b
-    add  a, 4
-    ld   b, a
+.grav_0_85:
+    ld   a, b                  ; Ripristina jump_frame
+    and  7
+    cp   5
+    jr   z, .skip_gravity      ; Salta se frame % 8 è 5 (media 0.875 -> altezza ~23.5px con Salto 6)
+    jr   .apply_gravity
 
-.check_vertical_state:
+.grav_0_65:
+    ld   a, b                  ; Ripristina jump_frame
+    and  7
+    cp   3
+    jr   z, .skip_gravity
+    cp   7
+    jr   z, .skip_gravity      ; Salta se frame % 8 è 3 o 7 (media 0.75 alternata)
+    jr   .apply_gravity
+
+.grav_0_25:
+    ld   a, b                  ; Ripristina jump_frame
+    and  3
+    cp   3
+    jr   nz, .skip_gravity     ; Salta se frame non è 3 (media 0.25)
+    jr   .apply_gravity
+
+.grav_1_0:
+    ; Non saltare mai la gravità
+    jr   .apply_gravity
+
+.apply_gravity:
     ld   a, (velocity_y)
-    bit  7, a              ; Se negativo (sta scendendo), controlla atterraggi
-    jr   nz, .falling_checks
-    or   a                 ; Se zero (culmine), controlla atterraggi
-    jr   z, .falling_checks
+    sub  1
+    jr   .clamp_fall_speed
+    
+.skip_gravity:
+    ld   a, (velocity_y)
+    
+.clamp_fall_speed:
+    ; Controlla se positivo per evitare bug con cp signed
+    bit 7, a
+    jr  z, .store_vel
+    
+    cp  -MAX_FALL_SPEED   ; -12
+    jr  nc, .store_vel
+    ld  a, -MAX_FALL_SPEED
 
-    ; Se stiamo salendo (velocity_y > 0): controlla collisione della testa con il soffitto (Wall)
+.store_vel:
+    ld  (velocity_y), a
+
+    ; Applica movimento verticale: PlayerY = PlayerY - velocity_y
+    ld  bc, (PlayerPos)
+    ld  d, a              ; D = velocity_y (signed)
+    ld  a, b              ; A = PlayerY
+    sub d                 ; A = PlayerY - velocity_y
+    ld  b, a              ; B = new PlayerY
+
+    ld  a, (velocity_y)
+    bit 7, a              ; Se negativo, bit 7 = 1
+    jr  nz, .falling_checks
+    or  a                 ; Se zero
+    jr  z, .falling_checks
+    
+    ; Se stiamo salendo, controlla la collisione della testa con il soffitto (muri Wall)
+    ; In questo punto, bc contiene: C = PlayerX, B = new PlayerY
     push bc
+    
+    ; Controlla se la testa a sinistra (PlayerX, new_Y) colpisce un Wall
     call CheckWallCell
     jr   c, .ceiling_collision
     
+    ; Controlla se la testa a destra (PlayerX + 7, new_Y) colpisce un Wall
     ld   a, c
     add  a, 7
-    ld   c, a
+    ld   c, a              ; C = PlayerX + 7
     call CheckWallCell
     jr   c, .ceiling_collision
     
@@ -438,6 +487,8 @@ Phys_ApplyGravity:
     pop  bc                 ; Ripristina bc originale (C = PlayerX, B = new PlayerY)
     
     ; Calcola la coordinata Y clampata appena sotto il soffitto.
+    ; Il muro colpito è a riga r = new_Y / 8.
+    ; Il limite Y consentito è riga r + 1, cioè Y = (r + 1) * 8.
     ld   a, b              ; A = new_Y
     srl  a
     srl  a
@@ -446,12 +497,11 @@ Phys_ApplyGravity:
     add  a, a              ; *2
     add  a, a              ; *4
     add  a, a              ; *8 (Y clampato)
+    
     ld   b, a              ; B = Y clampato
     
-    ; Interrompi salita ed entra in caduta:
-    ld   a, 18
-    ld   (jump_frame), a
-    ld   a, -4
+    ; Ferma la velocità verso l'alto (inizia la caduta)
+    xor  a
     ld   (velocity_y), a
     jp   .save_pos
     
