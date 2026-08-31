@@ -64,7 +64,7 @@ Enemy_LoadRoom:
 .load_h_loop:
     ld   a, (hl)                   ; Byte 0: Attributo / Flags
     cp   $FF
-    jr   z, .done_h_guardians      ; $FF = terminatore
+    jp   z, .done_h_guardians      ; $FF = terminatore
     or   a
     jr   z, .skip_h_guardian       ; 0 = slot inutilizzato -> salta al prossimo slot!
 
@@ -110,16 +110,17 @@ Enemy_LoadRoom:
 
     inc  hl
     ld   a, (hl)                   ; Byte 3: Anim mask / frame
-    ld   (ix+7), 0                 ; Anim subframe iniziale = 0
-
+    
     inc  hl
-    ld   a, (hl)                   ; Byte 4: Direction (0 = Destra, 1 = Sinistra)
-    and  1
-    jr   z, .h_dir_right
-    ld   a, 1                      ; 1 = Sinistra
+    ld   a, (hl)                   ; Byte 4: Initial Frame (0..7, in Manic Miner: 0=Destra, 7=Sinistra)
+    and  7
+    ld   (ix+7), a                 ; Frame iniziale (0..7)
+    cp   4
+    jr   nc, .h_dir_left
+    ld   a, 2                      ; 2 = Destra (Frame 0..3)
     jr   .set_h_dir
-.h_dir_right:
-    ld   a, 2                      ; 2 = Destra
+.h_dir_left:
+    ld   a, 1                      ; 1 = Sinistra (Frame 4..7)
 .set_h_dir:
     ld   (ix+6), a                 ; Direction
 
@@ -127,13 +128,13 @@ Enemy_LoadRoom:
     ld   a, (hl)                   ; Byte 5: Min limit
     and  31
     add  a, a : add a, a : add a, a
-    ld   (ix+4), a                 ; Min Limit X (pixel)
+    ld   (ix+4), a                 ; Min Limit X (pixel, multiplo di 8)
 
     inc  hl
     ld   a, (hl)                   ; Byte 6: Max limit
     and  31
     add  a, a : add a, a : add a, a
-    ld   (ix+5), a                 ; Max Limit X (pixel)
+    ld   (ix+5), a                 ; Max Limit X (pixel, multiplo di 8)
 
     inc  hl                        ; Prossimo guardiano
     ld   de, 11
@@ -502,27 +503,21 @@ Enemy_DrawSingleSlot:
     jr   nz, .v_frame
 
     ; Guardiano Orizzontale:
-    ld   a, (ix+7)                 ; Anim subframe (0..3)
-    and  3
-    ld   e, a                      ; E = Anim subframe
+    ld   a, (ix+7)                 ; Frame index (0..7)
+    and  7
+    ld   e, a                      ; E = Frame index (0..7)
 
     ld   a, (room_has_v_guardians)
     or   a
-    jr   nz, .h_use_second_half    ; Se ci sono guardiani verticali, i guardiani orizzontali usano la SECONDA METÀ (frame 4..7)!
+    jr   z, .h_frame_direct
 
-    ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
-    cp   1                         ; Sinistra?
-    jr   z, .left_frames
-
-    ; Movimento a Destra: Frame 0..3 (prima metà)
+    ; Nelle stanze con guardiani verticali (o Kong): i guardiani orizzontali usano la seconda metà (frame 4..7)
     ld   a, e
-    jr   .got_frame_idx
+    or   4
+    ld   e, a
 
-.h_use_second_half:
-.left_frames:
-    ; Movimento a Sinistra (o orizzontale in stanze con guardiani verticali): Frame 7..4 (seconda metà invertita)
-    ld   a, 7
-    sub  e
+.h_frame_direct:
+    ld   a, e
     jr   .got_frame_idx
 
 .kong_frame:
@@ -637,47 +632,64 @@ Enemy_Update:
     jp   nz, .next                 ; Salta l'aggiornamento sui frame dispari
 
 .h_speed_ok:
-    ; Aggiorna Anim State per guardiano orizzontale (0..3)
-    ld   a, (ix+7)
-    inc  a
-    and  3
-    ld   (ix+7), a
-
 .horizontal:
-    ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
-    cp   1
-    jr   nz, .horiz_right
+    ; Movimento orizzontale originale Manic Miner (Routine 8D0F)
+    ld   a, (ix+7)                 ; Frame corrente (0..7)
+    cp   3                         ; Frame terminale verso destra?
+    jr   z, .h_frame_is_3
+    cp   4                         ; Frame terminale verso sinistra?
+    jr   z, .h_frame_is_4
+    jr   nc, .h_move_left_frame    ; Se frame >= 5 (5, 6, 7): decrementa (movimento a sinistra)
 
-.horiz_left:
-    ld   a, (ix+2)                 ; Current X
-    sub  2                         ; Muovi a sinistra di 2 pixel
-    cp   (ix+4)                    ; Min Limit
-    jr   z, .h_rev_right
-    jr   c, .h_rev_right
+    ; Frame 0, 1, 2: incrementa frame (movimento a destra)
+    inc  (ix+7)
+    jp   .next
+
+.h_move_left_frame:
+    ; Frame 7, 6, 5: decrementa frame (movimento a sinistra)
+    dec  (ix+7)
+    jp   .next
+
+.h_frame_is_3:
+    ; Il frame era 3 (bordo destro della cella).
+    ; Controlla se il guardiano è al limite destro del percorso (Max Limit X).
+    ld   a, (ix+2)                 ; Current X (multiplo di 8 pixel)
+    cp   (ix+5)                    ; Max Limit X
+    jr   nz, .h_advance_right_cell
+
+    ; Limite destro raggiunto: inverte la marcia impostando il frame a 7 (e direzione 1 = Sinistra)
+    ld   (ix+7), 7
+    ld   (ix+6), 1                 ; Direction = 1 (Left)
+    jp   .next
+
+.h_advance_right_cell:
+    ; Avanza di 1 carattere a destra (+8 pixel) e imposta il frame iniziale a 0
+    ld   (ix+7), 0
+    ld   (ix+6), 2                 ; Direction = 2 (Right)
+    ld   a, (ix+2)
+    add  a, 8
     ld   (ix+2), a
     jp   .next
 
-.h_rev_right:
-    ld   a, (ix+4)                 ; Min Limit
-    ld   (ix+2), a
-    ld   a, 2
-    ld   (ix+6), a                 ; Cambia direzione a Destra
+.h_frame_is_4:
+    ; Il frame era 4 (bordo sinistro della cella).
+    ; Controlla se il guardiano è al limite sinistro del percorso (Min Limit X).
+    ld   a, (ix+2)                 ; Current X (multiplo di 8 pixel)
+    cp   (ix+4)                    ; Min Limit X
+    jr   nz, .h_advance_left_cell
+
+    ; Limite sinistro raggiunto: inverte la marcia impostando il frame a 0 (e direzione 2 = Destra)
+    ld   (ix+7), 0
+    ld   (ix+6), 2                 ; Direction = 2 (Right)
     jp   .next
 
-.horiz_right:
-    ld   a, (ix+2)                 ; Current X
-    add  a, 2                      ; Muovi a destra di 2 pixel
-    cp   (ix+5)                    ; Max Limit
-    jr   z, .h_rev_left
-    jr   nc, .h_rev_left
+.h_advance_left_cell:
+    ; Retrocede di 1 carattere a sinistra (-8 pixel) e imposta il frame iniziale a 7
+    ld   (ix+7), 7
+    ld   (ix+6), 1                 ; Direction = 1 (Left)
+    ld   a, (ix+2)
+    sub  8
     ld   (ix+2), a
-    jp   .next
-
-.h_rev_left:
-    ld   a, (ix+5)                 ; Max Limit
-    ld   (ix+2), a
-    ld   a, 1
-    ld   (ix+6), a                 ; Cambia direzione a Sinistra
     jp   .next
 
 .vertical:
@@ -943,25 +955,22 @@ CheckCollision:
     and  $40                       ; Vertical?
     jr   nz, .col_guard_vert
 
-    ld   a, (ix+7)                 ; Anim subframe (0..3)
-    and  3
+    ; Guardiano orizzontale:
+    ld   a, (ix+7)                 ; Frame index (0..7)
+    and  7
     ld   c, a
 
     ld   a, (room_has_v_guardians)
     or   a
-    jr   nz, .col_h_second_half    ; Se ci sono guardiani verticali, orizzontali usano la seconda metà (frame 4..7)
+    jr   z, .col_h_frame_direct
 
-    ld   a, (ix+6)                 ; Direction (1 = Left, 2 = Right)
-    cp   1
-    jr   z, .guard_left_frame
-    ; Frame Destra: Frame = Subframe (0..3, prima metà)
+    ; Nelle stanze con guardiani verticali (o Kong): orizzontali usano la seconda metà (frame 4..7)
     ld   a, c
-    jr   .calc_guard_ptr
-.col_h_second_half:
-.guard_left_frame:
-    ; Frame Sinistra (o stanza con guardiani verticali): Frame = 7 - Subframe (7..4)
-    ld   a, 7
-    sub  c
+    or   4
+    ld   c, a
+
+.col_h_frame_direct:
+    ld   a, c
     jr   .calc_guard_ptr
 
 .col_kong_frame:
