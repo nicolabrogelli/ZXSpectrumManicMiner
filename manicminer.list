@@ -9438,8 +9438,8 @@
  450+ 86E7 28 0B            jr   z, .y_check
  451+ 86E9 30 09            jr   nc, .y_check              ; WillyX >= ItemLeft
  452+ 86EB
- 453+ 86EB                  ; Se WillyX < ItemLeft, verifichiamo che WillyRight (WillyX + 15) >= ItemLeft
- 454+ 86EB C6 0F            add  a, 15
+ 453+ 86EB                  ; Se WillyX < ItemLeft, verifichiamo che WillyRight (WillyX + 7) >= ItemLeft
+ 454+ 86EB C6 07            add  a, 7
  455+ 86ED BB               cp   e
  456+ 86EE 28 04            jr   z, .y_check
  457+ 86F0 30 02            jr   nc, .y_check

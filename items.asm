@@ -450,8 +450,8 @@ CheckWillyItemCollision:
     jr   z, .y_check
     jr   nc, .y_check              ; WillyX >= ItemLeft
 
-    ; Se WillyX < ItemLeft, verifichiamo che WillyRight (WillyX + 15) >= ItemLeft
-    add  a, 15
+    ; Se WillyX < ItemLeft, verifichiamo che WillyRight (WillyX + 7) >= ItemLeft
+    add  a, 7
     cp   e
     jr   z, .y_check
     jr   nc, .y_check
