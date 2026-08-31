@@ -208,16 +208,7 @@ Phys_ApplyGravity:
     jr   z, .stepping_left
     
 .stepping_right:
-    ; Muovendo a destra: piede sinistro (dietro) a Y + 16 deve essere solido
-    ld   a, b
-    add  a, 16
-    push bc
-    ld   b, a              ; B = Y + 16
-    call Phys_CheckSolid    ; C = X
-    pop  bc
-    jr   nc, .no_step_down
-    
-    ; Piede destro (davanti) a Y + 16 deve essere vuoto
+    ; Muovendo a destra: controlla se il piede destro (davanti) ha superato il bordo (vuoto a Y+16)
     ld   a, b
     add  a, 16
     push bc
@@ -227,9 +218,9 @@ Phys_ApplyGravity:
     ld   c, a              ; C = X + 7
     call Phys_CheckSolid
     pop  bc
-    jr   c, .no_step_down
-    
-    ; Piede destro (davanti) a Y + 24 deve essere solido
+    jr   c, .no_step_down  ; Se il piede destro è ancora su terreno piano a Y+16, nessun gradino
+
+    ; Piede destro è nel vuoto a Y+16: controlla se a Y+24 c'è un gradino solido (piede destro o sinistro)
     ld   a, b
     add  a, 24
     cp   128
@@ -238,46 +229,57 @@ Phys_ApplyGravity:
     ld   b, a              ; B = Y + 24
     ld   a, c
     add  a, 7
-    ld   c, a              ; C = X + 7
+    ld   c, a              ; C = X + 7 (piede destro)
     call Phys_CheckSolid
     pop  bc
-    jr   nc, .no_step_down
-    
-    jr   .do_step_down
+    jr   c, .do_step_down  ; Piede destro trova gradino a Y+24!
+
+    ; Controlla anche il piede sinistro a Y+24
+    push bc
+    ld   a, b
+    add  a, 24
+    ld   b, a              ; B = Y + 24
+    call Phys_CheckSolid    ; C = X (piede sinistro)
+    pop  bc
+    jr   c, .do_step_down
+
+    jr   .no_step_down
     
 .stepping_left:
-    ; Muovendo a sinistra: piede destro (dietro) a Y + 16 deve essere solido
-    ld   a, b
-    add  a, 16
-    push bc
-    ld   b, a              ; B = Y + 16
-    ld   a, c
-    add  a, 7
-    ld   c, a              ; C = X + 7
-    call Phys_CheckSolid
-    pop  bc
-    jr   nc, .no_step_down
-    
-    ; Piede sinistro (davanti) a Y + 16 deve essere vuoto
+    ; Muovendo a sinistra: controlla se il piede sinistro (davanti) ha superato il bordo (vuoto a Y+16)
     ld   a, b
     add  a, 16
     push bc
     ld   b, a              ; B = Y + 16
     call Phys_CheckSolid    ; C = X
     pop  bc
-    jr   c, .no_step_down
-    
-    ; Piede sinistro (davanti) a Y + 24 deve essere solido
+    jr   c, .no_step_down  ; Se il piede sinistro è ancora su terreno piano a Y+16, nessun gradino
+
+    ; Piede sinistro è nel vuoto a Y+16: controlla se a Y+24 c'è un gradino solido (piede sinistro o destro)
     ld   a, b
     add  a, 24
     cp   128
     jr   nc, .no_step_down
     push bc
     ld   b, a              ; B = Y + 24
-    call Phys_CheckSolid    ; C = X
+    call Phys_CheckSolid    ; C = X (piede sinistro)
     pop  bc
-    jr   nc, .no_step_down
-    
+    jr   c, .do_step_down  ; Piede sinistro trova gradino a Y+24!
+
+    ; Controlla anche il piede destro a Y+24
+    push bc
+    ld   a, b
+    add  a, 24
+    ld   b, a              ; B = Y + 24
+    ld   a, c
+    add  a, 7
+    ld   c, a              ; C = X + 7 (piede destro)
+    call Phys_CheckSolid
+    pop  bc
+    jr   c, .do_step_down
+
+    jr   .no_step_down
+
 .do_step_down:
     ; Controlla se il nuovo Y (B + 8) causerebbe collisioni con muri a sinistra o a destra.
     ; Se sì, annulla lo step down per evitare che Willy sprofondi/entri nei blocchi Wall.
