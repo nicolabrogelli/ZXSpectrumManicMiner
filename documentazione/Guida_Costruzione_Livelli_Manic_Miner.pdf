@@ -1,0 +1,4541 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Length 10104 >>
+stream
+
+0.08 0.15 0.32 rg
+0.1 0.6 0.8 RG
+2 w
+45 680 505 120 re
+B
+
+0.1 0.65 0.85 rg
+45 680 505 6 re
+f
+
+
+BT
+1 1 1 rg
+/F2 20 Tf
+65 760 Td
+(ZX SPECTRUM MANIC MINER) Tj
+ET
+
+
+BT
+0.2 0.8 1 rg
+/F2 12 Tf
+65 735 Td
+(Guida Tecnica Completa alla Costruzione dei Livelli \(Caverne\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F1 9 Tf
+65 715 Td
+(Specifiche Dati a 1024 Byte, Griglia di Layout, Tile, Fisica, Nemici, Boss e Casi Studio) Tj
+ET
+
+
+BT
+0.6 0.75 0.9 rg
+/F1 8 Tf
+65 695 Td
+(Documento Tecnico di Riferimento per Sviluppatori Z80 / Manic Miner Engine) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 635 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 633 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 643 Td
+(1. Architettura di una Caverna a 1024 Byte) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 615 Td
+(Ogni livello \(Caverna\) del gioco Manic Miner per ZX Spectrum occupa una struttura dati rigorosamente fissa di) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 602.85 Td
+(esattamente 1024 byte \(1 KB\). Questa tabella definisce in modo autocontenuto la geometria del livello, la) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 590.7 Td
+(grafica e i colori dei blocchi, la posizione di partenza di Willy, i nemici, gli oggetti collezionabili, il) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 578.5500000000001 Td
+(portale e le meccaniche speciali.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 546.4000000000001 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 546.4000000000001 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 550.4000000000001 Td
+(Mappa Completa degli Offset di Memoria \(1024 Byte\)) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 519.4000000000001 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 523.4000000000001 Td
+(Offset) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+100 523.4000000000001 Td
+(Dim.) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+140 523.4000000000001 Td
+(Etichetta Dati) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+295 523.4000000000001 Td
+(Descrizione e Funzione) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 504.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 508.4000000000001 Td
+(0..511) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 508.4000000000001 Td
+(512 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 508.4000000000001 Td
+(CavernLayout) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 508.4000000000001 Td
+(Matrice 16x32 delle celle \(attributi grafici delle tile\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 489.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 493.4000000000001 Td
+(512..543) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 493.4000000000001 Td
+(32 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 493.4000000000001 Td
+(CavernTile / Name) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 493.4000000000001 Td
+(Nome della stanza \(stringa ASCII di 32 caratteri\)) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 474.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 478.4000000000001 Td
+(544..615) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 478.4000000000001 Td
+(72 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 478.4000000000001 Td
+(CavernTilesDef \(8x9\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 478.4000000000001 Td
+(8 Definizioni di tile \(1 attr + 8 byte bitmap cad.\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 459.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 463.4000000000001 Td
+(616..622) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 463.4000000000001 Td
+(7 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 463.4000000000001 Td
+(WillyAppearanceAndPos) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 463.4000000000001 Td
+(Posizione iniziale Y/X di Willy, direzione e frame) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 444.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 448.4000000000001 Td
+(623..626) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 448.4000000000001 Td
+(4 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 448.4000000000001 Td
+(ConveyorData) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 448.4000000000001 Td
+(Direzione, indirizzo schermo e lunghezza del nastro) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 429.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 433.4000000000001 Td
+(627) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 433.4000000000001 Td
+(1 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 433.4000000000001 Td
+(BorderColor) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 433.4000000000001 Td
+(Colore del bordo video dello Spectrum \(0..7\)) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 414.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 418.4000000000001 Td
+(628) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 418.4000000000001 Td
+(1 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 418.4000000000001 Td
+(Unused1) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 418.4000000000001 Td
+(Byte di riserva / non utilizzato \(0\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 399.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 403.4000000000001 Td
+(629..654) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 403.4000000000001 Td
+(26 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 403.4000000000001 Td
+(LocationColorItems) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 403.4000000000001 Td
+(Tabella fino a 5 chiavi/oggetti + terminatore 255) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 384.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 388.4000000000001 Td
+(655..691) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 388.4000000000001 Td
+(37 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 388.4000000000001 Td
+(PortalData) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 388.4000000000001 Td
+(Attributo, 32 byte bitmap \(4 frame\), indirizzi video) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 369.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 373.4000000000001 Td
+(692..699) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 373.4000000000001 Td
+(8 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 373.4000000000001 Td
+(ItemGraphic) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 373.4000000000001 Td
+(Bitmap 8x8 dell'oggetto raccoglibile della stanza) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 354.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 358.4000000000001 Td
+(700) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 358.4000000000001 Td
+(1 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 358.4000000000001 Td
+(InitialAir) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 358.4000000000001 Td
+(Riserva d'aria iniziale della caverna \(es. 63\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 339.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 343.4000000000001 Td
+(701) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 343.4000000000001 Td
+(1 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 343.4000000000001 Td
+(GameClock) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 343.4000000000001 Td
+(Velocita / clock del timer della stanza \(es. 128..252\)) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 324.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 328.4000000000001 Td
+(702..730) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 328.4000000000001 Td
+(29 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 328.4000000000001 Td
+(HorizontalGuardians) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 328.4000000000001 Td
+(Fino a 4 nemici orizzontali \(7 byte cad. + term. 255\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 309.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 313.4000000000001 Td
+(731..732) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 313.4000000000001 Td
+(2 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 313.4000000000001 Td
+(Unused2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 313.4000000000001 Td
+(Byte non utilizzati \(0, 0\)) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 294.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 298.4000000000001 Td
+(733) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 298.4000000000001 Td
+(1 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 298.4000000000001 Td
+(VGuardians) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 298.4000000000001 Td
+(Guardiano verticale o terminatore 255 \(o 0 per boss\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 279.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 283.4000000000001 Td
+(734..735) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 283.4000000000001 Td
+(2 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 283.4000000000001 Td
+(Unused3) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 283.4000000000001 Td
+(Byte non utilizzati \(0, 0\)) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 264.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 268.4000000000001 Td
+(736..767) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 268.4000000000001 Td
+(32 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 268.4000000000001 Td
+(GraphicElement) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 268.4000000000001 Td
+(Grafica decorativa o sprite speciale del boss \(32 byte\)) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 249.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 253.4000000000001 Td
+(768..1023) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 253.4000000000001 Td
+(256 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 253.4000000000001 Td
+(GraphicGuardian) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 253.4000000000001 Td
+(Sprite animati dei guardiani \(16 frame da 16 byte\)) Tj
+ET
+
+1 0.96 0.9 rg
+0.9 0.5 0.1 RG
+1 w
+45 175.4000000000001 505 66 re
+B
+
+0.9 0.5 0.1 rg
+45 175.4000000000001 4 66 re
+f
+
+
+BT
+0.6 0.3 0 rg
+/F2 9 Tf
+55 228.4000000000001 Td
+(IMPORTANTE: Dimensione Rigorosa a 1024 Byte) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 217.4000000000001 Td
+(Tutti i file delle caverne \(es. CentralCavern.asm, EugeneLair.asm\) devono totalizzare esattamente 1024 byte. Se una) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 206.60000000000008 Td
+(sezione ha meno elementi \(es. meno di 5 item o meno di 4 guardiani\), lo spazio residuo deve essere riempito con zeri e) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 195.80000000000007 Td
+(terminato con 255.) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 1) Tj
+ET
+
+endstream
+endobj
+2 0 obj
+<< /Length 7475 >>
+stream
+
+0.5 0.5 0.55 RG
+0.5 w
+45 805 m 550 805 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 810 Td
+(ZX SPECTRUM MANIC MINER - GUIDA ALLA COSTRUZIONE DEI LIVELLI) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 741.89 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 739.89 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 749.89 Td
+(2. Griglia di Layout e Matrice delle Tile) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 721.89 Td
+(L'area di gioco di ogni caverna e' una matrice di 16 righe verticali per 32 colonne orizzontali \(512 blocchi) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 709.74 Td
+(totali da 8x8 pixel, risoluzione 256x128 pixel per la zona di gioco\).) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 677.59 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 677.59 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 681.59 Td
+(Coordinate e Calcolo degli Indirizzi) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 665.59 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 665.59 Td
+(Righe \(Row\): da 0 \(in alto\) a 15 \(pavimento in basso\).) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 650.115 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 650.115 Td
+(Colonne \(Col\): da 0 \(bordo sinistro\) a 31 \(bordo destro\).) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 634.64 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 634.64 Td
+(Indice Cella nel Buffer: Offset = Row * 32 + Col \(valori da 0 a 511\).) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 619.165 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 619.165 Td
+(Coordinate Pixel: X = Col * 8 \(0..248\), Y = Row * 8 \(0..120\).) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 587.6899999999999 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 587.6899999999999 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 591.6899999999999 Td
+(Tipologie di Tile Standard \(0..7\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 575.6899999999999 Td
+(Nel motore di gioco, la funzione UnpackRoomLayout analizza i 512 byte del layout confrontando i valori degli) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 563.54 Td
+(attributi con la tabella delle 8 tile definite all'offset 544. Ciascuna tile viene classificata in un tipo) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 551.39 Td
+(logico standardizzato da 0 a 7:) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 520.24 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 524.24 Td
+(Tipo) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+95 524.24 Td
+(Nome Logico) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+210 524.24 Td
+(Comportamento Fisico e Interazione) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 505.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 509.24 Td
+(0) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 509.24 Td
+(Background) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 509.24 Td
+(Spazio vuoto attraversabile. Nessuna collisione.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 490.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 494.24 Td
+(1) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 494.24 Td
+(Floor) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 494.24 Td
+(Pavimento solido calpestabile. Willy atterra e cammina.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 475.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 479.24 Td
+(2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 479.24 Td
+(Crumbling Floor) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 479.24 Td
+(Pavimento sgretolabile. Si dissolve di 1 pixel/frame al tocco.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 460.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 464.24 Td
+(3) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 464.24 Td
+(Wall) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 464.24 Td
+(Muro solido. Blocca il passaggio orizzontale e i salti in testa.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 445.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 449.24 Td
+(4) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 449.24 Td
+(Conveyor) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 449.24 Td
+(Nastro trasportatore. Trascina Willy a sinistra o destra.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 430.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 434.24 Td
+(5) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 434.24 Td
+(Nasty 1) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 434.24 Td
+(Ostacolo letale fisso di tipo 1 \(fuoco, punte, acidi\). Uccide Willy.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 415.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 419.24 Td
+(6) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 419.24 Td
+(Nasty 2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 419.24 Td
+(Ostacolo letale fisso di tipo 2 \(ragni statici, stalattiti\). Uccide Willy.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 400.24 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 404.24 Td
+(7) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 404.24 Td
+(Extra / Special) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+210 404.24 Td
+(Tile speciale. In alcune stanze funge da pavimento, in altre decorative.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 376.24 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 376.24 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 380.24 Td
+(Struttura Dati delle 8 Tile \(Offset 544..615, 72 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 364.24 Td
+(Ogni tile e' composta da 9 byte: 1 byte di Attributo Colore ZX Spectrum seguito da 8 byte di dati Bitmap \(1) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 352.09000000000003 Td
+(byte per scanline\).) Tj
+ET
+
+0.12 0.14 0.18 rg
+0.25 0.28 0.35 RG
+1 w
+45 229.44000000000005 505 106.5 re
+B
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 324.94000000000005 Td
+(; Esempio di definizione Tile in Assembler Z80 \(Eugene's Lair\):) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 314.44000000000005 Td
+(EugeneLairBackground:     DEFB 16,  0,0,0,0,0,0,0,0              ; Attr 16 \(Paper 2=Red, Ink 0=Black\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 303.94000000000005 Td
+(EugeneLairFloor:          DEFB 21,  255,255,219,110,197,64,0,0   ; Attr 21 \(Paper 2=Red, Ink 5=Cyan\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 293.44000000000005 Td
+(EugeneLairCrumblingFloor: DEFB 20,  255,219,165,36,82,32,8,0     ; Attr 20 \(Paper 2=Red, Ink 4=Green\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 282.94000000000005 Td
+(EugeneLairWall:           DEFB 46,  34,255,136,255,34,255,136,255; Attr 46 \(Paper 5=Cyan, Ink 6=Yellow\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 272.44000000000005 Td
+(EugeneLairConveyor:       DEFB 86,  252,102,252,102,0,0,0,0      ; Attr 86 \(Bright 1, Paper 2, Ink 6\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 261.94000000000005 Td
+(EugeneLairNasty1:         DEFB 22,  68,40,148,81,53,214,88,16    ; Attr 22 \(Paper 2=Red, Ink 6=Yellow\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 251.44000000000005 Td
+(EugeneLairNasty2:         DEFB 19,  126,60,28,24,24,8,8,8        ; Attr 19 \(Stalattite letale\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 240.94000000000005 Td
+(EugeneLairExtra:          DEFB 0,   0,0,0,0,0,0,0,0              ; Attr 0 \(Non utilizzato\)) Tj
+ET
+
+0.92 0.98 0.93 rg
+0.2 0.7 0.3 RG
+1 w
+45 166.44000000000005 505 55 re
+B
+
+0.2 0.7 0.3 rg
+45 166.44000000000005 4 55 re
+f
+
+
+BT
+0.1 0.45 0.2 rg
+/F2 9 Tf
+55 208.44000000000005 Td
+(Regola di Attributo ZX Spectrum) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 197.44000000000005 Td
+(Formato Byte Attributo: [Bit 7: Flash] [Bit 6: Bright] [Bit 5..3: PAPER \(Sfondo\)] [Bit 2..0: INK \(Tratto\)]. Esempio: 21) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 186.64000000000004 Td
+(= 00010101b -> Bright 0, Paper 2 \(Red\), Ink 5 \(Cyan\).) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 2) Tj
+ET
+
+endstream
+endobj
+3 0 obj
+<< /Length 9020 >>
+stream
+
+0.5 0.5 0.55 RG
+0.5 w
+45 805 m 550 805 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 810 Td
+(ZX SPECTRUM MANIC MINER - GUIDA ALLA COSTRUZIONE DEI LIVELLI) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 741.89 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 739.89 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 749.89 Td
+(3. Parametri di Spawn, Nastro e Oggetti) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 705.89 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 705.89 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 709.89 Td
+(Posizione Iniziale di Miner Willy \(Offset 616..622, 7 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 693.89 Td
+(Definisce le coordinate e lo stato con cui Willy appare nella stanza:) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 662.74 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 666.74 Td
+(Byte) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+95 666.74 Td
+(Campo) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+225 666.74 Td
+(Valori e Descrizione) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 647.74 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 651.74 Td
+(0) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 651.74 Td
+(Pixel Y * 2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 651.74 Td
+(Coordinata Y di Willy moltiplicata per 2. Es: 48 -> Y = 24 pixel \(Eugene's Lair\).) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 632.74 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 636.74 Td
+(1) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 636.74 Td
+(Animation Frame) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 636.74 Td
+(Frame iniziale dell'animazione di camminata \(0..3\). Di solito 0.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 617.74 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 621.74 Td
+(2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 621.74 Td
+(Direction / Flags) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 621.74 Td
+(0 = Willy guarda a Destra, 1 = Willy guarda a Sinistra.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 602.74 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 606.74 Td
+(3) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 606.74 Td
+(Airborne Status) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 606.74 Td
+(0 = a terra \(grounded\), 1 = a mezz'aria \(in volo/caduta\).) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 587.74 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 591.74 Td
+(4..5) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 591.74 Td
+(Attribute Buffer Addr) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 591.74 Td
+(Indirizzo buffer attributi a 23552 \(DEFW 23552 + Row*32 + Col\).) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 572.74 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 576.74 Td
+(6) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 576.74 Td
+(Jumping Counter) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 576.74 Td
+(Contatore salto / frame animazione di salto \(inizializzare a 0\).) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 548.74 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 548.74 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 552.74 Td
+(Configurazione del Nastro Trasportatore \(Offset 623..626, 4 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 536.74 Td
+(Se la caverna contiene un nastro trasportatore \(Conveyor\), questi 4 byte ne regolano la direzione e) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 524.59 Td
+(l'estensione:) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 493.44000000000005 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 497.44000000000005 Td
+(Byte) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+95 497.44000000000005 Td
+(Campo) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+225 497.44000000000005 Td
+(Valore e Funzione) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 478.44000000000005 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 482.44000000000005 Td
+(0) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 482.44000000000005 Td
+(Direction) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 482.44000000000005 Td
+(0 = Trascinamento verso SINISTRA, 1 = Trascinamento verso DESTRA.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 463.44000000000005 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 467.44000000000005 Td
+(1..2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 467.44000000000005 Td
+(Screen Buffer Addr) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 467.44000000000005 Td
+(Indirizzo video Spectrum \(DEFW\) calcolato per \(Row, Col\).) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 448.44000000000005 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 452.44000000000005 Td
+(3) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 452.44000000000005 Td
+(Length) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+225 452.44000000000005 Td
+(Lunghezza del nastro in numero di tile orizzontali \(es. 10 blocchi in Eugene's Lair\).) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 424.44000000000005 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 424.44000000000005 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 428.44000000000005 Td
+(Tabella Oggetti Raccoglibili / Chiavi \(Offset 629..654, 26 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 412.44000000000005 Td
+(Ogni caverna puo' contenere fino a un massimo di 5 oggetti raccoglibili \(chiavi\). Ogni oggetto occupa 5 byte,) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 400.2900000000001 Td
+(e la lista deve terminare con il byte di fine lista 255 \(0xFF\):) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 369.1400000000001 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 373.1400000000001 Td
+(Offset Oggetto) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+150 373.1400000000001 Td
+(Struttura Dati \(5 Byte\)) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+330 373.1400000000001 Td
+(Esempio Eugene's Lair) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 354.1400000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 358.1400000000001 Td
+(Oggetto 1 \(5B\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+150 358.1400000000001 Td
+(DEFB Attr, DEFW Addr, DEFB Char, DEFB 255) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+330 358.1400000000001 Td
+(Attr=19, Addr=23614 \(Row 1, Col 30\), Char=96) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 339.1400000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 343.1400000000001 Td
+(Oggetto 2 \(5B\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+150 343.1400000000001 Td
+(DEFB Attr, DEFW Addr, DEFB Char, DEFB 255) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+330 343.1400000000001 Td
+(Attr=20, Addr=23754 \(Row 6, Col 10\), Char=96) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 324.1400000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 328.1400000000001 Td
+(Oggetto 3 \(5B\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+150 328.1400000000001 Td
+(DEFB Attr, DEFW Addr, DEFB Char, DEFB 255) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+330 328.1400000000001 Td
+(Attr=21, Addr=23805 \(Row 7, Col 29\), Char=96) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 309.1400000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 313.1400000000001 Td
+(Oggetto 4 \(5B\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+150 313.1400000000001 Td
+(DEFB Attr, DEFW Addr, DEFB Char, DEFB 255) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+330 313.1400000000001 Td
+(Attr=22, Addr=23943 \(Row 12, Col 7\), Char=104) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 294.1400000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 298.1400000000001 Td
+(Oggetto 5 \(5B\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+150 298.1400000000001 Td
+(DEFB Attr, DEFW Addr, DEFB Char, DEFB 255) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+330 298.1400000000001 Td
+(Attr=19, Addr=23945 \(Row 12, Col 9\), Char=104) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 279.1400000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 283.1400000000001 Td
+(Terminatore \(1B\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+150 283.1400000000001 Td
+(DEFB 255) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+330 283.1400000000001 Td
+(Indica la fine degli item attivi \(0xFF\)) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 255.1400000000001 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 255.1400000000001 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 259.1400000000001 Td
+(Portale di Uscita \(Offset 655..691, 37 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 243.1400000000001 Td
+(Il portale si attiva e lampeggia quando tutti gli oggetti sono stati raccolti:) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 226.9900000000001 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 226.9900000000001 Td
+(Byte 0: Attributo colore del portale \(es. 87 = Flash 0, Bright 1, Paper 2, Ink 7\).) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 211.5150000000001 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 211.5150000000001 Td
+(Byte 1..32: 32 byte di grafica \(4 frame di animazione 8x8 da 8 byte ciascuno\).) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 196.0400000000001 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 196.0400000000001 Td
+(Byte 33..34: Indirizzo nel buffer attributi \(DEFW 23552 + Row*32 + Col\). In EugeneLair: 23983 \(13,15\).) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 180.5650000000001 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 180.5650000000001 Td
+(Byte 35..36: Indirizzo nel buffer video dello schermo Spectrum \(DEFW\). In EugeneLair: 26799.) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 3) Tj
+ET
+
+endstream
+endobj
+4 0 obj
+<< /Length 7740 >>
+stream
+
+0.5 0.5 0.55 RG
+0.5 w
+45 805 m 550 805 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 810 Td
+(ZX SPECTRUM MANIC MINER - GUIDA ALLA COSTRUZIONE DEI LIVELLI) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 741.89 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 739.89 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 749.89 Td
+(4. Guardiani, Nemici e Meccaniche Speciali) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 705.89 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 705.89 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 709.89 Td
+(Guardiani Orizzontali \(Offset 702..730, 29 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 693.89 Td
+(Una caverna puo' ospitare fino a 4 guardiani orizzontali indipendenti. Ciascun guardiano e' configurato con un) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 681.74 Td
+(blocco da 7 byte:) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 650.59 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 654.59 Td
+(Byte) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+95 654.59 Td
+(Parametro Guardiano) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+235 654.59 Td
+(Descrizione Operativa) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 635.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 639.59 Td
+(0) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 639.59 Td
+(Attributo Colore) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+235 639.59 Td
+(Colore video del nemico \(es. 22 = Paper 2, Ink 6\).) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 620.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 624.59 Td
+(1..2) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 624.59 Td
+(Indirizzo Schermo Iniziale) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+235 624.59 Td
+(DEFW con l'offset del pixel iniziale \(es. 23660 per Y=3, X=12\).) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 605.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 609.59 Td
+(3) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 609.59 Td
+(Frame / Velocita) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+235 609.59 Td
+(Frame iniziale e velocita di animazione \(bitmask\).) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 590.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 594.59 Td
+(4) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 594.59 Td
+(Min X \(Limite Sinistro\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+235 594.59 Td
+(Coordinata pixel X minima oltre cui il nemico inverte la marcia.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 575.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 579.59 Td
+(5) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 579.59 Td
+(Max X \(Limite Destro\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+235 579.59 Td
+(Coordinata pixel X massima oltre cui il nemico inverte la marcia.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 560.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 564.59 Td
+(6) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+95 564.59 Td
+(Passo / Direzione) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+235 564.59 Td
+(Direzione iniziale e incremento pixel per frame \(+1 o -1\).) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 536.59 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 536.59 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 540.59 Td
+(Guardiani Verticali e Nemici Speciali \(Offset 733\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 524.59 Td
+(All'offset 733 e' presente la tabella dei guardiani verticali. Se la stanza non usa guardiani verticali, il) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 512.44 Td
+(byte deve essere impostato a 255 \(0xFF\). Nelle stanze speciali, questo offset gestisce entita avanzate:) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 496.2900000000001 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 496.2900000000001 Td
+(Eugene's Lair: gestisce Eugene che oscilla verticalmente al centro dello schermo.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 480.81500000000005 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 480.81500000000005 Td
+(Skylab Landing Bay: gestisce i 4 moduli Skylab che precipitano a velocita variabili.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 465.34000000000003 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 465.34000000000003 Td
+(Solar Power Generator: gestisce il raggio ottico a riflessione solare.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 449.865 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 449.865 Td
+(The Final Barrier: gestisce i guardiani verticali multipli e il checkpoint finale.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 418.39 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 418.39 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 422.39 Td
+(Meccaniche Speciali di Caverna Supportate) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 391.39 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 395.39 Td
+(Stanza Speciale) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+180 395.39 Td
+(Funzione nel Motore) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+320 395.39 Td
+(Meccanica Dedicata) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 376.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 380.39 Td
+(EugeneLair.asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 380.39 Td
+(enemy.asm \(.eugene_update\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 380.39 Td
+(Boss reattivo centrale: oscilla e scende al portale quando finisce l'aria/item.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 361.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 365.39 Td
+(MinerWilly...Kong.asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 365.39 Td
+(Kong_CheckSwitches) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 365.39 Td
+(Kong in cima; 2 interruttori fanno crollare il pavimento sotto Kong.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 346.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 350.39 Td
+(ReturnoftheAlien...asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 350.39 Td
+(Kong_CheckSwitches) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 350.39 Td
+(Seconda battaglia con Kong con percorso a ostacoli invertito.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 331.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 335.39 Td
+(SkylabLandingBay.asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 335.39 Td
+(Skylab_Update) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 335.39 Td
+(4 satelliti che cadono ciclicamente dall'alto a velocita differenziate.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 316.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 320.39 Td
+(SolarPowerGen.asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 320.39 Td
+(Solar_Update) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 320.39 Td
+(Raggio riflettente che blocca il passaggio finche non si devia il sole.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 301.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 305.39 Td
+(TheSixteenthCavern.asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 305.39 Td
+(Sixteenth_Update) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 305.39 Td
+(Crollo sequenziale dei pavimenti a tempo.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 286.39 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 290.39 Td
+(TheMenagerie.asm) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+180 290.39 Td
+(Phys_ApplyGravity) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+320 290.39 Td
+(Supporto rampe diagonali calpestabili a pendenza costante.) Tj
+ET
+
+0.93 0.96 1 rg
+0.2 0.5 0.8 RG
+1 w
+45 212.39 505 66 re
+B
+
+0.2 0.5 0.8 rg
+45 212.39 4 66 re
+f
+
+
+BT
+0.1 0.3 0.6 rg
+/F2 9 Tf
+55 265.39 Td
+(Regole per le Caverne con Kong \(Interruttori\)) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 254.39 Td
+(Nelle stanze di Kong, le celle degli interruttori \(Switches\) controllano la caduta di Kong. Quando Willy tocca) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 243.58999999999997 Td
+(l'interruttore, la routine Kong_CheckSwitches rimuove i blocchi di pavimento alle coordinate \(Row 2, Col 15..16\)) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 232.78999999999996 Td
+(provocando la caduta di Kong nel baratro.) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 4) Tj
+ET
+
+endstream
+endobj
+5 0 obj
+<< /Length 6527 >>
+stream
+
+0.5 0.5 0.55 RG
+0.5 w
+45 805 m 550 805 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 810 Td
+(ZX SPECTRUM MANIC MINER - GUIDA ALLA COSTRUZIONE DEI LIVELLI) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 741.89 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 739.89 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 749.89 Td
+(5. Caso Studio Approfondito: Eugene's Lair \(Caverna 04\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 721.89 Td
+(Eugene's Lair e' una delle caverne piu' celebri e complesse di Manic Miner. Costituisce un esempio magistrale) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 709.74 Td
+(di come combinare elementi platform rigidi, nastri trasportatori, pavimenti sgretolabili e una logica di Boss) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 697.59 Td
+(Fight programmata in Assembly Z80.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 665.44 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 665.44 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 669.44 Td
+(Architettura e Geometria del Livello) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 653.44 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 653.44 Td
+(Spawn Point di Willy: In alto a sinistra \(Y=24, X=8, Row 3 Col 1\), Willy parte in quota e deve farsi strada) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 641.965 Td
+(scendendo e risalendo.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 626.49 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 626.49 Td
+(Nastro Trasportatore Centrale \(Row 8, Cols 10..19\): Lungo 10 blocchi, scorre verso Sinistra \(conveyor_dir = 0\).) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 615.015 Td
+(Taglia a meta' la caverna e costringe a calcolare con precisione i salti in contro-inerzia.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 599.54 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 599.54 Td
+(Pavimenti Sgretolabili \(Crumbling Floor 20\): Posizionati a Row 5 \(Cols 18..21\) e Row 10 \(Cols 1..2\). Obbligano) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 588.0649999999999 Td
+(Willy a muoversi senza esitazioni prima che il blocco si dissolva completamente.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 572.5899999999999 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 572.5899999999999 Td
+(Stalattiti Nasty \(Tile 19 e 22\): Posizionate strategicamente sui passaggi obbligati e sopra il nastro.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 541.1149999999999 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 541.1149999999999 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 545.1149999999999 Td
+(La Meccanica del Boss: Eugene \(Sprite e Intelligenza Artificiale\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 529.1149999999999 Td
+(Nel file enemy.asm \(linee 224..240, 535..550, 738..790\), il motore riconosce automaticamente la stanza tramite) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 516.9649999999999 Td
+(il puntatore EugeneLairLayout e alloca Eugene nello Slot 4 dei nemici attivi con il flag speciale $E0) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 504.81499999999994 Td
+(\(Active=1, Vertical=1, Boss=1\):) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 473.66499999999996 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 477.66499999999996 Td
+(Fase di Gioco) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+160 477.66499999999996 Td
+(Stato di Eugene) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+275 477.66499999999996 Td
+(Comportamento Tecnico Z80) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 458.66499999999996 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 462.66499999999996 Td
+(Fase 1: Raccolta Item) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+160 462.66499999999996 Td
+(Oscillazione Verticale) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+275 462.66499999999996 Td
+(Eugene oscilla continuamente tra Y=0 e Y=88 al centro dello schermo \(Col 15\). Se Willy lo tocca, muore all'istante.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 443.66499999999996 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 447.66499999999996 Td
+(Fase 2: Item Completati) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+160 447.66499999999996 Td
+(Discesa al Portale) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+275 447.66499999999996 Td
+(Appena raccolti tutti i 5 item, Eugene scende inesorabilmente a quota Y=88 \(sul portale/toilette\) e vi si posiziona sopra.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 428.66499999999996 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 432.66499999999996 Td
+(Fase 3: Portale Attivo) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+160 432.66499999999996 Td
+(Cambiamento Colore) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+275 432.66499999999996 Td
+(Eugene cambia continuamente colore ciclando l'attributo tramite il registro game_clock, creando un effetto psichedelico lampeggiante.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 404.66499999999996 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 404.66499999999996 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 408.66499999999996 Td
+(Estratto della Grafica di Eugene \(Offset 736, 32 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 392.66499999999996 Td
+(A differenza dei normali guardiani che usano la tabella da 256 byte, Eugene possiede uno sprite dedicato ad) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 380.515 Td
+(alta definizione da 32 byte \(16x16 pixel\) memorizzato direttamente all'offset 736:) Tj
+ET
+
+0.12 0.14 0.18 rg
+0.25 0.28 0.35 RG
+1 w
+45 289.365 505 75 re
+B
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 353.365 Td
+(; Offset 736 in EugeneLair.asm - Sprite 16x16 pixel di Eugene:) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 342.865 Td
+(EugeneLairGraphicElement:) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 332.365 Td
+(    DEFB 3,192, 15,240, 31,248, 31,248   ; Linee 1..4 \(Sommit‡ della testa\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 321.865 Td
+(    DEFB 49,140, 14,112, 111,246, 174,117 ; Linee 5..8 \(Occhi e fronte\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 311.365 Td
+(    DEFB 177,141, 159,249, 155,217, 140,49 ; Linee 9..12 \(Bocca e centro\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 300.865 Td
+(    DEFB 71,226, 2,64, 2,64, 14,112       ; Linee 13..16 \(Base e mento\)) Tj
+ET
+
+0.92 0.98 0.93 rg
+0.2 0.7 0.3 RG
+1 w
+45 215.365 505 66 re
+B
+
+0.2 0.7 0.3 rg
+45 215.365 4 66 re
+f
+
+
+BT
+0.1 0.45 0.2 rg
+/F2 9 Tf
+55 268.365 Td
+(Logica di Uscita da Eugene's Lair) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 257.365 Td
+(Quando Eugene scende a Y=88 e il portale lampeggia alla coordinata \(Row 13, Col 15\), Willy deve saltare sopra Eugene o) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 246.565 Td
+(entrare nella toilette dal basso per completare la caverna e passare a 'Central Cavern' successiva.) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 5) Tj
+ET
+
+endstream
+endobj
+6 0 obj
+<< /Length 6237 >>
+stream
+
+0.5 0.5 0.55 RG
+0.5 w
+45 805 m 550 805 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 810 Td
+(ZX SPECTRUM MANIC MINER - GUIDA ALLA COSTRUZIONE DEI LIVELLI) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 741.89 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 739.89 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 749.89 Td
+(6. Regole di Fisica e Level Design) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 721.89 Td
+(Per creare caverne bilanciate, giocabili e prive di bug, e' fondamentale conoscere le costanti fisiche e le) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 709.74 Td
+(regole di collisione implementate nel motore:) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 677.59 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 677.59 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 681.59 Td
+(Costanti di Salto, Gravita e Caduta) Tj
+ET
+
+0.15 0.25 0.42 rg
+45 650.59 505 15 re
+f
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+50 654.59 Td
+(Parametro) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+175 654.59 Td
+(Valore) Tj
+ET
+
+
+BT
+1 1 1 rg
+/F2 8 Tf
+265 654.59 Td
+(Descrizione Tecnica) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 635.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 639.59 Td
+(Altezza Salto) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 639.59 Td
+(18 ~ 24 pixel) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 639.59 Td
+(Parabola determinata da room_jump_strength \(5..6\) e gravita.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 620.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 624.59 Td
+(Velocita Orizzontale) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 624.59 Td
+(2 pixel / frame) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 624.59 Td
+(Velocita standard a terra \(player_speed = 2 o 3 px\).) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 605.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 609.59 Td
+(Velocita in Aria) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 609.59 Td
+(2.5 px / frame) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 609.59 Td
+(Alternanza automatica 2 e 3 pixel per frame durante il salto.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 590.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 594.59 Td
+(Caduta Massima Sicura) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 594.59 Td
+(40 pixel) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 594.59 Td
+(MAX_SAFE_FALL_HEIGHT = 40. Cadute superiori a 5 tile sono fatali.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 575.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 579.59 Td
+(Preset Gravita) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 579.59 Td
+(0.75 \(Standard\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 579.59 Td
+(Sequenza sub-pixel: 3 frame di accelerazione ogni 4 frame.) Tj
+ET
+
+0.91 0.93 0.96 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 560.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 564.59 Td
+(Coyote Time) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 564.59 Td
+(2 frame) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 564.59 Td
+(Permette di saltare fino a 2 frame dopo aver lasciato un bordo.) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 545.59 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 549.59 Td
+(Jump Buffer) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+175 549.59 Td
+(2 frame) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+265 549.59 Td
+(Registra la pressione del salto 2 frame prima del contatto col suolo.) Tj
+ET
+
+0.93 0.95 0.98 rg
+0.8 0.85 0.92 RG
+1 w
+45 521.59 505 20 re
+B
+
+0.1 0.5 0.8 rg
+45 521.59 4 20 re
+f
+
+
+BT
+0.08 0.18 0.36 rg
+/F2 10.5 Tf
+56 525.59 Td
+(Regole Geometriche di Collisione \(Da Rispettare nel Level Design\)) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 509.59000000000003 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 509.59000000000003 Td
+(Larghezza Sprite Willy = 8 pixel: La hitbox orizzontale occupa [X .. X+7].) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 494.115 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 494.115 Td
+(Distacco dai Bordi \(Overshoot di 8px\): Quando Willy cammina a destra fuori da una piattaforma \(Colonna k\), il) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 482.64 Td
+(distacco avviene solo quando l'intero sprite entra nella Colonna k+1. Willy cadra' quindi rigorosamente lungo la) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 471.16499999999996 Td
+(Colonna k+1. Non puo' lasciarsi cadere su una piattaforma sottostante che finisce alla Colonna k.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 455.68999999999994 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 455.68999999999994 Td
+(Salto da Nastro Trasportatore: Saltando da un nastro senza premere frecce direzionali, Willy eredita) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 444.2149999999999 Td
+(automaticamente l'inerzia orizzontale del nastro nella direzione di scorrimento.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 428.7399999999999 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 428.7399999999999 Td
+(Tolleranza di Atterraggio \(3 Pixel\): Durante una caduta o un salto, Willy atterra su un pavimento solido se la) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 417.2649999999999 Td
+(traiettoria intercetta la superficie superiore della tile con tolleranza di 3 pixel. Se un salto colpisce il) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 405.78999999999985 Td
+(fianco laterale di un blocco oltre 3 pixel sotto la cima, Willy non scala il blocco e cade.) Tj
+ET
+
+
+BT
+0.1 0.5 0.8 rg
+/F2 8.5 Tf
+50 390.3149999999998 Td
+(>) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 390.3149999999998 Td
+(Gradini di 1 Tile \(Step-Down 8px\): Willy scende fluidamente gradini di 1 tile \(8 pixel\) senza entrare in caduta) Tj
+ET
+
+
+BT
+0.2 0.2 0.22 rg
+/F1 8.5 Tf
+60 378.8399999999998 Td
+(se il blocco inferiore e' immediatamente adiacente.) Tj
+ET
+
+0.92 0.98 0.93 rg
+0.2 0.7 0.3 RG
+1 w
+45 297.3649999999998 505 66 re
+B
+
+0.2 0.7 0.3 rg
+45 297.3649999999998 4 66 re
+f
+
+
+BT
+0.1 0.45 0.2 rg
+/F2 9 Tf
+55 350.3649999999998 Td
+(Regola d'Oro per la Creazione di Salti) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 339.3649999999998 Td
+(La distanza massima superabile con un salto orizzontale su terreno piano e' di circa 4-5 blocchi \(32-40 pixel\). Salti) Tj
+ET
+
+
+BT
+0.2 0.2 0.25 rg
+/F1 8 Tf
+57 328.56499999999977 Td
+(verso piattaforme piu' alte di 2 blocchi \(16 pixel\) richiedono che il punto di decollo sia molto vicino al bordo.) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 6) Tj
+ET
+
+endstream
+endobj
+7 0 obj
+<< /Length 7522 >>
+stream
+
+0.5 0.5 0.55 RG
+0.5 w
+45 805 m 550 805 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 810 Td
+(ZX SPECTRUM MANIC MINER - GUIDA ALLA COSTRUZIONE DEI LIVELLI) Tj
+ET
+
+0.08 0.18 0.36 rg
+45 741.89 505 30 re
+f
+
+0.1 0.6 0.8 rg
+45 739.89 505 2 re
+f
+
+
+BT
+1 1 1 rg
+/F2 13 Tf
+55 749.89 Td
+(7. Template Assembler Z80 Completo per una Nuova Caverna) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 721.89 Td
+(Di seguito e' riportato lo scheletro completo per creare un nuovo file di livello \(es. MyCustomCavern.asm\). Il) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 709.74 Td
+(file puo' essere incluso direttamente nella tabella delle stanze in manicminer.asm:) Tj
+ET
+
+0.12 0.14 0.18 rg
+0.25 0.28 0.35 RG
+1 w
+45 156.59000000000003 505 537 re
+B
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 682.59 Td
+(;===========================================================================) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 672.09 Td
+(; MyCustomCavern.asm - Caverna Personalizzata per Manic Miner \(1024 Byte\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 661.59 Td
+(;===========================================================================) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 651.09 Td
+(MyCustomCavernLayout:) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 640.59 Td
+(    DEFB 22,22,22,22,22,22,22,22, 22,22,22,22,22,22,22,22 ; Riga 0 \(Soffitto\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 630.09 Td
+(    DEFB 22,22,22,22,22,22,22,22, 22,22,22,22,22,22,22,22) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 619.59 Td
+(    DEFB 22, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0 ; Righe 1..14 \(Zona Gioco\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 609.09 Td
+(    DEFB  0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0,22) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 598.59 Td
+(    ; ... \(Ripetere per tutte le 16 righe: totale 512 byte\) ...) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 588.09 Td
+(    DEFB 22,66,66,66,66,66,66,66, 66,66,66,66,66,66,66,66 ; Riga 15 \(Pavimento\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 577.59 Td
+(    DEFB 66,66,66,66,66,66,66,66, 66,66,66,66,66,66,66,22) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 567.09 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 556.59 Td
+(MyCustomCavernTile:) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 546.09 Td
+(    DEFM "       My Custom Cavern         "  ; 32 Caratteri esatti) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 535.59 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 525.09 Td
+(MyCustomCavernBackground:     DEFB 0,  0,0,0,0,0,0,0,0     ; Attr 0 \(Background\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 514.59 Td
+(MyCustomCavernFloor:          DEFB 66, 255,255,219,110,197,64,0,0 ; Attr 66 \(Floor\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 504.09000000000003 Td
+(MyCustomCavernCrumblingFloor: DEFB 2,  255,219,165,36,82,32,8,0   ; Attr 2 \(Crumbling\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 493.59000000000003 Td
+(MyCustomCavernWall:           DEFB 22, 34,255,136,255,34,255,136,255 ; Attr 22 \(Wall\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 483.09000000000003 Td
+(MyCustomCavernConveyor:       DEFB 4,  240,102,240,102,0,153,255,0 ; Attr 4 \(Conveyor\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 472.59000000000003 Td
+(MyCustomCavernNasty1:         DEFB 68, 68,40,148,81,53,214,88,16  ; Attr 68 \(Nasty 1\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 462.09000000000003 Td
+(MyCustomCavernNasty2:         DEFB 5,  255,254,126,124,76,76,8,8  ; Attr 5 \(Nasty 2\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 451.59000000000003 Td
+(MyCustomCavernExtra:          DEFB 0,  0,0,0,0,0,0,0,0     ; Attr 0 \(Extra\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 441.09000000000003 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 430.59000000000003 Td
+(MyCustomCavernWillyPos:       DEFB 208, 0, 0, 0           ; Y*2=208 \(Y=104\), Frame 0, Dir 0, Air 0) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 420.09000000000003 Td
+(                              DEFW 23970, 0               ; Addr Attributi \(13,2\), Jump Frame 0) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 409.59000000000003 Td
+(MyCustomCavernConveyorData:   DEFB 0, 0,0, 0              ; Dir 0, Addr Video 0, Len 0) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 399.09000000000003 Td
+(MyCustomCavernBorderColor:    DEFB 2                      ; Bordo Rosso) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 388.59000000000003 Td
+(MyCustomCavernUnused1:        DEFB 0                      ; Riserva) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 378.09000000000003 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 367.59000000000003 Td
+(MyCustomCavernItems:          DEFB 3, 23561, 96, 255      ; Item 1 a \(Row 0, Col 9\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 357.09000000000003 Td
+(                              DEFB 255                    ; Terminatore oggetti) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 346.59000000000003 Td
+(                              .fill 21, 0                 ; Padding fino a 26 byte) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 336.09000000000003 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 325.59000000000003 Td
+(MyCustomCavernPortal:         DEFB 14                     ; Attributo Portale) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 315.09000000000003 Td
+(                              .fill 32, 255               ; Grafica 4 frame \(32 byte\)) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 304.59000000000003 Td
+(                              DEFW 23997, 26813           ; Addr Attributi e Addr Video) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 294.09000000000003 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 283.59000000000003 Td
+(MyCustomCavernItemGraphic:    DEFB 48,72,136,144,104,4,10,4 ; Bitmap Chiave) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 273.09000000000003 Td
+(MyCustomCavernInitialAir:     DEFB 63                     ; Riserva Aria) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 262.59000000000003 Td
+(MyCustomCavernGameClock:      DEFB 252                    ; Clock Stanza) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 252.09000000000003 Td
+() Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 241.59000000000003 Td
+(MyCustomCavernHGuardians:     DEFB 70, 23784, 96, 0, 232, 239, 1 ; Guardiano 1) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 231.09000000000003 Td
+(                              DEFB 255                    ; Terminatore guardiani) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 220.59000000000003 Td
+(                              .fill 21, 0                 ; Padding fino a 29 byte) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 210.09000000000003 Td
+(MyCustomCavernUnused2:        DEFB 0, 0) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 199.59000000000003 Td
+(MyCustomCavernVGuardians:     DEFB 255                    ; Nessun guardiano verticale) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 189.09000000000003 Td
+(MyCustomCavernUnused3:        DEFB 0, 0) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 178.59000000000003 Td
+(MyCustomCavernGraphicElement: .fill 32, 0                 ; Grafica decorativa) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 168.09000000000003 Td
+(MyCustomCavernGraphicGuardian:.fill 256, 0                ; Sprite Nemici \(256 Byte\)) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 148.59000000000003 Td
+(Per aggiungere la nuova caverna alla rotazione del gioco, e' sufficiente includere il file in manicminer.asm e) Tj
+ET
+
+
+BT
+0.15 0.15 0.18 rg
+/F1 9 Tf
+45 136.44000000000003 Td
+(registrare l'etichetta del layout nella tabella RoomsListTable.) Tj
+ET
+
+
+0.5 0.5 0.55 RG
+0.5 w
+45 40 m 550 40 l S
+BT
+/F1 8 Tf
+0.4 0.4 0.45 rg
+45 28 Td
+(Documento Tecnico di Sviluppo Z80 / ZX Spectrum) Tj
+505 28 Td
+(Pagina 7) Tj
+ET
+
+endstream
+endobj
+8 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+10 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+11 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>
+endobj
+12 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 1 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+13 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 2 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+14 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 3 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+15 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 4 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+16 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 5 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+17 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 6 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+18 0 obj
+<<
+/Type /Page
+/Parent 19 0 R
+/MediaBox [0 0 595.28 841.89]
+/Contents 7 0 R
+/Resources <<
+  /Font <<
+    /F1 8 0 R
+    /F2 9 0 R
+    /F3 10 0 R
+    /F4 11 0 R
+  >>
+>>
+>>
+endobj
+19 0 obj
+<<
+/Type /Pages
+/Kids [12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R]
+/Count 7
+>>
+endobj
+20 0 obj
+<<
+/Type /Catalog
+/Pages 19 0 R
+>>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000000015 00000 n 
+0000010172 00000 n 
+0000017699 00000 n 
+0000026771 00000 n 
+0000034563 00000 n 
+0000041142 00000 n 
+0000047431 00000 n 
+0000055005 00000 n 
+0000055075 00000 n 
+0000055150 00000 n 
+0000055219 00000 n 
+0000055293 00000 n 
+0000055479 00000 n 
+0000055665 00000 n 
+0000055851 00000 n 
+0000056037 00000 n 
+0000056223 00000 n 
+0000056409 00000 n 
+0000056595 00000 n 
+0000056696 00000 n 
+trailer
+<<
+/Size 21
+/Root 20 0 R
+>>
+startxref
+56747
+%%EOF
