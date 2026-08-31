@@ -222,15 +222,31 @@ Phys_ApplyGravity:
     jr   z, .stepping_left
     
 .stepping_right:
-    ; Muovendo a destra: piede sinistro (dietro) a Y + 16 deve essere solido
+    ; Muovendo a destra: controlla se il terreno di partenza a Y + 16 era solido
+    ; (controlla a X, oppure a X - 2 se Willy ha appena superato il bordo nel passo corrente)
     ld   a, b
     add  a, 16
     push bc
     ld   b, a              ; B = Y + 16
     call Phys_CheckSolid    ; C = X
     pop  bc
-    jr   nc, .no_step_down
-    
+    jr   c, .step_r_origin_ok
+
+    ; Controlla se la piattaforma di partenza era immediatamente dietro (X - 2)
+    ld   a, c
+    sub  2
+    cp   PLAYER_MIN_X
+    jp   c, .no_step_down
+    push bc
+    ld   c, a
+    ld   a, b
+    add  a, 16
+    ld   b, a              ; B = Y + 16
+    call Phys_CheckSolid    ; C = X - 2
+    pop  bc
+    jp   nc, .no_step_down
+
+.step_r_origin_ok:
     ; Piede destro (davanti) a Y + 16 deve essere vuoto
     ld   a, b
     add  a, 16
@@ -241,13 +257,13 @@ Phys_ApplyGravity:
     ld   c, a              ; C = X + 7
     call Phys_CheckSolid
     pop  bc
-    jr   c, .no_step_down
+    jp   c, .no_step_down
     
-    ; Piede destro (davanti) a Y + 24 deve essere solido
+    ; Davanti a Y + 24 deve essere solido (controlla X + 7 oppure X)
     ld   a, b
     add  a, 24
     cp   128
-    jr   nc, .no_step_down
+    jp   nc, .no_step_down
     push bc
     ld   b, a              ; B = Y + 24
     ld   a, c
@@ -255,12 +271,22 @@ Phys_ApplyGravity:
     ld   c, a              ; C = X + 7
     call Phys_CheckSolid
     pop  bc
-    jr   nc, .no_step_down
+    jr   c, .do_step_down
+    
+    ; Controlla anche a X se il gradino è sotto la prima metà del corpo
+    push bc
+    ld   a, b
+    add  a, 24
+    ld   b, a
+    call Phys_CheckSolid    ; C = X
+    pop  bc
+    jp   nc, .no_step_down
     
     jr   .do_step_down
     
 .stepping_left:
-    ; Muovendo a sinistra: piede destro (dietro) a Y + 16 deve essere solido
+    ; Muovendo a sinistra: controlla se il terreno di partenza a Y + 16 era solido
+    ; (controlla a X + 7, oppure a X + 9 se Willy ha appena superato il bordo nel passo corrente)
     ld   a, b
     add  a, 16
     push bc
@@ -270,8 +296,23 @@ Phys_ApplyGravity:
     ld   c, a              ; C = X + 7
     call Phys_CheckSolid
     pop  bc
-    jr   nc, .no_step_down
-    
+    jr   c, .step_l_origin_ok
+
+    ; Controlla se la piattaforma di partenza era immediatamente dietro (X + 9)
+    ld   a, c
+    add  a, 9
+    cp   PLAYER_MAX_X + 8
+    jp   nc, .no_step_down
+    push bc
+    ld   c, a
+    ld   a, b
+    add  a, 16
+    ld   b, a              ; B = Y + 16
+    call Phys_CheckSolid    ; C = X + 9
+    pop  bc
+    jp   nc, .no_step_down
+
+.step_l_origin_ok:
     ; Piede sinistro (davanti) a Y + 16 deve essere vuoto
     ld   a, b
     add  a, 16
@@ -279,18 +320,30 @@ Phys_ApplyGravity:
     ld   b, a              ; B = Y + 16
     call Phys_CheckSolid    ; C = X
     pop  bc
-    jr   c, .no_step_down
+    jp   c, .no_step_down
     
-    ; Piede sinistro (davanti) a Y + 24 deve essere solido
+    ; Davanti a Y + 24 deve essere solido (controlla X oppure X + 7)
     ld   a, b
     add  a, 24
     cp   128
-    jr   nc, .no_step_down
+    jp   nc, .no_step_down
     push bc
     ld   b, a              ; B = Y + 24
     call Phys_CheckSolid    ; C = X
     pop  bc
-    jr   nc, .no_step_down
+    jr   c, .do_step_down
+    
+    ; Controlla anche a X + 7 se il gradino è sotto la seconda metà del corpo
+    push bc
+    ld   a, b
+    add  a, 24
+    ld   b, a
+    ld   a, c
+    add  a, 7
+    ld   c, a
+    call Phys_CheckSolid    ; C = X + 7
+    pop  bc
+    jp   nc, .no_step_down
     
     jr   .do_step_down
 
@@ -304,7 +357,7 @@ Phys_ApplyGravity:
     ; C = X (bordo sinistro)
     call CheckWillyWallCollision
     pop  bc
-    jr   c, .no_step_down  ; Se collide, non effettuare lo step down
+    jp   c, .no_step_down  ; Se collide, non effettuare lo step down
     
     ld   a, b
     add  a, 8
@@ -315,35 +368,42 @@ Phys_ApplyGravity:
     ld   c, a              ; C = X + 7 (bordo destro)
     call CheckWillyWallCollision
     pop  bc
-    jr   c, .no_step_down  ; Se collide, non effettuare lo step down
+    jp   c, .no_step_down  ; Se collide, non effettuare lo step down
 
-    ; Applica lo step down
+    ; Applica lo step down: Y = Y + 8
     ld   a, b
     add  a, 8
-    ld   b, a              ; B = Y + 8
-    ld   (PlayerPos+1), a  ; Aggiorna Y
-    
+    ld   (PlayerPos+1), a  ; Aggiorna PlayerY a quota Y+8
+    ld   a, 1
+    ld   (on_ground), a
+    jp   .still_on_ground  ; Salta direttamente a still_on_ground (Willy è già a terra!)
+
 .no_step_down:
-    
     ; Se on_ground == 1, controlliamo se siamo ancora su terreno solido
     ; Dobbiamo controllare i pixel direttamente sotto i piedi del player:
     ; (PlayerX, PlayerY + 16) e (PlayerX + 7, PlayerY + 16)
-    ld  a, b
+    ld   bc, (PlayerPos)   ; Ripristina BC pulito
+    ld   a, b
     add  a, 16
-    ld  b, a              ; B = PlayerY + 16
+    ld   b, a              ; B = PlayerY + 16
     
     ; Controlla se la cella sotto il piede sinistro (PlayerX, PlayerY + 16) è solida
     call Phys_CheckSolid
-    jr   c, .still_on_ground
+    jp   c, .still_on_ground
     
     ; Controlla se la cella sotto il piede destro (PlayerX + 7, PlayerY + 16) è solida
+    ld   bc, (PlayerPos)   ; Ripristina BC pulito prima di calcolare X+7
+    ld   a, b
+    add  a, 16
+    ld   b, a
     ld   a, c
     add  a, 7
     ld   c, a              ; C = PlayerX + 7
     call Phys_CheckSolid
-    jr   c, .still_on_ground
+    jp   c, .still_on_ground
     
     ; Se nessuna delle due è solida, iniziamo a cadere!
+    ld   bc, (PlayerPos)   ; Ripristina BC pulito
     xor  a
     ld   (on_ground), a
     ld   (velocity_y), a   ; Inizia la caduta con velocità 0
@@ -673,7 +733,7 @@ Phys_ApplyGravity:
     jr   z, .do_landing    ; Se == (entro i primi 3px dalla superficie), atterra
     jr   c, .do_landing    ; Se < (era sopra la superficie prima di cadere), atterra
     
-    jr   .no_collision_checks ; Se era nella metà inferiore della tile (proveniva da sotto), NON atterrare! ; Se era sotto la superficie (proveniva da sotto), NON atterrare!
+    jr   .no_collision_checks ; Se era nella metà inferiore della tile (proveniva da sotto), NON atterrare!
 
 .do_landing:
     ; Atterra sulla riga di layout E!
