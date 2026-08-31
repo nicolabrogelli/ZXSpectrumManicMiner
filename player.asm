@@ -130,12 +130,20 @@ MovePlayer:
 
 .check_oppose_right:
     ; Sta premendo Destra contro il nastro a Sinistra.
+    ; Se sta saltando (bit 2 di D o jump_pressed), permetti sempre il salto a Destra
+    bit  2, d
+    jr   nz, .do_move_right
+    ld   a, (jump_pressed)
+    or   a
+    jr   nz, .do_move_right
+
     ; Se era già stato catturato (tasto rilasciato prima sul nastro), ignora l'input!
     ld   a, (conveyor_caught)
     or   a
     jr   nz, .right_ignored_drag_left
 
-    ; Non era ancora catturato: continua a muoversi a Destra!
+.do_move_right:
+    ; Non era ancora catturato o sta saltando: continua a muoversi a Destra!
     ld   a, 2
     ld   (direction), a
     jp   movePlayer_right
@@ -163,12 +171,20 @@ MovePlayer:
 
 .check_oppose_left:
     ; Sta premendo Sinistra contro il nastro a Destra.
+    ; Se sta saltando (bit 2 di D o jump_pressed), permetti sempre il salto a Sinistra
+    bit  2, d
+    jr   nz, .do_move_left
+    ld   a, (jump_pressed)
+    or   a
+    jr   nz, .do_move_left
+
     ; Se era già stato catturato (tasto rilasciato prima sul nastro), ignora l'input!
     ld   a, (conveyor_caught)
     or   a
     jr   nz, .left_ignored_drag_right
 
-    ; Non era ancora catturato: continua a muoversi a Sinistra!
+.do_move_left:
+    ; Non era ancora catturato o sta saltando: continua a muoversi a Sinistra!
     ld   a, 1
     ld   (direction), a
     jp   movePlayer_left
