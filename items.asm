@@ -347,7 +347,7 @@ DrawItemGraphic:
     jr   nc, .no_carry
     inc  h
 .no_carry:
-    ld   de, $5800
+    ld   de, COLOR_DATA
     add  hl, de
 
     pop  bc                        ; Recupera HL originale
@@ -801,7 +801,7 @@ Items_Animate:
     pop  hl
 
     ; Aggiorna memoria attributi VRAM ($5800)
-    ld   de, $5800
+    ld   de, COLOR_DATA
     add  hl, de                    ; HL = Indirizzo attributi a schermo
     ld   (hl), b                   ; Scrive l'attributo aggiornato a schermo
 

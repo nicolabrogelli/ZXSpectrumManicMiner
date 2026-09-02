@@ -1140,16 +1140,16 @@ Gfx_ClearScreenDirect:
     ld   b, a                  ; B = colore attributi
     
     ; 1. Pulisce tutti i pixel a zero ($4000..$57FF)
-    ld   hl, $4000
+    ld   hl, SCREEN_MEMORY
     ld   (hl), 0
-    ld   de, $4001
+    ld   de, SCREEN_MEMORY + 1
     ld   bc, 6143
     ldir
     
     ; 2. Imposta tutti gli attributi a B ($5800..$5AFF)
-    ld   hl, $5800
+    ld   hl, COLOR_DATA
     ld   (hl), b
-    ld   de, $5801
+    ld   de, COLOR_DATA + 1
     ld   bc, 767
     ldir
     
@@ -1633,15 +1633,15 @@ Gfx_DrawGameOverScreen:
     out  ($fe), a
 
     ; 2. Pulisce i primi due terzi dello schermo display file ($4000..$4FFF, 4096 byte)
-    ld   hl, $4000
-    ld   de, $4001
+    ld   hl, SCREEN_MEMORY
+    ld   de, SCREEN_MEMORY + 1
     ld   bc, $0fff
     ld   (hl), 0
     ldir
 
     ; 3. Imposta gli attributi dei primi due terzi a Bright 1, Ink 7, Paper 0 ($47) ($5800..$59FF, 512 byte)
-    ld   hl, $5800
-    ld   de, $5801
+    ld   hl, COLOR_DATA
+    ld   de, COLOR_DATA + 1
     ld   bc, $01ff
     ld   (hl), $47
     ldir
@@ -1688,8 +1688,8 @@ Gfx_DrawGameOverScreen:
     jr   nz, .sound_pulse_loop
 
     ; 6d. Ciclo colori attributi sui primi due terzi ($5800..$59FF, 512 byte)
-    ld   hl, $5800
-    ld   de, $5801
+    ld   hl, COLOR_DATA
+    ld   de, COLOR_DATA + 1
     ld   bc, $01ff
     ld   a, (game_over_distance)
     and  $0c                   ; bit 2 e 3
@@ -2619,7 +2619,7 @@ Gfx_DrawTile:
     ld   d, 0
     ld   e, c              ; DE = C (Col)
     add  hl, de            ; HL = B * 32 + C
-    ld   de, $5800
+    ld   de, COLOR_DATA
     add  hl, de            ; HL = AttrAddr
     
     ld   a, (ix+0)         ; A = attribute byte
@@ -2714,7 +2714,7 @@ Gfx_DrawCrumblingTile:
     ld   e, c
     ld   d, 0
     add  hl, de
-    ld   de, $5800
+    ld   de, COLOR_DATA
     add  hl, de                ; HL = AttrAddr
     pop  af
     ld   (hl), a
@@ -2745,13 +2745,13 @@ Gfx_DrawRoom:
 
     ; Copia 2048 byte del bitmap grafico del paesaggio a $4000..$47FF (righe 0..7)
     ld   hl, LandscapeGraphicData
-    ld   de, $4000
+    ld   de, SCREEN_MEMORY
     ld   bc, $0800
     ldir
 
     ; Copia 256 byte di attributi colore originali a $5800..$58FF (righe 0..7)
     ld   hl, TheFinalBarrierLayout
-    ld   de, $5800
+    ld   de, COLOR_DATA
     ld   bc, $0100
     ldir
 
@@ -2920,7 +2920,7 @@ Gfx_AnimatePortal:
     ld   l, c
     ld   bc, -23552
     add  hl, bc
-    ld   bc, $5800
+    ld   bc, COLOR_DATA
     add  hl, bc                ; HL = Indirizzo VRAM attributo Top-Left
 
     ; Controlla se il portale è attivo (tutti gli item raccolti)
