@@ -139,6 +139,15 @@ Phys_ApplyGravity:
     ; Determina jump_dir: usa current_input_dir (se 0 -> salto verticale verso l'alto)
     ld   a, (current_input_dir)
     ld   (jump_dir), a
+    or   a
+    jr   nz, .early_no_apex_pause
+    ld   a, VERTICAL_JUMP_APEX_PAUSE
+    ld   (jump_apex_pause_timer), a
+    jr   .early_jump_done
+.early_no_apex_pause:
+    xor  a
+    ld   (jump_apex_pause_timer), a
+.early_jump_done:
     jp   .in_air
 
 .no_early_jump:
@@ -414,9 +423,38 @@ Phys_ApplyGravity:
     ; Determina jump_dir: usa current_input_dir (se 0 -> salto verticale verso l'alto)
     ld   a, (current_input_dir)
     ld   (jump_dir), a
+    or   a
+    jr   nz, .ground_no_apex_pause
+    ld   a, VERTICAL_JUMP_APEX_PAUSE
+    ld   (jump_apex_pause_timer), a
+    jr   .ground_jump_done
+.ground_no_apex_pause:
+    xor  a
+    ld   (jump_apex_pause_timer), a
+.ground_jump_done:
     jp   .in_air
 
 .in_air:
+    ; --- CONTROLLO PAUSA ALL'APICE DEL SALTO VERTICALE ---
+    ld   a, (jump_dir)
+    or   a
+    jr   nz, .normal_in_air      ; Se non è salto verticale (jump_dir != 0), continua normalmente
+
+    ld   a, (velocity_y)
+    or   a
+    jr   nz, .normal_in_air      ; Se non è all'apice (velocity_y != 0), continua salita o discesa
+
+    ld   a, (jump_apex_pause_timer)
+    or   a
+    jr   z, .normal_in_air      ; Se la pausa all'apice è esaurita (o 0), inizia la discesa normalmente
+
+    ; Siamo all'apice del salto verticale con pausa attiva:
+    ; decrementa il timer e mantieni Willy fermo all'apice (velocity_y = 0, Y invariato)
+    dec  a
+    ld   (jump_apex_pause_timer), a
+    jp   .end
+
+.normal_in_air:
     ; Incrementa jump_frame per mantenere coerente la gravità frazionaria del salto
     ld   a, (jump_frame)
     inc  a
@@ -556,6 +594,7 @@ Phys_ApplyGravity:
     ; Ferma la velocità verso l'alto (inizia la caduta)
     xor  a
     ld   (velocity_y), a
+    ld   (jump_apex_pause_timer), a
     jp   .save_pos
     
 .falling_checks:
@@ -622,6 +661,7 @@ Phys_ApplyGravity:
     ld   (jump_start_y), a  ; Reset jump Y
     ld   (jump_dir), a
     ld   (jump_frame), a
+    ld   (jump_apex_pause_timer), a
 
     ld   a, b               ; A = ramp_Y
     sub  d                  ; A = ramp_Y - jump_start_y
@@ -644,6 +684,7 @@ Phys_ApplyGravity:
     ld   (jump_start_y), a
     ld   (jump_dir), a
     ld   (jump_frame), a
+    ld   (jump_apex_pause_timer), a
     jr   .save_pos          ; Esegui controllo transizione di stanza verso l'alto!
     
 .no_ramp_landing:
@@ -722,6 +763,7 @@ Phys_ApplyGravity:
     ld   (jump_start_y), a ; Reset jump Y
     ld   (jump_dir), a
     ld   (jump_frame), a
+    ld   (jump_apex_pause_timer), a
 
     ld   a, b              ; A = landing_Y (in B)
     sub  d                 ; A = landing_Y - jump_start_y
@@ -757,6 +799,7 @@ Phys_ApplyGravity:
     ld   (velocity_y), a
     ld   (jump_start_y), a
     ld   (jump_dir), a
+    ld   (jump_apex_pause_timer), a
     jr   .save_ok
 
 .check_max:
@@ -769,6 +812,7 @@ Phys_ApplyGravity:
     ld   (velocity_y), a
     ld   (jump_dir), a
     ld   (jump_frame), a
+    ld   (jump_apex_pause_timer), a
     ld   (PlayerPos), bc
 
     ld   a, (jump_start_y)

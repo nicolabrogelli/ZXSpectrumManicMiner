@@ -26,6 +26,7 @@ coyote_timer:   db $00
 jump_start_y:   db $00
 jump_dir:       db $00
 jump_frame:     db $00
+jump_apex_pause_timer: db $00
 current_input_dir: db $00
 q_prev:         db $01
 a_prev:         db $01

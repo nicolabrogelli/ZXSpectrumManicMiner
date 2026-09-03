@@ -85,5 +85,16 @@ COYOTE_TIME_FRAMES EQU 4
 JUMP_BUFFER_FRAMES EQU 5
     ENDIF
 
+; --- Pausa all'Apice del Salto Verticale (Vertical Jump Apex Pause) ---
+; Numero di frame (50Hz, 1 frame = 20ms) nei quali Willy rimane sospeso
+; all'apice del salto verticale prima che inizi la fase di discesa.
+;   0 = Nessuna pausa (discesa immediata standard)
+;   2 = Pausa di 2 frame (40 ms)
+;   3 = Pausa di 3 frame (60 ms - valore frazionario consigliato)
+;   5 = Pausa di 5 frame (100 ms)
+    IFNDEF VERTICAL_JUMP_APEX_PAUSE
+VERTICAL_JUMP_APEX_PAUSE EQU 6
+    ENDIF
+
 
 

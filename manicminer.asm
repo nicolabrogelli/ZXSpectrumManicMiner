@@ -240,6 +240,7 @@ Main_loop:
     ld   (coyote_timer), a
     ld   (jump_frame), a
     ld   (jump_dir), a
+    ld   (jump_apex_pause_timer), a
     ld   (body_state), a
     ld   (player_old_body), a
     ld   (player_old_dir), a

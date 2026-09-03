@@ -534,6 +534,7 @@ TriggerRoomChange:
     ld   (coyote_timer), a
     ld   (jump_frame), a
     ld   (jump_dir), a
+    ld   (jump_apex_pause_timer), a
     ld   (on_ground), a            ; Imposta a 0 (mezz'aria / caduta)
 
     ; Se l'ingresso è orizzontale, evita che il primo tratto della
