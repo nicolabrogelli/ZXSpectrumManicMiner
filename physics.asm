@@ -217,6 +217,14 @@ Phys_ApplyGravity:
     ; --- CONTROLLO STEP DOWN DI 1 TILE (8 pixel) ---
     ; Se stiamo scendendo da una rampa o gradino di 1 tile,
     ; facciamo scendere Willy immediatamente per evitare che fluttui in aria.
+    ; Sulle piattaforme Conveyor (o provenendo da un Conveyor) NESSUN step down:
+    ; a fine nastro Willy non scende gradini ma cade o salta regolarmente.
+    call CheckWillyOnConveyor
+    jp   c, .no_step_down
+    ld   a, (conveyor_caught)
+    or   a
+    jp   nz, .no_step_down
+
     ld   a, (direction)
     cp   1
     jr   z, .stepping_left
@@ -259,7 +267,7 @@ Phys_ApplyGravity:
     pop  bc
     jp   c, .no_step_down
     
-    ; Davanti a Y + 24 deve essere solido (controlla X + 7 oppure X)
+    ; Davanti a Y + 24 deve essere solido: controlla SOLO il piede davanti (X + 7)
     ld   a, b
     add  a, 24
     cp   128
@@ -270,15 +278,6 @@ Phys_ApplyGravity:
     add  a, 7
     ld   c, a              ; C = X + 7
     call Phys_CheckSolid
-    pop  bc
-    jr   c, .do_step_down
-    
-    ; Controlla anche a X se il gradino è sotto la prima metà del corpo
-    push bc
-    ld   a, b
-    add  a, 24
-    ld   b, a
-    call Phys_CheckSolid    ; C = X
     pop  bc
     jp   nc, .no_step_down
     
@@ -322,7 +321,7 @@ Phys_ApplyGravity:
     pop  bc
     jp   c, .no_step_down
     
-    ; Davanti a Y + 24 deve essere solido (controlla X oppure X + 7)
+    ; Davanti a Y + 24 deve essere solido: controlla SOLO il piede davanti (X)
     ld   a, b
     add  a, 24
     cp   128
@@ -330,18 +329,6 @@ Phys_ApplyGravity:
     push bc
     ld   b, a              ; B = Y + 24
     call Phys_CheckSolid    ; C = X
-    pop  bc
-    jr   c, .do_step_down
-    
-    ; Controlla anche a X + 7 se il gradino è sotto la seconda metà del corpo
-    push bc
-    ld   a, b
-    add  a, 24
-    ld   b, a
-    ld   a, c
-    add  a, 7
-    ld   c, a
-    call Phys_CheckSolid    ; C = X + 7
     pop  bc
     jp   nc, .no_step_down
     
@@ -932,10 +919,6 @@ CheckWillyOnConveyor:
     push bc
     push de
     push hl
-
-    ld   a, (on_ground)
-    or   a
-    jr   z, .not_on_conveyor
 
     ld   bc, (PlayerPos)   ; C = WillyX, B = WillyY
     
