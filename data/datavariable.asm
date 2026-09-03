@@ -63,7 +63,7 @@ room_ptr:           dw CentralCavernLayout
 enemy_update_rate:  db GUARDIAN_UPDATE_RATE
 enemy_update_timer: db 0
 player_speed:       db WILLY_WALK_SPEED
-player_air_speed:   db 2
+player_air_speed:   db DEFAULT_AIR_SPEED_PRESET
 transition_active:  db 0
 room_entry_positions: .122 db 0 ; Tabella posizioni di ingresso per tutte le stanze (61 stanze * 2 byte: X, Y)
 ramp_entry_guard:  db 0   ; Guardia aggancio rampa dopo ingresso orizzontale

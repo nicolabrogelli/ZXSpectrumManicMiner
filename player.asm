@@ -195,6 +195,66 @@ MovePlayer:
     ld   (direction), a
     jp   movePlayer_right
 
+; -------------------------------------------------------------------
+; GetPlayerAirSpeed
+;
+; Calcola la velocità orizzontale in volo (pixel per frame) in base al
+; preset configurato in player_air_speed (DEFAULT_AIR_SPEED_PRESET).
+;
+; Presets:
+;   0 = 1.0 px/frame costante  (parabola stretta)
+;   1 = 1.5 px/frame alternato (parabola corta: alterna 1 e 2 px)
+;   2 = 2.0 px/frame costante  (parabola media)
+;   3 = 2.5 px/frame alternato (parabola standard MM: alterna 2 e 3 px)
+;   4 = 3.0 px/frame costante  (parabola estesa)
+;
+; Output:
+;   A = pixel di spostamento orizzontale per il frame corrente
+; -------------------------------------------------------------------
+GetPlayerAirSpeed:
+    ld   a, (player_air_speed)
+    or   a
+    jr   z, .speed_1_0
+    dec  a
+    jr   z, .speed_1_5
+    dec  a
+    jr   z, .speed_2_0
+    dec  a
+    jr   z, .speed_2_5
+    dec  a
+    jr   z, .speed_3_0
+    
+    ; Default: se valore diverso, usa 2.0 px/frame
+    jr   .speed_2_0
+
+.speed_1_0:
+    ld   a, 1
+    ret
+
+.speed_1_5:
+    ld   a, 1
+    ld   hl, jump_frame
+    bit  0, (hl)
+    ret  z
+    inc  a                      ; Alterna 1 e 2 px
+    ret
+
+.speed_2_0:
+    ld   a, 2
+    ret
+
+.speed_2_5:
+    ld   a, 2
+    ld   hl, jump_frame
+    bit  0, (hl)
+    ret  z
+    inc  a                      ; Alterna 2 e 3 px (standard MM)
+    ret
+
+.speed_3_0:
+    ld   a, 3
+    ret
+
 ; ===============================================================
 ; MOVIMENTO SINISTRA
 ; ===============================================================
@@ -206,11 +266,7 @@ movePlayer_left:
     ld   a, (player_speed)
     jr   .speed_left_ok
 .air_left:
-    ld   a, 2
-    ld   hl, jump_frame
-    bit  0, (hl)
-    jr   z, .speed_left_ok
-    inc  a                      ; Alterna 2 e 3 px per frame (Media = 2.5 px/frame)
+    call GetPlayerAirSpeed
 .speed_left_ok:
     ld   e, a
 
@@ -263,11 +319,7 @@ movePlayer_right:
     ld   a, (player_speed)
     jr   .speed_right_ok
 .air_right:
-    ld   a, 2
-    ld   hl, jump_frame
-    bit  0, (hl)
-    jr   z, .speed_right_ok
-    inc  a                      ; Alterna 2 e 3 px per frame (Media = 2.5 px/frame)
+    call GetPlayerAirSpeed
 .speed_right_ok:
     ld   e, a
 

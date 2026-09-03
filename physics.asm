@@ -1840,6 +1840,8 @@ Phys_LoadRoomSettings:
     ld   (room_jump_strength), a
     ld   a, DEFAULT_GRAVITY_PRESET
     ld   (room_gravity_preset), a
+    ld   a, DEFAULT_AIR_SPEED_PRESET
+    ld   (player_air_speed), a
     pop  af
     ret
 

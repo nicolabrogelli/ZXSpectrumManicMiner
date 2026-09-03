@@ -32,6 +32,21 @@ JUMP_STRENGTH: EQU DEFAULT_JUMP_STRENGTH
 DEFAULT_GRAVITY_PRESET EQU 1
     ENDIF
 
+; --- Lunghezza / Ampiezza Parabola Salto Orizzontale (Air Speed Preset) ---
+; Definisce lo spostamento orizzontale in pixel per frame durante il salto direzionale.
+; Consente di accorciare o allungare la parabola orizzontale mantenendo l'altezza massima invariata.
+; Presets:
+;   0 = Parabola stretta       (1.0 px/frame costante  -> gittata ~16 pixel / 2 blocchi)
+;   1 = Parabola corta         (1.5 px/frame alternato -> gittata ~24 pixel / 3 blocchi)
+;   2 = Parabola media         (2.0 px/frame costante  -> gittata ~32 pixel / 4 blocchi)
+;   3 = Parabola standard MM   (2.5 px/frame alternato -> gittata ~40 pixel / 5 blocchi)
+;   4 = Parabola estesa        (3.0 px/frame costante  -> gittata ~48 pixel / 6 blocchi)
+    IFNDEF DEFAULT_AIR_SPEED_PRESET
+DEFAULT_AIR_SPEED_PRESET EQU 3
+    ENDIF
+
+JUMP_AIR_SPEED_PRESET: EQU DEFAULT_AIR_SPEED_PRESET
+
 ; --- Velocità Massima di Caduta ---
 ; Limite massimo per la velocità di caduta verso il basso (in pixel/frame)
     IFNDEF MAX_FALL_SPEED
