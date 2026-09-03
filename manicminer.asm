@@ -385,10 +385,13 @@ TriggerGameOver:
 ; - Se il giocatore preme 'N' (o ENTER): ritorna alla schermata iniziale (Title Screen).
 ; -------------------------------------------------------------------
 TriggerVictory:
-    ; 1. Disegna la schermata di vittoria ed esegue l'animazione di Maria, CONGRATULATIONS e prompt
+    ; 1. Verifica ed aggiorna eventuale nuovo High Score
+    call Score_CheckAndUpdateHighScore
+
+    ; 2. Disegna la schermata di vittoria ed esegue l'animazione di Maria, CONGRATULATIONS e prompt
     call Gfx_DrawVictoryScreen
 
-    ; 2. Attende il rilascio dei tasti Y, N ed ENTER se erano già premuti
+    ; 3. Attende il rilascio dei tasti Y, N ed ENTER se erano già premuti
 .wait_keys_release:
     halt
     ; Controlla tasto Y (Porta $DF, bit 4)

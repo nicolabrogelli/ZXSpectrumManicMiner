@@ -1240,6 +1240,7 @@ Gfx_PrintRoomName:
 ; -------------------------------------------------------------------
 ; Gfx_Clear16x16_Black
 ; Azzera (pulisce a nero) un blocco di 16x16 pixel alla coordinata (C, B)
+; Se X non è allineato a 8 pixel (C & 7 != 0), azzera 3 byte per scanline
 ; Input: C = X, B = Y
 ; -------------------------------------------------------------------
 Gfx_Clear16x16_Black:
@@ -1251,8 +1252,28 @@ Gfx_Clear16x16_Black:
     ld   l, c
     call Gfx_GetScreenAddr      ; HL = indirizzo schermo per (X, Y)
     
-    ld   c, 16                  ; 16 scanline
-.clear_loop:
+    ld   a, c
+    and  7
+    jr   z, .clear_2bytes
+
+    ld   c, 16                  ; 16 scanline (3 byte per linea se non allineato)
+.clear_loop_3:
+    xor  a
+    ld   (hl), a
+    inc  hl
+    ld   (hl), a
+    inc  hl
+    ld   (hl), a
+    dec  hl
+    dec  hl
+    call Gfx_IncScreenLine
+    dec  c
+    jr   nz, .clear_loop_3
+    jr   .clear_done
+
+.clear_2bytes:
+    ld   c, 16                  ; 16 scanline (2 byte per linea se allineato a 8 pixel)
+.clear_loop_2:
     xor  a
     ld   (hl), a
     inc  hl
@@ -1260,8 +1281,9 @@ Gfx_Clear16x16_Black:
     dec  hl
     call Gfx_IncScreenLine
     dec  c
-    jr   nz, .clear_loop
-    
+    jr   nz, .clear_loop_2
+
+.clear_done:
     pop  hl
     pop  de
     pop  bc
@@ -1781,7 +1803,7 @@ Gfx_DrawGameOverScreen:
 ; -------------------------------------------------------------------
 ; Gfx_DrawVictoryScreen
 ; Esegue la sequenza animata della schermata di vittoria:
-; 1. Pulisce lo schermo a nero, mostra Willy (Y=96), Nome Stanza (riga 16) e Status Line (riga 18).
+; 1. Pulisce lo schermo a nero, mostra Willy (Y=96), Nome Stanza (riga 16) e Status Line (riga 19).
 ; 2. Animazione di Maria (VecchiaSprite): cammina verso sinistra da X=168 fino a X=128 (accanto a Willy).
 ; 3. Breve pausa con Maria fermata accanto a Willy.
 ; 4. Stampa la scritta di sottotitolo "YOU HAVE WON!" a riga 3.
@@ -1816,23 +1838,10 @@ Gfx_DrawVictoryScreen:
     ld   a, WHITE | $40        ; Bianco Brillante
     call Gfx_SetEnemyColorAttributes
 
-    ; 3. Stampa il Nome della Stanza a riga 16
+    ; 3. Stampa il Nome della Stanza a riga 16 (Gfx_PrintRoomName aggiorna anche la riga di stato a riga 19 e le vite)
     call Gfx_PrintRoomName
 
-    ; 4. Stampa la riga di stato a riga 18
-    ld   hl, status_line       ; HL = indirizzo stringa di stato
-    ld   b, 32                 ; B = 32 caratteri
-    ld   d, 18
-    ld   e, 0
-    call Gfx_PrintDirectText
-
-    ; 5. Applica i colori agli attributi di riga 18 ($5A40)
-    ld   hl, status_line_attrs
-    ld   de, $5a40             ; Indirizzo attributi riga 18
-    ld   bc, 32
-    ldir
-
-    ; 6. Animazione: Maria cammina verso sinistra da X=168 fino a fermarsi a X=128 (accanto a Willy)
+    ; 4. Animazione: Maria cammina verso sinistra da X=168 fino a fermarsi a X=128 (accanto a Willy)
     ld   b, 96                 ; B = Y = 96
     ld   c, 168                ; C = X iniziale (168)
     ld   d, 0                  ; D = contatore frame/passo
@@ -1872,11 +1881,11 @@ Gfx_DrawVictoryScreen:
     push bc
     push de
 
-    ; Calcola il frame di animazione di VecchiaSprite (4 frame da 32 byte ciascuno)
-    ; Frame index = (D / 2) & 3
+    ; Calcola il frame di animazione di VecchiaSprite (frame 0 e 1 di camminata alternata)
+    ; Frame index = (D / 2) & 1
     ld   a, d
     srl  a
-    and  3                     ; A = 0..3
+    and  1                     ; A = 0..1 (frame di camminata)
     ld   l, a
     ld   h, 0
     add  hl, hl                ; * 2
@@ -1907,10 +1916,20 @@ Gfx_DrawVictoryScreen:
     ld   a, c
     sub  2                     ; Avanza di 2 pixel verso sinistra
     ld   c, a
-    cp   126                   ; Si ferma a X = 128 (il ciclo termina quando C < 128, ossia C=126)
+    cp   128                   ; Continua finche X >= 128 (si ferma esattamente a X = 128)
     jr   nc, .maria_walk_loop
 
-    ; 7. Breve pausa con Maria fermata accanto a Willy (~0.7s)
+    ; Maria si ferma accanto a Willy a X=128:
+    ; Pulisce la cella e mostra Maria con il braccio puntato verso Willy (Frame 2)
+    ld   bc, $6080             ; B = 96 ($60), C = 128 ($80)
+    call Gfx_Clear16x16_Black
+    ld   ix, VecchiaSprite + (2 * 32) ; Frame 2: braccio che punta a Willy
+    call Gfx_DrawPixelSprite16x16
+    ld   bc, $6080
+    ld   a, YELLOW | $40
+    call Gfx_SetEnemyColorAttributes
+
+    ; 5. Breve pausa con Maria fermata accanto a Willy (~0.7s)
     ld   b, 35
 .pause_after_walk:
     halt
@@ -3415,6 +3434,23 @@ WillyGameOverSprite:
 ; Mantenuti per compatibilita
 BotteSprite:
     .32 db 0
+
+; Sprite di Maria (VecchiaSprite) da Jet Set Willy ($9C80..$9CFF) - 4 frame da 32 byte (16x16)
 VecchiaSprite:
-    .32 db 0
+    ; Frame 0: Posizione normale / piedi uniti (32 byte)
+    db 3,0, 3,192, 1,224, 1,64, 1,224, 7,128, 31,248, 63,252
+    db 55,108, 20,152, 15,240, 15,240, 15,240, 2,64, 2,64, 6,96
+
+    ; Frame 1: Passo / piede mosso (32 byte)
+    db 3,0, 3,192, 1,224, 1,64, 1,224, 7,128, 31,248, 63,252
+    db 55,108, 20,152, 15,240, 15,240, 15,240, 2,64, 6,64, 2,96
+
+    ; Frame 2: Braccio che punta a sinistra verso Willy (32 byte)
+    db 3,0, 3,192, 1,224, 1,64, 1,224, 7,128, 31,252, 63,254
+    db 55,102, 20,146, 15,240, 15,240, 15,240, 2,64, 2,64, 6,96
+
+    ; Frame 3: Braccio che punta esteso a sinistra (32 byte)
+    db 3,0, 3,192, 1,224, 1,64, 1,224, 7,128, 31,255, 63,254
+    db 55,96, 20,144, 15,240, 15,240, 15,240, 2,64, 2,64, 6,96
+
 

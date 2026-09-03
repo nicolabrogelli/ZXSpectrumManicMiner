@@ -108,7 +108,7 @@ JUMP_BUFFER_FRAMES EQU 5
 ;   3 = Pausa di 3 frame (60 ms - valore frazionario consigliato)
 ;   5 = Pausa di 5 frame (100 ms)
     IFNDEF VERTICAL_JUMP_APEX_PAUSE
-VERTICAL_JUMP_APEX_PAUSE EQU 6
+VERTICAL_JUMP_APEX_PAUSE EQU 7
     ENDIF
 
 
