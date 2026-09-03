@@ -117,3 +117,11 @@ collision_delta_y:      db 0
 row_enemy_cur:          db 0
 row_willy_cur:          db 0
 overlap_num_lines:      db 0
+
+; Interrupt
+IM2_TABLE   = $FE00
+IM2_VECTOR  = $FDFD
+SCREEN_LINE = $4860
+SCREEN_MEMORY = $4000
+COLOR_DATA = $5800
+STACK_POINTER = $fdf0

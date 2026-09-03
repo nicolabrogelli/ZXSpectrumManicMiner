@@ -22,7 +22,7 @@
     include "audio.asm"
     
 start:
-    ld   sp, $fdf0
+    ld   sp, STACK_POINTER
     jp   Main
  
 ;    org $7F50
@@ -44,7 +44,7 @@ Main:
     jp   ShowTitleScreen
 
 LoadRoomAndRestart:
-    ld   sp, $fdf0             ; Ripristina lo stack pointer per evitare stack drift/reset
+    ld   sp, STACK_POINTER             ; Ripristina lo stack pointer per evitare stack drift/reset
     call DetermineCurrentRoomID
     call Phys_LoadRoomSettings
     

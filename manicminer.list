@@ -287,98 +287,99 @@
   33+ 5DAD              YELLOW_FLASH: EQU $C6
   34+ 5DAD              WHITE_FLASH:  EQU $C7
   35+ 5DAD
-  36+ 5DAD              ; Interrupt
-  37+ 5DAD              IM2_TABLE   = $FE00
-  38+ 5DAD              IM2_VECTOR  = $FDFD
-  39+ 5DAD              SCREEN_LINE = $4860
-  40+ 5DAD              SCREEN_MEMORY = $4000
-  41+ 5DAD              COLOR_DATA = $5800
-  42+ 5DAD
-  43+ 5DAD              ; Note: La fisica (MAX_FALL_SPEED, JUMP_STRENGTH, GRAVITY, DEFAULT_GRAVITY_PRESET)
-  44+ 5DAD              ; è ora configurata in physics_config.asm
-  45+ 5DAD
-  46+ 5DAD              ; Limiti schermo del Player
-  47+ 5DAD              PLAYER_MIN_X:    EQU 5
-  48+ 5DAD              PLAYER_MAX_X:    EQU 245
-  49+ 5DAD
-  50+ 5DAD              ; items_grid è definito dinamicamente in resources.asm dopo le sprite
-  51+ 5DAD
-  52+ 5DAD              ; Offsets all'interno della struttura dati della Stanza Manic Miner (1024 byte)
-  53+ 5DAD              OFFSET_LAYOUT:           EQU 0    ; 512 byte (16 righe x 32 colonne)
-  54+ 5DAD              OFFSET_ROOM_NAME:        EQU 512  ; 32 byte nome stanza
-  55+ 5DAD              OFFSET_TILES:            EQU 544  ; 72 byte (8 definizioni tile x 9 byte)
-  56+ 5DAD              OFFSET_BG:               EQU 544  ; Tile 0: Sfondo
-  57+ 5DAD              OFFSET_FLOOR:            EQU 553  ; Tile 1: Pavimento
-  58+ 5DAD              OFFSET_CRUMBLING:        EQU 562  ; Tile 2: Pavimento sgretolabile
-  59+ 5DAD              OFFSET_WALL:             EQU 571  ; Tile 3: Muro
-  60+ 5DAD              OFFSET_CONVEYOR:         EQU 580  ; Tile 4: Nastro trasportatore
-  61+ 5DAD              OFFSET_NASTY1:           EQU 589  ; Tile 5: Nasty 1
-  62+ 5DAD              OFFSET_NASTY2:           EQU 598  ; Tile 6: Nasty 2
-  63+ 5DAD              OFFSET_EXTRA_TILE:       EQU 607  ; Tile 7: Extra
-  64+ 5DAD              OFFSET_POS_WILLY:        EQU 616  ; 7 byte pos/aspetto iniziale Willy
-  65+ 5DAD              OFFSET_CONVEYOR_DATA:    EQU 623  ; 4 byte conveyor (dir, addr, len)
-  66+ 5DAD              OFFSET_BORDER_COLOR:     EQU 627  ; 1 byte colore bordo
-  67+ 5DAD              OFFSET_UNUSED1:          EQU 628  ; 1 byte non usato
-  68+ 5DAD              OFFSET_ITEMS:            EQU 629  ; 26 byte item (fino a 5 x 5B + $FF)
-  69+ 5DAD              OFFSET_PORTAL:           EQU 655  ; 37 byte portale
-  70+ 5DAD              OFFSET_ITEM_GRAPHIC:     EQU 692  ; 8 byte bitmap grafica item
-  71+ 5DAD              OFFSET_INITIAL_AIR:      EQU 700  ; 1 byte aria iniziale
-  72+ 5DAD              OFFSET_GAME_CLOCK:       EQU 701  ; 1 byte orologio
-  73+ 5DAD              OFFSET_H_GUARDIANS:      EQU 702  ; 29 byte guardiani orizzontali (4 x 7B + $FF)
-  74+ 5DAD              OFFSET_UNUSED2:          EQU 731  ; 2 byte non usati
-  75+ 5DAD              OFFSET_V_GUARDIANS:      EQU 733  ; 1 byte terminatore / guardiani verticali
-  76+ 5DAD              OFFSET_UNUSED3:          EQU 734  ; 2 byte non usati
-  77+ 5DAD              OFFSET_EXTRA_GRAPHIC:    EQU 736  ; 32 byte grafica extra
-  78+ 5DAD              OFFSET_GUARDIAN_GRAPHICS: EQU 768 ; 256 byte sprite guardiani stanza (8 frame 16x16)
-  79+ 5DAD              ROOM_SIZE:               EQU 1024 ; Dimensione stanza Manic Miner
-  80+ 5DAD
-  81+ 5DAD              BLOCK:          EQU $FF
-  82+ 5DAD
-  83+ 5DAD              ROOM_MASTER_BEDROOM: EQU 35
-  84+ 5DAD
+  36+ 5DAD              ;; Interrupt
+  37+ 5DAD              ;IM2_TABLE   = $FE00
+  38+ 5DAD              ;IM2_VECTOR  = $FDFD
+  39+ 5DAD              ;SCREEN_LINE = $4860
+  40+ 5DAD              ;SCREEN_MEMORY = $4000
+  41+ 5DAD              ;COLOR_DATA = $5800
+  42+ 5DAD              ;STACK_POINTER = $fdf0
+  43+ 5DAD
+  44+ 5DAD              ; Note: La fisica (MAX_FALL_SPEED, JUMP_STRENGTH, GRAVITY, DEFAULT_GRAVITY_PRESET)
+  45+ 5DAD              ; è ora configurata in physics_config.asm
+  46+ 5DAD
+  47+ 5DAD              ; Limiti schermo del Player
+  48+ 5DAD              PLAYER_MIN_X:    EQU 5
+  49+ 5DAD              PLAYER_MAX_X:    EQU 245
+  50+ 5DAD
+  51+ 5DAD              ; items_grid è definito dinamicamente in resources.asm dopo le sprite
+  52+ 5DAD
+  53+ 5DAD              ; Offsets all'interno della struttura dati della Stanza Manic Miner (1024 byte)
+  54+ 5DAD              OFFSET_LAYOUT:           EQU 0    ; 512 byte (16 righe x 32 colonne)
+  55+ 5DAD              OFFSET_ROOM_NAME:        EQU 512  ; 32 byte nome stanza
+  56+ 5DAD              OFFSET_TILES:            EQU 544  ; 72 byte (8 definizioni tile x 9 byte)
+  57+ 5DAD              OFFSET_BG:               EQU 544  ; Tile 0: Sfondo
+  58+ 5DAD              OFFSET_FLOOR:            EQU 553  ; Tile 1: Pavimento
+  59+ 5DAD              OFFSET_CRUMBLING:        EQU 562  ; Tile 2: Pavimento sgretolabile
+  60+ 5DAD              OFFSET_WALL:             EQU 571  ; Tile 3: Muro
+  61+ 5DAD              OFFSET_CONVEYOR:         EQU 580  ; Tile 4: Nastro trasportatore
+  62+ 5DAD              OFFSET_NASTY1:           EQU 589  ; Tile 5: Nasty 1
+  63+ 5DAD              OFFSET_NASTY2:           EQU 598  ; Tile 6: Nasty 2
+  64+ 5DAD              OFFSET_EXTRA_TILE:       EQU 607  ; Tile 7: Extra
+  65+ 5DAD              OFFSET_POS_WILLY:        EQU 616  ; 7 byte pos/aspetto iniziale Willy
+  66+ 5DAD              OFFSET_CONVEYOR_DATA:    EQU 623  ; 4 byte conveyor (dir, addr, len)
+  67+ 5DAD              OFFSET_BORDER_COLOR:     EQU 627  ; 1 byte colore bordo
+  68+ 5DAD              OFFSET_UNUSED1:          EQU 628  ; 1 byte non usato
+  69+ 5DAD              OFFSET_ITEMS:            EQU 629  ; 26 byte item (fino a 5 x 5B + $FF)
+  70+ 5DAD              OFFSET_PORTAL:           EQU 655  ; 37 byte portale
+  71+ 5DAD              OFFSET_ITEM_GRAPHIC:     EQU 692  ; 8 byte bitmap grafica item
+  72+ 5DAD              OFFSET_INITIAL_AIR:      EQU 700  ; 1 byte aria iniziale
+  73+ 5DAD              OFFSET_GAME_CLOCK:       EQU 701  ; 1 byte orologio
+  74+ 5DAD              OFFSET_H_GUARDIANS:      EQU 702  ; 29 byte guardiani orizzontali (4 x 7B + $FF)
+  75+ 5DAD              OFFSET_UNUSED2:          EQU 731  ; 2 byte non usati
+  76+ 5DAD              OFFSET_V_GUARDIANS:      EQU 733  ; 1 byte terminatore / guardiani verticali
+  77+ 5DAD              OFFSET_UNUSED3:          EQU 734  ; 2 byte non usati
+  78+ 5DAD              OFFSET_EXTRA_GRAPHIC:    EQU 736  ; 32 byte grafica extra
+  79+ 5DAD              OFFSET_GUARDIAN_GRAPHICS: EQU 768 ; 256 byte sprite guardiani stanza (8 frame 16x16)
+  80+ 5DAD              ROOM_SIZE:               EQU 1024 ; Dimensione stanza Manic Miner
+  81+ 5DAD
+  82+ 5DAD              BLOCK:          EQU $FF
+  83+ 5DAD
+  84+ 5DAD              ROOM_MASTER_BEDROOM: EQU 35
   85+ 5DAD
-  86+ 5DAD              LAMETTA:  		EQU 0   ;(Lametta)
-  87+ 5DAD              SEGA: 			EQU 1   ;(Sega)
-  88+ 5DAD              UCCELLO: 		EQU 2   ;(Uccello)
-  89+ 5DAD              RADAR: 			EQU 3   ;(Radar)
-  90+ 5DAD              UOVO: 			EQU 4   ;(Uovo)
-  91+ 5DAD              UFO: 			EQU 5   ;(Ufo)
-  92+ 5DAD              FACCIA:			EQU 6   ;(Faccia)
-  93+ 5DAD              SCIMMIA:		EQU 7   ;(Scimmia)
-  94+ 5DAD              ROBOT:			EQU 8   ;(Robot)
-  95+ 5DAD              PALLA:			EQU 9   ;(Palla)
-  96+ 5DAD              DOUBLE_BALL:	EQU 10  ;(Double Ball)
-  97+ 5DAD              SOLDATO:		EQU 11  ;(Soldato)
-  98+ 5DAD              MAIALE:			EQU 12  ;(Maiale)
-  99+ 5DAD              CANGURO:		EQU 13  ;(Canguro)
- 100+ 5DAD              FIORE:			EQU 14  ;(Fiore)
- 101+ 5DAD              FACCIA_PALLA: 	EQU 15  ;(Faccia Palla)
- 102+ 5DAD              CANDELABRO:		EQU 16  ;(Candelabro)
- 103+ 5DAD              FRECCIA:		EQU 17  ;(Freccia)
- 104+ 5DAD              TRONCHESE:		EQU 18  ;(Tronchese)
- 105+ 5DAD              PERISCOPIO:		EQU 19  ;(Periscopio)
- 106+ 5DAD              NONNINO:		EQU 20  ;(Nonnino)
- 107+ 5DAD              PARRUCCA:		EQU 21  ;(Parrucca)
- 108+ 5DAD              FRATE:			EQU 22  ;(Frate)
- 109+ 5DAD              FACE_HL:		EQU 23  ;(FaceHellHL - Top-Left)
- 110+ 5DAD              FACE_HR:		EQU 24  ;(FaceHellHR - Top-Right)
- 111+ 5DAD              FACE_LL:		EQU 25  ;(FaceHellLL - Bottom-Left)
- 112+ 5DAD              FACE_LR:		EQU 26  ;(FaceHellLR - Bottom-Right)
- 113+ 5DAD              PINZA_GHIACCIO:	EQU 27  ;(PinzaGiaccioSprite)
- 114+ 5DAD              RUOTA:			EQU 28  ;(RuotaSprite)
- 115+ 5DAD              SALIERA:		EQU 29  ;(SalieraSprite)
- 116+ 5DAD              GELATO:			EQU 30  ;(GelatoSprite)
- 117+ 5DAD              PINGUINO:		EQU 31  ;(PinguinoSprite)
- 118+ 5DAD              MURO:			EQU 32  ;(MuroSprite)
- 119+ 5DAD              DIAVOLETTO:		EQU 33  ;(DiavolettoSprite)
- 120+ 5DAD              VECCHIA:		EQU 34  ;(VecchiaSprite)
- 121+ 5DAD              PIEDE:			EQU 35  ;(PiedeSprite)
- 122+ 5DAD              CHIP:			EQU 36  ;(ChipSprite)
- 123+ 5DAD              IPNOSI:			EQU 37  ;(IpnosiSprite)
- 124+ 5DAD              SWISSARMKIFE:	EQU 38  ;(SwissArmyKife)
- 125+ 5DAD              BOTTE:			EQU 39  ;(BotteSprite)
- 126+ 5DAD              ONDA:			EQU 40  ;(OndaSprite)
- 127+ 5DAD              PALAZZO:		EQU 41  ;(PalazzoSprite)
+  86+ 5DAD
+  87+ 5DAD              LAMETTA:  		EQU 0   ;(Lametta)
+  88+ 5DAD              SEGA: 			EQU 1   ;(Sega)
+  89+ 5DAD              UCCELLO: 		EQU 2   ;(Uccello)
+  90+ 5DAD              RADAR: 			EQU 3   ;(Radar)
+  91+ 5DAD              UOVO: 			EQU 4   ;(Uovo)
+  92+ 5DAD              UFO: 			EQU 5   ;(Ufo)
+  93+ 5DAD              FACCIA:			EQU 6   ;(Faccia)
+  94+ 5DAD              SCIMMIA:		EQU 7   ;(Scimmia)
+  95+ 5DAD              ROBOT:			EQU 8   ;(Robot)
+  96+ 5DAD              PALLA:			EQU 9   ;(Palla)
+  97+ 5DAD              DOUBLE_BALL:	EQU 10  ;(Double Ball)
+  98+ 5DAD              SOLDATO:		EQU 11  ;(Soldato)
+  99+ 5DAD              MAIALE:			EQU 12  ;(Maiale)
+ 100+ 5DAD              CANGURO:		EQU 13  ;(Canguro)
+ 101+ 5DAD              FIORE:			EQU 14  ;(Fiore)
+ 102+ 5DAD              FACCIA_PALLA: 	EQU 15  ;(Faccia Palla)
+ 103+ 5DAD              CANDELABRO:		EQU 16  ;(Candelabro)
+ 104+ 5DAD              FRECCIA:		EQU 17  ;(Freccia)
+ 105+ 5DAD              TRONCHESE:		EQU 18  ;(Tronchese)
+ 106+ 5DAD              PERISCOPIO:		EQU 19  ;(Periscopio)
+ 107+ 5DAD              NONNINO:		EQU 20  ;(Nonnino)
+ 108+ 5DAD              PARRUCCA:		EQU 21  ;(Parrucca)
+ 109+ 5DAD              FRATE:			EQU 22  ;(Frate)
+ 110+ 5DAD              FACE_HL:		EQU 23  ;(FaceHellHL - Top-Left)
+ 111+ 5DAD              FACE_HR:		EQU 24  ;(FaceHellHR - Top-Right)
+ 112+ 5DAD              FACE_LL:		EQU 25  ;(FaceHellLL - Bottom-Left)
+ 113+ 5DAD              FACE_LR:		EQU 26  ;(FaceHellLR - Bottom-Right)
+ 114+ 5DAD              PINZA_GHIACCIO:	EQU 27  ;(PinzaGiaccioSprite)
+ 115+ 5DAD              RUOTA:			EQU 28  ;(RuotaSprite)
+ 116+ 5DAD              SALIERA:		EQU 29  ;(SalieraSprite)
+ 117+ 5DAD              GELATO:			EQU 30  ;(GelatoSprite)
+ 118+ 5DAD              PINGUINO:		EQU 31  ;(PinguinoSprite)
+ 119+ 5DAD              MURO:			EQU 32  ;(MuroSprite)
+ 120+ 5DAD              DIAVOLETTO:		EQU 33  ;(DiavolettoSprite)
+ 121+ 5DAD              VECCHIA:		EQU 34  ;(VecchiaSprite)
+ 122+ 5DAD              PIEDE:			EQU 35  ;(PiedeSprite)
+ 123+ 5DAD              CHIP:			EQU 36  ;(ChipSprite)
+ 124+ 5DAD              IPNOSI:			EQU 37  ;(IpnosiSprite)
+ 125+ 5DAD              SWISSARMKIFE:	EQU 38  ;(SwissArmyKife)
+ 126+ 5DAD              BOTTE:			EQU 39  ;(BotteSprite)
+ 127+ 5DAD              ONDA:			EQU 40  ;(OndaSprite)
+ 128+ 5DAD              PALAZZO:		EQU 41  ;(PalazzoSprite)
 # file closed: constants.asm
   14  5DAD                  include "macro.asm"
 # file opened: macro.asm
@@ -4823,7 +4824,7 @@
   92+ 7115
   93+ 7115                  ; ── Sezione 2: movimento (sinistra / destra) ────────────────────
   94+ 7115                  ;
-  95+ 7115                  ; Porta $DF → riga P, O, I, U, Y.
+  95+ 7115                  ; Porta $DF → riga P(0), O(1), I(2), U(3), Y(4).
   96+ 7115                  ; Bit 0 = P (destra), Bit 1 = O (sinistra).
   97+ 7115
   98+ 7115 16 00            ld  d, $00                  ; azzera output
@@ -5172,7 +5173,7 @@
  441+ 72A1 3E 07            ld   a, $07
  442+ 72A3 CD 9D 62         call Gfx_ClearScreenDirect
  443+ 72A6
- 444+ 72A6 31 F0 FD         ld   sp, $fdf0
+ 444+ 72A6 31 F0 FD         ld   sp, STACK_POINTER
  445+ 72A9 C3 19 89         jp   LoadRoomAndRestart
  446+ 72AC
  447+ 72AC              .invalid_room:
@@ -5348,7 +5349,7 @@
  607+ 7399 CD 9D 62         call Gfx_ClearScreenDirect
  608+ 739C
  609+ 739C                  ; Reset dello stack pointer prima di riavviare la stanza
- 610+ 739C 31 F0 FD         ld   sp, $fdf0
+ 610+ 739C 31 F0 FD         ld   sp, STACK_POINTER
  611+ 739F C3 19 89         jp   LoadRoomAndRestart
  612+ 73A2
  613+ 73A2              RoomsListTable:
@@ -9346,7 +9347,7 @@
  347+ 8695 30 01            jr   nc, .no_carry
  348+ 8697 24               inc  h
  349+ 8698              .no_carry:
- 350+ 8698 11 00 58         ld   de, $5800
+ 350+ 8698 11 00 58         ld   de, COLOR_DATA
  351+ 869B 19               add  hl, de
  352+ 869C
  353+ 869C C1               pop  bc                        ; Recupera HL originale
@@ -9808,7 +9809,7 @@
  801+ 8876 E1               pop  hl
  802+ 8877
  803+ 8877                  ; Aggiorna memoria attributi VRAM ($5800)
- 804+ 8877 11 00 58         ld   de, $5800
+ 804+ 8877 11 00 58         ld   de, COLOR_DATA
  805+ 887A 19               add  hl, de                    ; HL = Indirizzo attributi a schermo
  806+ 887B 70               ld   (hl), b                   ; Scrive l'attributo aggiornato a schermo
  807+ 887C
@@ -10047,7 +10048,7 @@
 # file closed: audio.asm
   23  88F7
   24  88F7              start:
-  25  88F7 31 F0 FD         ld   sp, $fdf0
+  25  88F7 31 F0 FD         ld   sp, STACK_POINTER
   26  88FA C3 FD 88         jp   Main
   27  88FD
   28  88FD              ;    org $7F50
@@ -10069,7 +10070,7 @@
   44  8916 C3 58 8A         jp   ShowTitleScreen
   45  8919
   46  8919              LoadRoomAndRestart:
-  47  8919 31 F0 FD         ld   sp, $fdf0             ; Ripristina lo stack pointer per evitare stack drift/reset
+  47  8919 31 F0 FD         ld   sp, STACK_POINTER             ; Ripristina lo stack pointer per evitare stack drift/reset
   48  891C CD 44 85         call DetermineCurrentRoomID
   49  891F CD 60 7C         call Phys_LoadRoomSettings
   50  8922
@@ -21487,6 +21488,13 @@
  118+ F11F 00           row_willy_cur:          db 0
  119+ F120 00           overlap_num_lines:      db 0
  120+ F121
+ 121+ F121              ; Interrupt
+ 122+ F121              IM2_TABLE   = $FE00
+ 123+ F121              IM2_VECTOR  = $FDFD
+ 124+ F121              SCREEN_LINE = $4860
+ 125+ F121              SCREEN_MEMORY = $4000
+ 126+ F121              COLOR_DATA = $5800
+ 127+ F121              STACK_POINTER = $fdf0
 # file closed: data/datavariable.asm
  878  F121
  879  F121                  SAVESNA "manicminer.sna", start ; sna48-ok

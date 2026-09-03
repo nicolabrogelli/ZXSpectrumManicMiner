@@ -92,7 +92,7 @@ Input_CheckCtrl:
 
     ; ── Sezione 2: movimento (sinistra / destra) ────────────────────
     ;
-    ; Porta $DF → riga P, O, I, U, Y.
+    ; Porta $DF → riga P(0), O(1), I(2), U(3), Y(4).
     ; Bit 0 = P (destra), Bit 1 = O (sinistra).
 
     ld  d, $00                  ; azzera output
@@ -441,7 +441,7 @@ PerformDirectRoomJump:
     ld   a, $07
     call Gfx_ClearScreenDirect
 
-    ld   sp, $fdf0
+    ld   sp, STACK_POINTER
     jp   LoadRoomAndRestart
 
 .invalid_room:
@@ -607,7 +607,7 @@ TriggerRoomChange:
     call Gfx_ClearScreenDirect
     
     ; Reset dello stack pointer prima di riavviare la stanza
-    ld   sp, $fdf0
+    ld   sp, STACK_POINTER
     jp   LoadRoomAndRestart
 
 RoomsListTable:
