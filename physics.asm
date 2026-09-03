@@ -136,20 +136,8 @@ Phys_ApplyGravity:
     ld   a, b                    ; B = PlayerY
     ld   (jump_start_y), a
 
-    ; Determina jump_dir: se current_input_dir != 0 usa quello, altrimenti se su conveyor usa conveyor_dir
+    ; Determina jump_dir: usa current_input_dir (se 0 -> salto verticale verso l'alto)
     ld   a, (current_input_dir)
-    or   a
-    jr   nz, .set_early_jump_dir
-    call CheckWillyOnConveyor
-    jr   nc, .set_early_jump_dir
-    ld   a, (conveyor_dir)
-    or   a
-    jr   z, .early_conv_left
-    ld   a, 2                    ; conveyor va a destra -> jump_dir = 2
-    jr   .set_early_jump_dir
-.early_conv_left:
-    ld   a, 1                    ; conveyor va a sinistra -> jump_dir = 1
-.set_early_jump_dir:
     ld   (jump_dir), a
     jp   .in_air
 
@@ -423,20 +411,8 @@ Phys_ApplyGravity:
     ld   a, b              ; B = PlayerY
     ld   (jump_start_y), a
 
-    ; Determina jump_dir: se current_input_dir != 0 usa quello, altrimenti se su conveyor usa conveyor_dir
+    ; Determina jump_dir: usa current_input_dir (se 0 -> salto verticale verso l'alto)
     ld   a, (current_input_dir)
-    or   a
-    jr   nz, .set_ground_jump_dir
-    call CheckWillyOnConveyor
-    jr   nc, .set_ground_jump_dir
-    ld   a, (conveyor_dir)
-    or   a
-    jr   z, .conv_jump_left_ground
-    ld   a, 2                    ; conveyor va a destra -> jump_dir = 2
-    jr   .set_ground_jump_dir
-.conv_jump_left_ground:
-    ld   a, 1                    ; conveyor va a sinistra -> jump_dir = 1
-.set_ground_jump_dir:
     ld   (jump_dir), a
     jp   .in_air
 
