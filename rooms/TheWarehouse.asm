@@ -129,7 +129,8 @@ TheWarehouseLayout:
 	DEFB 255,0,0,0,0,0,0	;Horizontal guardian 3 (unused)
 	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
 	DEFB 255	;Terminator
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 	DEFB 65	;Vertical guardian 1: x=3, initial y=64, 64<=y<102, initial y-increment=2
 	DEFB 0
 	DEFB 64

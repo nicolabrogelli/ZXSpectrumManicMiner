@@ -144,7 +144,7 @@ MinerWillymeetstheKongBeastLayout:
 	DEFB 245
 	DEFB 255	;Terminator
 	
-	DEFB 0	;Initial status (on the ledge)
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
 	DEFB 0	;Unused
 	
 	DEFB 255,0,0,0,0,0,0	;Vertical guardian 1 (unused)

@@ -134,7 +134,8 @@ AttackoftheMutantTelephonesLayout:
 	DEFB 179
 	DEFB 255,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
 	DEFB 255	;Terminator
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 	DEFB 67	;Vertical guardian 1: x=12, initial y=8, 2<=y<56, initial y-increment=2
 	DEFB 0
 	DEFB 8

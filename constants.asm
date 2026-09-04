@@ -73,7 +73,8 @@ OFFSET_ITEM_GRAPHIC:     EQU 692  ; 8 byte bitmap grafica item
 OFFSET_INITIAL_AIR:      EQU 700  ; 1 byte aria iniziale
 OFFSET_GAME_CLOCK:       EQU 701  ; 1 byte orologio
 OFFSET_H_GUARDIANS:      EQU 702  ; 29 byte guardiani orizzontali (4 x 7B + $FF)
-OFFSET_UNUSED2:          EQU 731  ; 2 byte non usati
+OFFSET_AIR_SPEED:        EQU 731  ; 1 byte ampiezza parabola salto (0 = default DEFAULT_AIR_SPEED_PRESET)
+OFFSET_UNUSED2:          EQU 732  ; 1 byte non usato (secondo byte di riserva)
 OFFSET_V_GUARDIANS:      EQU 733  ; 1 byte terminatore / guardiani verticali
 OFFSET_UNUSED3:          EQU 734  ; 2 byte non usati
 OFFSET_EXTRA_GRAPHIC:    EQU 736  ; 32 byte grafica extra

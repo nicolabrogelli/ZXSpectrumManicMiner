@@ -137,7 +137,8 @@ TheBanckLayout:
 	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
 	DEFB 255	;Terminator
 
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 
 	DEFB 6	;Vertical guardian 1: x=9, initial y=40, 36<=y<102, initial y-increment=2
 	DEFB 0

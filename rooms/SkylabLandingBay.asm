@@ -131,7 +131,8 @@ SkylabLandingBayLayout:
 	DEFB 186
 	DEFB 0,0,0,0,0,0,0	;Horizontal guardian 4 (unused)
 	DEFB 255	;Terminator
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 	DEFB 15	;Vertical guardian 1: x=1, initial y=0, 0<=y<=72, y-increment=4
 	DEFB 0
 	DEFB 0

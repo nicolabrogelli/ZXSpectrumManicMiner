@@ -23,7 +23,8 @@
 ; AbandonedUraniumWorkingsInitialAir        Size   1 Byte, Start Byte 700 (Offset 700)
 ; AbandonedUraniumWorkingsGameClock         Size   1 Byte, Start Byte 701 (Offset 701)
 ; AbandonedUraniumWorkingsHGuardians        Size  29 Byte, Start Byte 702 (Offset 702)
-; AbandonedUraniumWorkingsUnused2           Size   2 Byte, Start Byte 731 (Offset 731)
+; AbandonedUraniumWorkingsAirSpeed          Size   1 Byte, Start Byte 731 (Offset 731)
+; AbandonedUraniumWorkingsUnused2           Size   1 Byte, Start Byte 732 (Offset 732)
 ; AbandonedUraniumWorkingsVGuardians        Size   1 Byte, Start Byte 733 (Offset 733)
 ; AbandonedUraniumWorkingsUnused3           Size   2 Byte, Start Byte 734 (Offset 734)
 ; AbandonedUraniumWorkingsGraphicElement    Size  32 Byte, Start Byte 736 (Offset 736)
@@ -207,9 +208,11 @@ AbandonedUraniumWorkingsHGuardians:
 	DEFB 0,0,0,0,0,0,0		;Horizontal guardian 4 (unused)
 	DEFB 255
 
-;The next two bytes are not used.
+AbandonedUraniumWorkingsAirSpeed:
+	DEFB 2			;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+
 AbandonedUraniumWorkingsUnused2:
-	DEFB 0,0	;Unused
+	DEFB 0			;Unused
 
 ;The next byte is copied to 32989 and indicates that there are no vertical guardians in this cavern.
 AbandonedUraniumWorkingVGuardians:

@@ -1,7 +1,7 @@
 %PDF-1.4
 %‚„œ”
 1 0 obj
-<< /Length 10136 >>
+<< /Length 10567 >>
 stream
 
 0.08 0.15 0.32 rg
@@ -653,7 +653,7 @@ BT
 0.15 0.15 0.2 rg
 /F2 7.5 Tf
 50 313.4000000000001 Td
-(731..732) Tj
+(731) Tj
 ET
 
 
@@ -661,7 +661,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 100 313.4000000000001 Td
-(2 B) Tj
+(1 B) Tj
 ET
 
 
@@ -669,7 +669,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 140 313.4000000000001 Td
-(Unused2) Tj
+(AirSpeed) Tj
 ET
 
 
@@ -677,7 +677,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 295 313.4000000000001 Td
-(Byte non utilizzati \(0, 0\)) Tj
+(Ampiezza parabola / preset volo \(0 = default DEFAULT_AIR_SPEED_PRESET\)) Tj
 ET
 
 0.97 0.98 0.99 rg
@@ -691,7 +691,7 @@ BT
 0.15 0.15 0.2 rg
 /F2 7.5 Tf
 50 298.4000000000001 Td
-(733) Tj
+(732) Tj
 ET
 
 
@@ -707,7 +707,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 140 298.4000000000001 Td
-(VGuardians) Tj
+(Unused2) Tj
 ET
 
 
@@ -715,7 +715,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 295 298.4000000000001 Td
-(Guardiano verticale o terminatore 255 \(o 0 per boss\)) Tj
+(Byte di riserva non utilizzato \(0\)) Tj
 ET
 
 0.91 0.93 0.96 rg
@@ -729,7 +729,7 @@ BT
 0.15 0.15 0.2 rg
 /F2 7.5 Tf
 50 283.4000000000001 Td
-(734..735) Tj
+(733) Tj
 ET
 
 
@@ -737,7 +737,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 100 283.4000000000001 Td
-(2 B) Tj
+(1 B) Tj
 ET
 
 
@@ -745,7 +745,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 140 283.4000000000001 Td
-(Unused3) Tj
+(VGuardians) Tj
 ET
 
 
@@ -753,7 +753,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 295 283.4000000000001 Td
-(Byte non utilizzati \(0, 0\)) Tj
+(Guardiano verticale o terminatore 255 \(o 0 per boss\)) Tj
 ET
 
 0.97 0.98 0.99 rg
@@ -767,7 +767,7 @@ BT
 0.15 0.15 0.2 rg
 /F2 7.5 Tf
 50 268.4000000000001 Td
-(736..767) Tj
+(734..735) Tj
 ET
 
 
@@ -775,7 +775,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 100 268.4000000000001 Td
-(32 B) Tj
+(2 B) Tj
 ET
 
 
@@ -783,7 +783,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 140 268.4000000000001 Td
-(GraphicElement) Tj
+(Unused3) Tj
 ET
 
 
@@ -791,7 +791,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 295 268.4000000000001 Td
-(Grafica decorativa o sprite speciale del boss \(32 byte\)) Tj
+(Byte non utilizzati \(0, 0\)) Tj
 ET
 
 0.91 0.93 0.96 rg
@@ -805,7 +805,7 @@ BT
 0.15 0.15 0.2 rg
 /F2 7.5 Tf
 50 253.4000000000001 Td
-(768..1023) Tj
+(736..767) Tj
 ET
 
 
@@ -813,7 +813,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 100 253.4000000000001 Td
-(256 B) Tj
+(32 B) Tj
 ET
 
 
@@ -821,7 +821,7 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 140 253.4000000000001 Td
-(GraphicGuardian) Tj
+(GraphicElement) Tj
 ET
 
 
@@ -829,24 +829,62 @@ BT
 0.15 0.15 0.2 rg
 /F1 7.5 Tf
 295 253.4000000000001 Td
+(Grafica decorativa o sprite speciale del boss \(32 byte\)) Tj
+ET
+
+0.97 0.98 0.99 rg
+0.8 0.83 0.88 RG
+0.5 w
+45 234.4000000000001 505 15 re
+B
+
+
+BT
+0.15 0.15 0.2 rg
+/F2 7.5 Tf
+50 238.4000000000001 Td
+(768..1023) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+100 238.4000000000001 Td
+(256 B) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+140 238.4000000000001 Td
+(GraphicGuardian) Tj
+ET
+
+
+BT
+0.15 0.15 0.2 rg
+/F1 7.5 Tf
+295 238.4000000000001 Td
 (Sprite animati dei guardiani \(16 frame da 16 byte\)) Tj
 ET
 
 1 0.96 0.9 rg
 0.9 0.5 0.1 RG
 1 w
-45 175.4000000000001 505 66 re
+45 160.4000000000001 505 66 re
 B
 
 0.9 0.5 0.1 rg
-45 175.4000000000001 4 66 re
+45 160.4000000000001 4 66 re
 f
 
 
 BT
 0.6 0.3 0 rg
 /F2 9 Tf
-55 228.4000000000001 Td
+55 213.4000000000001 Td
 (IMPORTANTE: Dimensione Rigorosa a 1024 Byte) Tj
 ET
 
@@ -854,7 +892,7 @@ ET
 BT
 0.2 0.2 0.25 rg
 /F1 8 Tf
-57 217.4000000000001 Td
+57 202.4000000000001 Td
 (Tutti i file delle caverne \(es. CentralCavern.asm, EugeneLair.asm\) devono totalizzare esattamente 1024 byte. Se una) Tj
 ET
 
@@ -862,7 +900,7 @@ ET
 BT
 0.2 0.2 0.25 rg
 /F1 8 Tf
-57 206.60000000000008 Td
+57 191.60000000000008 Td
 (sezione ha meno elementi \(es. meno di 5 item o meno di 4 guardiani\), lo spazio residuo deve essere riempito con zeri e) Tj
 ET
 
@@ -870,7 +908,7 @@ ET
 BT
 0.2 0.2 0.25 rg
 /F1 8 Tf
-57 195.80000000000007 Td
+57 180.80000000000007 Td
 (terminato con 255.) Tj
 ET
 
@@ -3889,7 +3927,7 @@ ET
 endstream
 endobj
 7 0 obj
-<< /Length 7542 >>
+<< /Length 7730 >>
 stream
 
 0.5 0.5 0.55 RG
@@ -3937,7 +3975,7 @@ ET
 0.12 0.14 0.18 rg
 0.25 0.28 0.35 RG
 1 w
-45 156.59000000000003 505 537 re
+45 146.09000000000003 505 547.5 re
 B
 
 
@@ -4305,7 +4343,7 @@ BT
 0.85 0.9 0.95 rg
 /F3 7.5 Tf
 55 210.09000000000003 Td
-(MyCustomCavernUnused2:        DEFB 0, 0) Tj
+(MyCustomCavernAirSpeed:       DEFB 0                      ; Preset parabola \(0 = default\)) Tj
 ET
 
 
@@ -4313,7 +4351,7 @@ BT
 0.85 0.9 0.95 rg
 /F3 7.5 Tf
 55 199.59000000000003 Td
-(MyCustomCavernVGuardians:     DEFB 255                    ; Nessun guardiano verticale) Tj
+(MyCustomCavernUnused2:        DEFB 0                      ; Riserva) Tj
 ET
 
 
@@ -4321,7 +4359,7 @@ BT
 0.85 0.9 0.95 rg
 /F3 7.5 Tf
 55 189.09000000000003 Td
-(MyCustomCavernUnused3:        DEFB 0, 0) Tj
+(MyCustomCavernVGuardians:     DEFB 255                    ; Nessun guardiano verticale) Tj
 ET
 
 
@@ -4329,7 +4367,7 @@ BT
 0.85 0.9 0.95 rg
 /F3 7.5 Tf
 55 178.59000000000003 Td
-(MyCustomCavernGraphicElement: .fill 32, 0                 ; Grafica decorativa) Tj
+(MyCustomCavernUnused3:        DEFB 0, 0) Tj
 ET
 
 
@@ -4337,6 +4375,14 @@ BT
 0.85 0.9 0.95 rg
 /F3 7.5 Tf
 55 168.09000000000003 Td
+(MyCustomCavernGraphicElement: .fill 32, 0                 ; Grafica decorativa) Tj
+ET
+
+
+BT
+0.85 0.9 0.95 rg
+/F3 7.5 Tf
+55 157.59000000000003 Td
 (MyCustomCavernGraphicGuardian:.fill 256, 0                ; Sprite Nemici \(256 Byte\)) Tj
 ET
 
@@ -4344,7 +4390,7 @@ ET
 BT
 0.15 0.15 0.18 rg
 /F1 9 Tf
-45 148.59000000000003 Td
+45 138.09000000000003 Td
 (Per aggiungere la nuova caverna alla rotazione del gioco, e' sufficiente includere il file in manicminer.asm e) Tj
 ET
 
@@ -4352,7 +4398,7 @@ ET
 BT
 0.15 0.15 0.18 rg
 /F1 9 Tf
-45 136.44000000000003 Td
+45 125.94000000000003 Td
 (registrare l'etichetta del layout nella tabella RoomsListTable.) Tj
 ET
 
@@ -4512,30 +4558,30 @@ xref
 0 21
 0000000000 65535 f 
 0000000015 00000 n 
-0000010204 00000 n 
-0000017731 00000 n 
-0000026803 00000 n 
-0000034595 00000 n 
-0000041174 00000 n 
-0000047463 00000 n 
-0000055057 00000 n 
-0000055127 00000 n 
-0000055202 00000 n 
-0000055271 00000 n 
-0000055345 00000 n 
-0000055531 00000 n 
-0000055717 00000 n 
-0000055903 00000 n 
-0000056089 00000 n 
-0000056275 00000 n 
-0000056461 00000 n 
-0000056647 00000 n 
-0000056748 00000 n 
+0000010635 00000 n 
+0000018162 00000 n 
+0000027234 00000 n 
+0000035026 00000 n 
+0000041605 00000 n 
+0000047894 00000 n 
+0000055676 00000 n 
+0000055746 00000 n 
+0000055821 00000 n 
+0000055890 00000 n 
+0000055964 00000 n 
+0000056150 00000 n 
+0000056336 00000 n 
+0000056522 00000 n 
+0000056708 00000 n 
+0000056894 00000 n 
+0000057080 00000 n 
+0000057266 00000 n 
+0000057367 00000 n 
 trailer
 <<
 /Size 21
 /Root 20 0 R
 >>
 startxref
-56799
+57418
 %%EOF

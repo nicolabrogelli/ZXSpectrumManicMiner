@@ -9441,7 +9441,7 @@ ET
 endstream
 endobj
 15 0 obj
-<< /Length 15272 >>
+<< /Length 15286 >>
 stream
 
 0.52 0.55 0.62 RG
@@ -10109,7 +10109,7 @@ ET
 0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 418.87 515.00 13.88 re
+40.00 409.99 515.00 22.75 re
 B
 
 
@@ -10117,7 +10117,7 @@ BT
 0.150 0.180 0.240 rg
 /F2 7.1 Tf
 44.00 422.14 Td
-(731..732) Tj
+(731) Tj
 ET
 
 
@@ -10125,44 +10125,6 @@ BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
 94.00 422.14 Td
-(2 B) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7.1 Tf
-139.00 422.14 Td
-(Unused2) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7.1 Tf
-284.00 422.14 Td
-(Byte non utilizzati \(impostati a 0, 0\).) Tj
-ET
-
-0.980 0.980 0.990 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 404.99 515.00 13.88 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7.1 Tf
-44.00 408.27 Td
-(733) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7.1 Tf
-94.00 408.27 Td
 (1 B) Tj
 ET
 
@@ -10170,7 +10132,91 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-139.00 408.27 Td
+139.00 422.14 Td
+(AirSpeed) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+284.00 422.14 Td
+(Ampiezza parabola / preset volo \(0 = default da physics_config.asm, 1..4 =) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+284.00 413.27 Td
+(custom, $FF = preset 0\).) Tj
+ET
+
+0.980 0.980 0.990 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 396.12 515.00 13.88 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7.1 Tf
+44.00 399.39 Td
+(732) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+94.00 399.39 Td
+(1 B) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+139.00 399.39 Td
+(Unused2) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+284.00 399.39 Td
+(Byte di riserva non utilizzato \(impostato a 0\).) Tj
+ET
+
+0.920 0.940 0.970 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 382.24 515.00 13.88 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7.1 Tf
+44.00 385.52 Td
+(733) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+94.00 385.52 Td
+(1 B) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7.1 Tf
+139.00 385.52 Td
 (VGuardians) Tj
 ET
 
@@ -10178,21 +10224,21 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-284.00 408.27 Td
+284.00 385.52 Td
 (Guardiani verticali \(o terminatore $FF; se 0 indica stanza con boss\).) Tj
 ET
 
-0.920 0.940 0.970 rg
+0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 391.12 515.00 13.88 re
+40.00 368.37 515.00 13.88 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7.1 Tf
-44.00 394.39 Td
+44.00 371.64 Td
 (734..735) Tj
 ET
 
@@ -10200,7 +10246,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-94.00 394.39 Td
+94.00 371.64 Td
 (2 B) Tj
 ET
 
@@ -10208,7 +10254,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-139.00 394.39 Td
+139.00 371.64 Td
 (Unused3) Tj
 ET
 
@@ -10216,21 +10262,21 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-284.00 394.39 Td
+284.00 371.64 Td
 (Byte non utilizzati \(impostati a 0, 0\).) Tj
 ET
 
-0.980 0.980 0.990 rg
+0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 377.24 515.00 13.88 re
+40.00 354.49 515.00 13.88 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7.1 Tf
-44.00 380.52 Td
+44.00 357.77 Td
 (736..767) Tj
 ET
 
@@ -10238,7 +10284,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-94.00 380.52 Td
+94.00 357.77 Td
 (32 B) Tj
 ET
 
@@ -10246,7 +10292,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-139.00 380.52 Td
+139.00 357.77 Td
 (GraphicElement) Tj
 ET
 
@@ -10254,21 +10300,21 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-284.00 380.52 Td
+284.00 357.77 Td
 (Grafica speciale per boss \(Eugene, Kong\) o elementi paesaggistici speciali.) Tj
 ET
 
-0.920 0.940 0.970 rg
+0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 363.37 515.00 13.88 re
+40.00 340.62 515.00 13.88 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7.1 Tf
-44.00 366.64 Td
+44.00 343.89 Td
 (768..1023) Tj
 ET
 
@@ -10276,7 +10322,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-94.00 366.64 Td
+94.00 343.89 Td
 (256 B) Tj
 ET
 
@@ -10284,7 +10330,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-139.00 366.64 Td
+139.00 343.89 Td
 (GraphicGuardian) Tj
 ET
 
@@ -10292,25 +10338,25 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7.1 Tf
-284.00 366.64 Td
+284.00 343.89 Td
 (Set di sprite dei guardiani \(8 frame 16x16 pixel da 32 byte ciascuno\).) Tj
 ET
 
 0.930 0.950 0.980 rg
 0.750 0.820 0.920 RG
 0.7 w
-40.00 342.37 515.00 19.00 re
+40.00 319.62 515.00 19.00 re
 B
 
 0.120 0.480 0.820 rg
-40.00 342.37 4.00 19.00 re
+40.00 319.62 4.00 19.00 re
 f
 
 
 BT
 0.080 0.180 0.360 rg
 /F2 9 Tf
-50.00 345.87 Td
+50.00 323.12 Td
 (7.2 Caricamento, Inizializzazione e Transizione tra Stanze) Tj
 ET
 
@@ -10318,7 +10364,7 @@ ET
 BT
 0.150 0.150 0.180 rg
 /F1 8.2 Tf
-40.00 333.37 Td
+40.00 310.62 Td
 (All'ingresso in una caverna, la routine LoadRoomAndRestart \(in manicminer.asm\) esegue la seguente pipeline atomica:) Tj
 ET
 
@@ -10326,7 +10372,7 @@ ET
 BT
 0.120 0.500 0.820 rg
 /F2 7.5 Tf
-45.00 319.54 Td
+45.00 296.79 Td
 (>) Tj
 ET
 
@@ -10334,7 +10380,7 @@ ET
 BT
 0.100 0.180 0.320 rg
 /F2 8 Tf
-52.00 319.54 Td
+52.00 296.79 Td
 (1. Reset Stack e Stato: ) Tj
 ET
 
@@ -10342,7 +10388,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-151.84 319.54 Td
+151.84 296.79 Td
 (Ripristina lo stack pointer \(ld sp, $fdf0\) per azzerare qualsiasi residuo di chiamate precedenti; azzera) Tj
 ET
 
@@ -10350,7 +10396,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-52.00 308.98 Td
+52.00 286.23 Td
 (la griglia dei pavimenti sgretolabili \(crumbling_grid\) e i timer dei portali.) Tj
 ET
 
@@ -10358,7 +10404,7 @@ ET
 BT
 0.120 0.500 0.820 rg
 /F2 7.5 Tf
-45.00 296.42 Td
+45.00 273.67 Td
 (>) Tj
 ET
 
@@ -10366,7 +10412,7 @@ ET
 BT
 0.100 0.180 0.320 rg
 /F2 8 Tf
-52.00 296.42 Td
+52.00 273.67 Td
 (2. Decompressione e Disegno: ) Tj
 ET
 
@@ -10374,7 +10420,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-172.64 296.42 Td
+172.64 273.67 Td
 (Esegue UnpackRoomLayout; chiama Gfx_DrawRoom per disegnare l'intera matrice 16x32; disegna conveyor e) Tj
 ET
 
@@ -10382,7 +10428,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-52.00 285.86 Td
+52.00 263.11 Td
 (rampe \(Gfx_DrawConveyorsAndRamps\); stampa il nome della caverna a riga 16 e inizializza la barra dell'aria a riga 17.) Tj
 ET
 
@@ -10390,7 +10436,7 @@ ET
 BT
 0.120 0.500 0.820 rg
 /F2 7.5 Tf
-45.00 273.30 Td
+45.00 250.55 Td
 (>) Tj
 ET
 
@@ -10398,7 +10444,7 @@ ET
 BT
 0.100 0.180 0.320 rg
 /F2 8 Tf
-52.00 273.30 Td
+52.00 250.55 Td
 (3. Inizializzazione Entita: ) Tj
 ET
 
@@ -10406,7 +10452,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-168.48 273.30 Td
+168.48 250.55 Td
 (Chiama Items_DrawRoom per disegnare e registrare gli oggetti; chiama Enemy_LoadRoom per inizializzare) Tj
 ET
 
@@ -10414,7 +10460,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-52.00 262.74 Td
+52.00 239.99 Td
 (ActiveEnemies con guardiani orizzontali, verticali o boss.) Tj
 ET
 
@@ -10422,7 +10468,7 @@ ET
 BT
 0.120 0.500 0.820 rg
 /F2 7.5 Tf
-45.00 250.18 Td
+45.00 227.43 Td
 (>) Tj
 ET
 
@@ -10430,7 +10476,7 @@ ET
 BT
 0.100 0.180 0.320 rg
 /F2 8 Tf
-52.00 250.18 Td
+52.00 227.43 Td
 (4. Posizionamento Willy e Bordo: ) Tj
 ET
 
@@ -10438,7 +10484,7 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-189.28 250.18 Td
+189.28 227.43 Td
 (Legge le coordinate di spawn da OFFSET_POS_WILLY \(se transition_active == 0\); legge il colore del) Tj
 ET
 
@@ -10446,25 +10492,25 @@ ET
 BT
 0.200 0.220 0.260 rg
 /F1 8 Tf
-52.00 239.62 Td
+52.00 216.87 Td
 (bordo da OFFSET_BORDER_COLOR, lo invia alla porta hardware out \($fe\), a e aggiorna la variabile BORDCR della ROM; disegna Willy.) Tj
 ET
 
 0.930 0.950 0.980 rg
 0.750 0.820 0.920 RG
 0.7 w
-40.00 212.06 515.00 19.00 re
+40.00 189.31 515.00 19.00 re
 B
 
 0.120 0.480 0.820 rg
-40.00 212.06 4.00 19.00 re
+40.00 189.31 4.00 19.00 re
 f
 
 
 BT
 0.080 0.180 0.360 rg
 /F2 9 Tf
-50.00 215.56 Td
+50.00 192.81 Td
 (7.3 Analisi Dettagliata delle 20 Caverne del Gioco) Tj
 ET
 
@@ -10472,19 +10518,19 @@ ET
 BT
 0.150 0.150 0.180 rg
 /F1 8.2 Tf
-40.00 203.06 Td
+40.00 180.31 Td
 (Tabella sinottica delle 20 caverne originali incluse nel motore:) Tj
 ET
 
 0.140 0.240 0.400 rg
-40.00 175.24 515.00 14.00 re
+40.00 152.49 515.00 14.00 re
 f
 
 
 BT
 1.000 1.000 1.000 rg
 /F2 7 Tf
-44.00 179.24 Td
+44.00 156.49 Td
 (ID) Tj
 ET
 
@@ -10492,7 +10538,7 @@ ET
 BT
 1.000 1.000 1.000 rg
 /F2 7 Tf
-74.00 179.24 Td
+74.00 156.49 Td
 (Nome Caverna) Tj
 ET
 
@@ -10500,7 +10546,7 @@ ET
 BT
 1.000 1.000 1.000 rg
 /F2 7 Tf
-214.00 179.24 Td
+214.00 156.49 Td
 (Colore Bordo) Tj
 ET
 
@@ -10508,21 +10554,21 @@ ET
 BT
 1.000 1.000 1.000 rg
 /F2 7 Tf
-289.00 179.24 Td
+289.00 156.49 Td
 (Caratteristiche, Guardiani e Meccaniche Speciali) Tj
 ET
 
 0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 152.74 515.00 22.50 re
+40.00 129.99 515.00 22.50 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 164.74 Td
+44.00 141.99 Td
 (00) Tj
 ET
 
@@ -10530,7 +10576,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 164.74 Td
+74.00 141.99 Td
 (Central Cavern) Tj
 ET
 
@@ -10538,7 +10584,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 164.74 Td
+214.00 141.99 Td
 (Rosso \(2\)) Tj
 ET
 
@@ -10546,7 +10592,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 164.74 Td
+289.00 141.99 Td
 (Livello introduttivo; 5 chiavi, 1 conveyor a sinistra, guardiani minerari) Tj
 ET
 
@@ -10554,21 +10600,21 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 155.99 Td
+289.00 133.24 Td
 (orizzontali.) Tj
 ET
 
 0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 138.99 515.00 13.75 re
+40.00 116.24 515.00 13.75 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 142.24 Td
+44.00 119.49 Td
 (01) Tj
 ET
 
@@ -10576,7 +10622,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 142.24 Td
+74.00 119.49 Td
 (The Cold Room) Tj
 ET
 
@@ -10584,7 +10630,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 142.24 Td
+214.00 119.49 Td
 (Blu \(1\)) Tj
 ET
 
@@ -10592,21 +10638,21 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 142.24 Td
+289.00 119.49 Td
 (Pavimenti ghiacciati; guardiani pinguini orizzontali e blocchi sgretolabili.) Tj
 ET
 
 0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 125.24 515.00 13.75 re
+40.00 102.49 515.00 13.75 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 128.49 Td
+44.00 105.74 Td
 (02) Tj
 ET
 
@@ -10614,7 +10660,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 128.49 Td
+74.00 105.74 Td
 (The Menagerie) Tj
 ET
 
@@ -10622,7 +10668,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 128.49 Td
+214.00 105.74 Td
 (Magenta \(3\)) Tj
 ET
 
@@ -10630,21 +10676,21 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 128.49 Td
+289.00 105.74 Td
 (Presenza di molteplici animali e mostri guardiani; percorsi multilivello.) Tj
 ET
 
 0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 102.74 515.00 22.50 re
+40.00 79.99 515.00 22.50 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 114.74 Td
+44.00 91.99 Td
 (03) Tj
 ET
 
@@ -10652,7 +10698,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 114.74 Td
+74.00 91.99 Td
 (Abandoned Uranium Workings) Tj
 ET
 
@@ -10660,7 +10706,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 114.74 Td
+214.00 91.99 Td
 (Verde \(4\)) Tj
 ET
 
@@ -10668,7 +10714,7 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 114.74 Td
+289.00 91.99 Td
 (Ostacoli radioattivi Nasty; salti di precisione millimetrica su blocchi) Tj
 ET
 
@@ -10676,54 +10722,8 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 105.99 Td
+289.00 83.24 Td
 (singoli.) Tj
-ET
-
-0.980 0.980 0.990 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 80.24 515.00 22.50 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 92.24 Td
-(04) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 92.24 Td
-(Eugene's Lair) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 92.24 Td
-(Rosso \(2\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 92.24 Td
-(Boss Eugene al centro; scende sul portale e diventa arcobaleno alla raccolta) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 83.49 Td
-(degli item.) Tj
 ET
 
 
@@ -10746,7 +10746,7 @@ ET
 endstream
 endobj
 16 0 obj
-<< /Length 7680 >>
+<< /Length 8177 >>
 stream
 
 0.52 0.55 0.62 RG
@@ -10801,10 +10801,10 @@ BT
 (Caratteristiche, Guardiani e Meccaniche Speciali) Tj
 ET
 
-0.920 0.940 0.970 rg
+0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 748.14 515.00 13.75 re
+40.00 739.39 515.00 22.50 re
 B
 
 
@@ -10812,7 +10812,7 @@ BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
 44.00 751.39 Td
-(05) Tj
+(04) Tj
 ET
 
 
@@ -10820,7 +10820,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 74.00 751.39 Td
-(Processing Plant) Tj
+(Eugene's Lair) Tj
 ET
 
 
@@ -10828,7 +10828,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 214.00 751.39 Td
-(Ciano \(5\)) Tj
+(Rosso \(2\)) Tj
 ET
 
 
@@ -10836,45 +10836,45 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 751.39 Td
-(Nastri trasportatori multipli contrapposti e nastri sgretolabili combinati.) Tj
+(Boss Eugene al centro; scende sul portale e diventa arcobaleno alla raccolta) Tj
 ET
 
-0.980 0.980 0.990 rg
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 742.64 Td
+(degli item.) Tj
+ET
+
+0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 725.64 515.00 22.50 re
+40.00 725.64 515.00 13.75 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 737.64 Td
-(06) Tj
+44.00 728.89 Td
+(05) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 737.64 Td
-(The Vat) Tj
+74.00 728.89 Td
+(Processing Plant) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 737.64 Td
-(Giallo \(6\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 737.64 Td
-(Vasca profonda; richiede una discesa controllata senza superare l'altezza di) Tj
+214.00 728.89 Td
+(Ciano \(5\)) Tj
 ET
 
 
@@ -10882,10 +10882,10 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 728.89 Td
-(caduta sicura.) Tj
+(Nastri trasportatori multipli contrapposti e nastri sgretolabili combinati.) Tj
 ET
 
-0.920 0.940 0.970 rg
+0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
 40.00 703.14 515.00 22.50 re
@@ -10896,7 +10896,7 @@ BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
 44.00 715.14 Td
-(07) Tj
+(06) Tj
 ET
 
 
@@ -10904,7 +10904,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 74.00 715.14 Td
-(Miner Willy meets the Kong Beast) Tj
+(The Vat) Tj
 ET
 
 
@@ -10912,7 +10912,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 214.00 715.14 Td
-(Verde \(4\)) Tj
+(Giallo \(6\)) Tj
 ET
 
 
@@ -10920,7 +10920,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 715.14 Td
-(Boss Kong Beast in alto a destra; 2 interruttori per aprire il varco e far) Tj
+(Vasca profonda; richiede una discesa controllata senza superare l'altezza di) Tj
 ET
 
 
@@ -10928,10 +10928,10 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 706.39 Td
-(precipitare il boss.) Tj
+(caduta sicura.) Tj
 ET
 
-0.980 0.980 0.990 rg
+0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
 40.00 680.64 515.00 22.50 re
@@ -10942,7 +10942,7 @@ BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
 44.00 692.64 Td
-(08) Tj
+(07) Tj
 ET
 
 
@@ -10950,7 +10950,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 74.00 692.64 Td
-(Wacky Amoebatrons) Tj
+(Miner Willy meets the Kong Beast) Tj
 ET
 
 
@@ -10958,7 +10958,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 214.00 692.64 Td
-(Blu \(1\)) Tj
+(Verde \(4\)) Tj
 ET
 
 
@@ -10966,7 +10966,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 692.64 Td
-(Guardiani amebe con percorsi orizzontali sovrapposti e piattaforme) Tj
+(Boss Kong Beast in alto a destra; 2 interruttori per aprire il varco e far) Tj
 ET
 
 
@@ -10974,13 +10974,13 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 683.89 Td
-(sgretolabili.) Tj
+(precipitare il boss.) Tj
 ET
 
-0.920 0.940 0.970 rg
+0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 666.89 515.00 13.75 re
+40.00 658.14 515.00 22.50 re
 B
 
 
@@ -10988,7 +10988,7 @@ BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
 44.00 670.14 Td
-(09) Tj
+(08) Tj
 ET
 
 
@@ -10996,7 +10996,7 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 74.00 670.14 Td
-(The Endorian Forest) Tj
+(Wacky Amoebatrons) Tj
 ET
 
 
@@ -11004,242 +11004,6 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 214.00 670.14 Td
-(Verde \(4\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 670.14 Td
-(Tile Extra \(7\) solido come Floor; alberi e rami percorribili, guardiani ewok.) Tj
-ET
-
-0.980 0.980 0.990 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 653.14 515.00 13.75 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 656.39 Td
-(10) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 656.39 Td
-(Attack of the Mutant Telephones) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 656.39 Td
-(Magenta \(3\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 656.39 Td
-(Tile Extra solido; guardiani telefoni giganti; nastri trasportatori veloci.) Tj
-ET
-
-0.920 0.940 0.970 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 639.39 515.00 13.75 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 642.64 Td
-(11) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 642.64 Td
-(Return of the Alien Kong Beast) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 642.64 Td
-(Giallo \(6\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 642.64 Td
-(Seconda battaglia contro Kong; interruttori e guardiani alieni sincronizzati.) Tj
-ET
-
-0.980 0.980 0.990 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 625.64 515.00 13.75 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 628.89 Td
-(12) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 628.89 Td
-(Ore Refinery) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 628.89 Td
-(Rosso \(2\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 628.89 Td
-(Raffineria con pavimenti metallici e acido; tile Extra solido come Floor.) Tj
-ET
-
-0.920 0.940 0.970 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 603.14 515.00 22.50 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 615.14 Td
-(13) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 615.14 Td
-(Skylab Landing Bay) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 615.14 Td
-(Ciano \(5\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 615.14 Td
-(Guardiani Skylab verticali che precipitano dall'alto simulando detriti) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 606.39 Td
-(spaziali.) Tj
-ET
-
-0.980 0.980 0.990 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 589.39 515.00 13.75 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 592.64 Td
-(14) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 592.64 Td
-(The Bank) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 592.64 Td
-(Verde \(4\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 592.64 Td
-(Caveau della banca; tile Extra solido; casseforti e guardiani custodi.) Tj
-ET
-
-0.920 0.940 0.970 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 575.64 515.00 13.75 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 578.89 Td
-(15) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-74.00 578.89 Td
-(The Sixteenth Cavern) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 578.89 Td
 (Blu \(1\)) Tj
 ET
 
@@ -11247,83 +11011,83 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 578.89 Td
-(Labirinto verticale complesso con piattaforme sgretolabili a cascata.) Tj
-ET
-
-0.980 0.980 0.990 rg
-0.800 0.840 0.900 RG
-0.35 w
-40.00 553.14 515.00 22.50 re
-B
-
-
-BT
-0.150 0.180 0.240 rg
-/F2 7 Tf
-44.00 565.14 Td
-(16) Tj
+289.00 670.14 Td
+(Guardiani amebe con percorsi orizzontali sovrapposti e piattaforme) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 565.14 Td
-(The Warehouse) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-214.00 565.14 Td
-(Giallo \(6\)) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 565.14 Td
-(Magazzino con barili e casse rotolanti; salti con raggio d'azione) Tj
-ET
-
-
-BT
-0.150 0.180 0.240 rg
-/F1 7 Tf
-289.00 556.39 Td
-(strettissimo.) Tj
+289.00 661.39 Td
+(sgretolabili.) Tj
 ET
 
 0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 539.39 515.00 13.75 re
+40.00 644.39 515.00 13.75 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 542.64 Td
-(17) Tj
+44.00 647.64 Td
+(09) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 542.64 Td
-(Amoebatrons' Revenge) Tj
+74.00 647.64 Td
+(The Endorian Forest) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 542.64 Td
+214.00 647.64 Td
+(Verde \(4\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 647.64 Td
+(Tile Extra \(7\) solido come Floor; alberi e rami percorribili, guardiani ewok.) Tj
+ET
+
+0.980 0.980 0.990 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 630.64 515.00 13.75 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 633.89 Td
+(10) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 633.89 Td
+(Attack of the Mutant Telephones) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 633.89 Td
 (Magenta \(3\)) Tj
 ET
 
@@ -11331,37 +11095,37 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 542.64 Td
-(Ritorno delle amebe mutanti; densita di ostacoli Nasty elevatissima.) Tj
+289.00 633.89 Td
+(Tile Extra solido; guardiani telefoni giganti; nastri trasportatori veloci.) Tj
 ET
 
-0.980 0.980 0.990 rg
+0.920 0.940 0.970 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 525.64 515.00 13.75 re
+40.00 616.89 515.00 13.75 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 528.89 Td
-(18) Tj
+44.00 620.14 Td
+(11) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 528.89 Td
-(Solar Power Generator) Tj
+74.00 620.14 Td
+(Return of the Alien Kong Beast) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 528.89 Td
+214.00 620.14 Td
 (Giallo \(6\)) Tj
 ET
 
@@ -11369,46 +11133,282 @@ ET
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 528.89 Td
-(Generatore solare; raggi laser letali e piattaforme mobili a tempo.) Tj
+289.00 620.14 Td
+(Seconda battaglia contro Kong; interruttori e guardiani alieni sincronizzati.) Tj
 ET
 
-0.920 0.940 0.970 rg
+0.980 0.980 0.990 rg
 0.800 0.840 0.900 RG
 0.35 w
-40.00 503.14 515.00 22.50 re
+40.00 603.14 515.00 13.75 re
 B
 
 
 BT
 0.150 0.180 0.240 rg
 /F2 7 Tf
-44.00 515.14 Td
-(19) Tj
+44.00 606.39 Td
+(12) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-74.00 515.14 Td
-(The Final Barrier) Tj
+74.00 606.39 Td
+(Ore Refinery) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-214.00 515.14 Td
-(Bianco \(7\)) Tj
+214.00 606.39 Td
+(Rosso \(2\)) Tj
 ET
 
 
 BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
-289.00 515.14 Td
-(Livello finale; paesaggio montano esterno \(datalandscape.asm\); porta alla) Tj
+289.00 606.39 Td
+(Raffineria con pavimenti metallici e acido; tile Extra solido come Floor.) Tj
+ET
+
+0.920 0.940 0.970 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 580.64 515.00 22.50 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 592.64 Td
+(13) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 592.64 Td
+(Skylab Landing Bay) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 592.64 Td
+(Ciano \(5\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 592.64 Td
+(Guardiani Skylab verticali che precipitano dall'alto simulando detriti) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 583.89 Td
+(spaziali.) Tj
+ET
+
+0.980 0.980 0.990 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 566.89 515.00 13.75 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 570.14 Td
+(14) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 570.14 Td
+(The Bank) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 570.14 Td
+(Verde \(4\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 570.14 Td
+(Caveau della banca; tile Extra solido; casseforti e guardiani custodi.) Tj
+ET
+
+0.920 0.940 0.970 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 553.14 515.00 13.75 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 556.39 Td
+(15) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 556.39 Td
+(The Sixteenth Cavern) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 556.39 Td
+(Blu \(1\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 556.39 Td
+(Labirinto verticale complesso con piattaforme sgretolabili a cascata.) Tj
+ET
+
+0.980 0.980 0.990 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 530.64 515.00 22.50 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 542.64 Td
+(16) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 542.64 Td
+(The Warehouse) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 542.64 Td
+(Giallo \(6\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 542.64 Td
+(Magazzino con barili e casse rotolanti; salti con raggio d'azione) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 533.89 Td
+(strettissimo.) Tj
+ET
+
+0.920 0.940 0.970 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 516.89 515.00 13.75 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 520.14 Td
+(17) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 520.14 Td
+(Amoebatrons' Revenge) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 520.14 Td
+(Magenta \(3\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 520.14 Td
+(Ritorno delle amebe mutanti; densita di ostacoli Nasty elevatissima.) Tj
+ET
+
+0.980 0.980 0.990 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 503.14 515.00 13.75 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 506.39 Td
+(18) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 506.39 Td
+(Solar Power Generator) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 506.39 Td
+(Giallo \(6\)) Tj
 ET
 
 
@@ -11416,6 +11416,52 @@ BT
 0.150 0.180 0.240 rg
 /F1 7 Tf
 289.00 506.39 Td
+(Generatore solare; raggi laser letali e piattaforme mobili a tempo.) Tj
+ET
+
+0.920 0.940 0.970 rg
+0.800 0.840 0.900 RG
+0.35 w
+40.00 480.64 515.00 22.50 re
+B
+
+
+BT
+0.150 0.180 0.240 rg
+/F2 7 Tf
+44.00 492.64 Td
+(19) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+74.00 492.64 Td
+(The Final Barrier) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+214.00 492.64 Td
+(Bianco \(7\)) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 492.64 Td
+(Livello finale; paesaggio montano esterno \(datalandscape.asm\); porta alla) Tj
+ET
+
+
+BT
+0.150 0.180 0.240 rg
+/F1 7 Tf
+289.00 483.89 Td
 (Master Bedroom!) Tj
 ET
 
@@ -18442,57 +18488,57 @@ xref
 0000111660 00000 n 
 0000115800 00000 n 
 0000127380 00000 n 
-0000142706 00000 n 
-0000150439 00000 n 
-0000161886 00000 n 
-0000163899 00000 n 
-0000177276 00000 n 
-0000179306 00000 n 
-0000190266 00000 n 
-0000197827 00000 n 
-0000208477 00000 n 
-0000211563 00000 n 
-0000218464 00000 n 
-0000226643 00000 n 
-0000236218 00000 n 
-0000236316 00000 n 
-0000236419 00000 n 
-0000236525 00000 n 
-0000236621 00000 n 
-0000236722 00000 n 
-0000236925 00000 n 
-0000237128 00000 n 
-0000237331 00000 n 
-0000237534 00000 n 
-0000237737 00000 n 
-0000237940 00000 n 
-0000238143 00000 n 
-0000238346 00000 n 
-0000238549 00000 n 
-0000238753 00000 n 
-0000238957 00000 n 
-0000239161 00000 n 
-0000239365 00000 n 
-0000239569 00000 n 
-0000239773 00000 n 
-0000239977 00000 n 
-0000240181 00000 n 
-0000240385 00000 n 
-0000240589 00000 n 
-0000240793 00000 n 
-0000240997 00000 n 
-0000241201 00000 n 
-0000241405 00000 n 
-0000241609 00000 n 
-0000241813 00000 n 
-0000242017 00000 n 
-0000242221 00000 n 
-0000242463 00000 n 
+0000142720 00000 n 
+0000150950 00000 n 
+0000162397 00000 n 
+0000164410 00000 n 
+0000177787 00000 n 
+0000179817 00000 n 
+0000190777 00000 n 
+0000198338 00000 n 
+0000208988 00000 n 
+0000212074 00000 n 
+0000218975 00000 n 
+0000227154 00000 n 
+0000236729 00000 n 
+0000236827 00000 n 
+0000236930 00000 n 
+0000237036 00000 n 
+0000237132 00000 n 
+0000237233 00000 n 
+0000237436 00000 n 
+0000237639 00000 n 
+0000237842 00000 n 
+0000238045 00000 n 
+0000238248 00000 n 
+0000238451 00000 n 
+0000238654 00000 n 
+0000238857 00000 n 
+0000239060 00000 n 
+0000239264 00000 n 
+0000239468 00000 n 
+0000239672 00000 n 
+0000239876 00000 n 
+0000240080 00000 n 
+0000240284 00000 n 
+0000240488 00000 n 
+0000240692 00000 n 
+0000240896 00000 n 
+0000241100 00000 n 
+0000241304 00000 n 
+0000241508 00000 n 
+0000241712 00000 n 
+0000241916 00000 n 
+0000242120 00000 n 
+0000242324 00000 n 
+0000242528 00000 n 
+0000242732 00000 n 
+0000242974 00000 n 
 trailer
 <<
 /Size 62
 /Root 61 0 R
 >>
 startxref
-242514
+243025
 %%EOF

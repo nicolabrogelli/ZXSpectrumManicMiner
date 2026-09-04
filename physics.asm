@@ -1839,9 +1839,9 @@ GetRampY:
 
 ; -------------------------------------------------------------------
 ; Carica le impostazioni di salto e gravità specifiche per la stanza corrente
-; Legge il byte ad offset OFFSET_APEX_PAUSE (628).
-; Se è 0, applica l'impostazione di default VERTICAL_JUMP_APEX_PAUSE.
-; Se è valorizzato (> 0), applica quel valore come tempo di pausa all'apice.
+; Legge:
+; - Pausa apice da OFFSET_APEX_PAUSE (628): se 0 -> VERTICAL_JUMP_APEX_PAUSE
+; - Ampiezza parabola da OFFSET_AIR_SPEED (731): se 0 -> DEFAULT_AIR_SPEED_PRESET ($FF -> preset 0)
 ; -------------------------------------------------------------------
 Phys_LoadRoomSettings:
     push af
@@ -1864,6 +1864,22 @@ Phys_LoadRoomSettings:
     ld   a, VERTICAL_JUMP_APEX_PAUSE
 .custom_apex_pause:
     ld   (room_apex_pause), a
+
+    ; Carica ampiezza parabola / preset volo da OFFSET_AIR_SPEED (731)
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_AIR_SPEED
+    add  hl, de
+    ld   a, (hl)
+    or   a
+    jr   nz, .check_custom_air_speed
+    ld   a, DEFAULT_AIR_SPEED_PRESET
+    jr   .set_air_speed
+.check_custom_air_speed:
+    cp   $ff
+    jr   nz, .set_air_speed
+    xor  a                         ; $FF / 255 seleziona Preset 0 (1.0 px/frame)
+.set_air_speed:
+    ld   (player_air_speed), a
 
     pop  de
     pop  hl

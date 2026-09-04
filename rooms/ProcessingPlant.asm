@@ -152,7 +152,8 @@ ProcessingPlantLayout:
 	DEFB 189
 	DEFB 255	;Terminator
 	
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 
 	DEFB 255,0,0,0,0,0,0	;Vertical guardian 1 (unused)
 	DEFB 0,0,0,0,0,0,0		;Vertical guardian 2 (unused)

@@ -127,7 +127,8 @@ AmoebatronsRevengeLayout:
 	DEFB 172
 	DEFB 178
 	DEFB 255	;Terminator
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 	DEFB 67	;Vertical guardian 1: x=5, initial y=8, 5<=y<104, initial y-increment=3
 	DEFB 0
 	DEFB 8

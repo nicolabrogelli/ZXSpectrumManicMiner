@@ -23,7 +23,8 @@
 ; CentralCavernInitialAir        Size   1 Byte, Start Byte 700 (Offset 700)
 ; CentralCavernGameClock         Size   1 Byte, Start Byte 701 (Offset 701)
 ; CentralCavernHGuardians        Size  29 Byte, Start Byte 702 (Offset 702)
-; CentralCavernUnused2           Size   2 Byte, Start Byte 731 (Offset 731)
+; CentralCavernAirSpeed          Size   1 Byte, Start Byte 731 (Offset 731)
+; CentralCavernUnused2           Size   1 Byte, Start Byte 732 (Offset 732)
 ; CentralCavernVGuardians        Size   1 Byte, Start Byte 733 (Offset 733)
 ; CentralCavernUnused3           Size   2 Byte, Start Byte 734 (Offset 734)
 ; CentralCavernGraphicElement    Size  32 Byte, Start Byte 736 (Offset 736)
@@ -202,9 +203,11 @@ CentralCaverHorizontalGuardians:
 	DEFB 0,0,0,0,0,0,0		;Horizontal guardian 4 (unused)
 	DEFB 255				;Terminator
 
-;The next two bytes are not used.
+CentralCavernAirSpeed:
+	DEFB 0			;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+
 CentralCaverUnused2:
-	DEFB 0,0	;Unused
+	DEFB 0			;Unused
 
 ;The next byte is copied to 32989 and indicates that there are no vertical guardians in this cavern.
 CentralCavernVGuardians:

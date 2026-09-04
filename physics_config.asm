@@ -36,11 +36,13 @@ DEFAULT_GRAVITY_PRESET EQU 1
 ; Definisce lo spostamento orizzontale in pixel per frame durante il salto direzionale.
 ; Consente di accorciare o allungare la parabola orizzontale mantenendo l'altezza massima invariata.
 ; Presets:
-;   0 = Parabola stretta       (1.0 px/frame costante  -> gittata ~16 pixel / 2 blocchi)
+;   0 = Parabola stretta       (1.0 px/frame costante  -> gittata ~16 pixel / 2 blocchi, nella stanza usare $FF / 255)
 ;   1 = Parabola corta         (1.5 px/frame alternato -> gittata ~24 pixel / 3 blocchi)
 ;   2 = Parabola media         (2.0 px/frame costante  -> gittata ~32 pixel / 4 blocchi)
 ;   3 = Parabola standard MM   (2.5 px/frame alternato -> gittata ~40 pixel / 5 blocchi)
 ;   4 = Parabola estesa        (3.0 px/frame costante  -> gittata ~48 pixel / 6 blocchi)
+; Valore di default globale utilizzato se nella stanza corrente il byte
+; di configurazione (offset 731, OFFSET_AIR_SPEED) è impostato a 0.
     IFNDEF DEFAULT_AIR_SPEED_PRESET
 DEFAULT_AIR_SPEED_PRESET EQU 3
     ENDIF

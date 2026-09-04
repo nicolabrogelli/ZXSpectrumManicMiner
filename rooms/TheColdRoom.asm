@@ -23,7 +23,8 @@
 ; TheColdRoomInitialAir        Size   1 Byte, Start Byte 700 (Offset 700)
 ; TheColdRoomGameClock         Size   1 Byte, Start Byte 701 (Offset 701)
 ; TheColdRoomHGuardians        Size  29 Byte, Start Byte 702 (Offset 702)
-; TheColdRoomUnused2           Size   2 Byte, Start Byte 731 (Offset 731)
+; TheColdRoomAirSpeed          Size   1 Byte, Start Byte 731 (Offset 731)
+; TheColdRoomUnused2           Size   1 Byte, Start Byte 732 (Offset 732)
 ; TheColdRoomVGuardians        Size   1 Byte, Start Byte 733 (Offset 733)
 ; TheColdRoomUnused3           Size   2 Byte, Start Byte 734 (Offset 734)
 ; TheColdRoomGraphicElement    Size  32 Byte, Start Byte 736 (Offset 736)
@@ -208,9 +209,11 @@ TheColdRoomHGuardians:
 	DEFB 0,0,0,0,0,0,0		;Horizontal guardian 4 (unused)
 	DEFB 255	;Terminator
 
-;The next two bytes are not used.
+TheColdRoomAirSpeed:
+	DEFB 0			;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+
 TheColdRoomUnused2:
-	DEFB 0,0	;Unused
+	DEFB 0			;Unused
 
 ;The next byte is copied to 32989 and indicates that there are no vertical guardians in this cavern.
 TheColdRoomVGuardians:

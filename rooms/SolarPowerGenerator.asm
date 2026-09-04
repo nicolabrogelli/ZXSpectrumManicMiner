@@ -146,7 +146,8 @@ SolarPowerGeneratorLayout:
 	DEFB 189
 	DEFB 255	;Terminator
 
-	DEFB 0,0	;Unused
+	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+	DEFB 0	;Unused
 
 	DEFB 38	;Vertical guardian 1: x=5, initial y=64, 2<=y<102, initial y-increment=3
 	DEFB 0
