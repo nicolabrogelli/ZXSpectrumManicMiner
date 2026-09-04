@@ -32,9 +32,9 @@ Audio_UpdateJumpSound:
     ; Suona la nota: 15 cicli
     ld   b, 15
 .note_loop:
-    ; Speaker ON
+    ; Speaker ON (attiva bit 3 MIC e bit 4 EAR per volume ottimale)
     ld   a, (room_border_color)
-    or   $10
+    or   $18
     out  ($fe), a
     ld   c, d
 .d1:
@@ -43,7 +43,7 @@ Audio_UpdateJumpSound:
 
     ; Speaker OFF
     ld   a, (room_border_color)
-    and  $ef
+    and  $e7
     out  ($fe), a
     ld   c, d
 .d2:
@@ -71,8 +71,18 @@ Audio_JumpSoundDelays:
 ; -------------------------------------------------------------------
 ; Audio_UpdateMusic
 ;
-; Gestisce la riproduzione della musica di sottofondo frame-by-frame.
-; Viene chiamata a ogni frame.
+; Gestisce la riproduzione della musica di sottofondo frame-by-frame
+; fedele al motore audio originale di Matthew Smith (Manic Miner 1983).
+; Brano: "In the Hall of the Mountain King" (Edvard Grieg).
+;
+; Nel gioco originale (routine a $883A / 34874):
+; - Un loop di sintesi a 1-bit su porta $FE (768 passaggi, ~8.8 ms) viene
+;   eseguito a intervalli regolari.
+; - Ciascuna delle 64 note della melodia viene suonata per 2 burst consecutivi
+;   (producendo il caratteristico ritmo staccato "ta-ta").
+; - Con MUSIC_FRAME_DIVIDER = 2 a 25 FPS, un burst viene emesso ogni 80 ms,
+;   riproducendo il tema completo di 64 note in 10.24 secondi, perfettamente
+;   allineato ai ~11.5 secondi del gioco originale.
 ; -------------------------------------------------------------------
 Audio_UpdateMusic:
     push af
@@ -80,81 +90,57 @@ Audio_UpdateMusic:
     push de
     push hl
 
-    ; Se il salto sta riproducendo un effetto sonoro, non suonare la musica
+    IF MUTE_MUSIC_ON_JUMP != 0
+    ; Se abilitato, il salto silenzia temporaneamente la musica
     ld   a, (Audio_jump_sound_note)
     cp   18
-    jr   c, .done                 ; Salto attivo -> niente musica
+    jr   c, .done
+    ENDIF
 
-    ; Decrementa il contatore dei frame della nota corrente
+    IF MUSIC_FRAME_DIVIDER > 1
+    ; Divisore di frame per sincronizzare il tempo al frame rate di gioco
     ld   a, (Audio_music_frame_counter)
     dec  a
     ld   (Audio_music_frame_counter), a
-    jr   nz, .play_current_note   ; Se non è zero, continua a suonare
+    jr   nz, .done
+    ld   a, MUSIC_FRAME_DIVIDER
+    ld   (Audio_music_frame_counter), a
+    ENDIF
 
-    ; Altrimenti carica la nota successiva
+    ; Avanza l'indice del burst e calcola la nota corrente (0..63)
+    ; INC A; AND 126; RRCA; mantiene ciascuna nota attiva per 2 burst
     ld   a, (Audio_music_note_idx)
     inc  a
-    cp   35                       ; Abbiamo 35 note in totale
-    jr   c, .no_wrap
-    xor  a                        ; Torna a 0 se raggiunge la fine (loop)
-.no_wrap:
     ld   (Audio_music_note_idx), a
-
-    ; Carica la durata e impostala come nuovo contatore di frame
+    and  126                      ; Maschera bit 7 e bit 0 (valori 0, 2, ..., 126)
+    rrca                          ; Dividi per 2 -> indice nota 0..63
     ld   e, a
     ld   d, 0
-    ld   hl, Audio_MusicSheet
-    add  hl, de
-    add  hl, de                   ; Ogni nota prende 2 byte (delay, duration)
-    
-    ; Leggi durata (secondo byte)
-    inc  hl
-    ld   a, (hl)
-    srl  a                        ; Divide per 2 (velocizza 2x, quattro volte più lento rispetto all'inizio)
-    jr   nz, .dur_ok
-    ld   a, 1
-.dur_ok:
-    ld   (Audio_music_frame_counter), a
+    ld   hl, Audio_GameTune
+    add  hl, de                   ; HL = puntatore al delay del semionda della nota
 
-.play_current_note:
-    ; Ottieni il delay della nota corrente (primo byte)
-    ld   a, (Audio_music_note_idx)
-    ld   e, a
-    ld   d, 0
-    ld   hl, Audio_MusicSheet
-    add  hl, de
-    add  hl, de                   ; hl punta al primo byte della nota
-    ld   a, (hl)                  ; A = delay
-    or   a
-    jr   z, .done                 ; Se delay è 0, è una pausa (Rest)
-
-    ; Suona la nota: 2 cicli
-    ld   d, a                     ; D = delay
-    ld   b, 2                     ; 2 cicli per frame
-.note_loop:
-    ; Speaker ON
+    ; Configura il colore del bordo corrente e lo stato iniziale dello speaker
     ld   a, (room_border_color)
-    or   $10
-    out  ($fe), a
-    ld   c, d
-.d1:
-    push af
-    pop  af
-    dec  c
-    jr   nz, .d1
+    and  $07                      ; Mantiene solo i 3 bit del colore bordo (speaker OFF)
+    ld   e, (hl)                  ; E = delay iniziale per il pitch counter
+    ld   bc, 3                    ; B = 0 (256 cicli), C = 3 -> 768 iterazioni totali (~8.8 ms)
 
-    ; Speaker OFF
+    ; Loop originale di generazione tono a 1 bit (routine 34898 / TM51)
+.sound_loop:
+    out  ($fe), a                 ; Emette lo stato corrente su porta $FE
+    dec  e
+    jr   nz, .no_flip
+    ld   e, (hl)                  ; Ricarica il valore del semionda
+    xor  $18                      ; Inverte bit 3 (MIC) e bit 4 (EAR/BEEPER)
+.no_flip:
+    djnz .sound_loop
+    dec  c
+    jr   nz, .sound_loop
+
+    ; Spegni lo speaker assicurando che i bit 3 e 4 tornino a 0
     ld   a, (room_border_color)
-    and  $ef
+    and  $07
     out  ($fe), a
-    ld   c, d
-.d2:
-    push af
-    pop  af
-    dec  c
-    jr   nz, .d2
-
-    djnz .note_loop
 
 .done:
     pop  hl
@@ -163,13 +149,16 @@ Audio_UpdateMusic:
     pop  af
     ret
 
-Audio_MusicSheet:
-    ; Formato: db delay, durata (in frame a 50Hz)
-    db 96, 5, 101, 15, 96, 5, 107, 25, 152, 5, 143, 35, 107, 15, 96, 10
-    db 107, 10, 96, 10, 107, 25, 96, 10, 85, 10, 81, 10, 85, 5, 81, 10
-    db 85, 10, 96, 70, 72, 40, 81, 10, 76, 5, 85, 20, 96, 10, 107, 25
-    db 90, 20, 114, 5, 107, 10, 90, 10, 96, 10, 107, 10, 96, 10, 85, 5
-    db 90, 10, 107, 20, 68, 65
+; -------------------------------------------------------------------
+; Tabella delle note dell'in-game tune: "In the Hall of the Mountain King"
+; Dati originali Manic Miner (Bug-Byte Ltd, 1983 - memoria $858C / 34188).
+; 64 note (1 byte per nota che rappresenta il delay del semionda).
+; -------------------------------------------------------------------
+Audio_GameTune:
+    db 128, 114, 102,  96,  86, 102,  86,  86,  81,  96,  81,  81,  86, 102,  86,  86
+    db 128, 114, 102,  96,  86, 102,  86,  86,  81,  96,  81,  81,  86,  86,  86,  86
+    db 128, 114, 102,  96,  86, 102,  86,  86,  81,  96,  81,  81,  86, 102,  86,  86
+    db 128, 114, 102,  96,  86, 102,  86,  64,  86, 102, 128, 102,  86,  86,  86,  86
     ELSE
 Audio_UpdateMusic:
     ret
@@ -188,7 +177,7 @@ Audio_PlayCollectSound:
     ld   b, 120
 .sound_loop:
     ld   a, (room_border_color)
-    or   $10               ; speaker ON
+    or   $18               ; speaker ON (EAR + MIC)
     out  ($fe), a
 
     ld   c, 60
@@ -197,7 +186,7 @@ Audio_PlayCollectSound:
     jr   nz, .d1
 
     ld   a, (room_border_color)
-    and  $ef              ; speaker OFF
+    and  $e7              ; speaker OFF
     out  ($fe), a
 
     ld   c, 60

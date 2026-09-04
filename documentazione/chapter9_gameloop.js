@@ -1,4 +1,4 @@
-﻿function addChapter9(doc) {
+function addChapter9(doc) {
     doc.addPage("9. GAME LOOP, SINCRONIZZAZIONE E GESTIONE INPUT");
     doc.addSectionHeader("9", "GAME LOOP, SINCRONIZZAZIONE E GESTIONE INPUT");
 
@@ -15,7 +15,7 @@
         ["5", "Gfx_AnimatePortal", "Se tutti gli item sono raccolti, fa lampeggiare ciclicamente l'attributo del portale."],
         ["6", "Phys_UpdateAir", "Decrementa la riserva d'aria in base ad air_deplete_rate; se l'aria e' a 0, salta a .willy_dies."],
         ["7", "Audio_UpdateJumpSound", "Esegue l'effetto sonoro del salto frame-by-frame se attivo (suono modulato a 18 note)."],
-        ["8", "Audio_UpdateMusic", "Aggiorna la musica di sottofondo polifonica a 1-bit se abilitata."],
+        ["8", "Audio_UpdateMusic", "Aggiorna la musica di sottofondo a 1-bit (\"In the Hall of the Mountain King\") se abilitata."],
         ["9", "Gfx_PrintWillyLives", "Aggiorna l'animazione camminante delle icone delle vite in basso a schermo."],
         ["10", "Salvataggio PlayerPosOld", "Copia PlayerPos in PlayerPosOld per preparare la cancellazione al frame successivo."],
         ["11", "Input_CheckCtrl", "Scansiona le porte I/O della tastiera ($DF, $FE, $FB, $FD), popola registro D e applica i filtri."],

@@ -11,14 +11,29 @@
 ; 1 = Effetti abilitati
 ; 0 = Effetti disabilitati
     IFNDEF ENABLE_EFFECTS
-ENABLE_EFFECTS EQU 0
+ENABLE_EFFECTS EQU 1
     ENDIF
 
 ; --- Musica di sottofondo ---
 ; 1 = Musica abilitata
 ; 0 = Musica disabilitata
     IFNDEF ENABLE_MUSIC
-ENABLE_MUSIC EQU 0
+ENABLE_MUSIC EQU 1
+    ENDIF
+
+; --- Divisore Frame per la Musica In-Game ---
+; Intervallo di frame per la riproduzione dei burst musicali (a 25 FPS):
+; 2 = Tempo fedele all'originale (~10.2s per 64 note, 1 burst ogni 80ms, 12.5 note/s)
+; 1 = Tempo rapido arcade (~5.1s per 64 note, 1 burst ogni frame a 40ms, 25 note/s)
+    IFNDEF MUSIC_FRAME_DIVIDER
+MUSIC_FRAME_DIVIDER EQU 2
+    ENDIF
+
+; --- Muto musica durante il salto ---
+; 1 = Il salto silenzia la musica durante i 18 frame dell'animazione
+; 0 = La musica continua regolarmente anche durante il salto (comportamento originale Manic Miner)
+    IFNDEF MUTE_MUSIC_ON_JUMP
+MUTE_MUSIC_ON_JUMP EQU 0
     ENDIF
 
 ; --- Morte per collisione con i guardiani (nemici) ---

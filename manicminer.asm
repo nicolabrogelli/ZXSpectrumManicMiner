@@ -853,6 +853,13 @@ ResetFullGameState:
     ld   (a_prev), a
     ld   (on_ground), a
 
+    IF ENABLE_MUSIC != 0
+    xor  a
+    ld   (Audio_music_note_idx), a
+    ld   a, 1
+    ld   (Audio_music_frame_counter), a
+    ENDIF
+
     ; Azzeramento punteggio partita corrente (Score = 000000)
     ; Nota: High score viene mantenuto intatto tra le partite
     xor  a
