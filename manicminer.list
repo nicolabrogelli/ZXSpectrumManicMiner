@@ -17898,7 +17898,7 @@
  137++DC76 00 00 00
  138++DC79 FF           	DEFB 255	;Terminator
  139++DC7A
- 140++DC7A 00           	DEFB 0	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
+ 140++DC7A 02           	DEFB 2	;Air speed preset (0 = default DEFAULT_AIR_SPEED_PRESET)
  141++DC7B 00           	DEFB 0	;Unused
  142++DC7C
  143++DC7C 07           	DEFB 7	;Vertical guardian 1: x=24, initial y=48, 40<=y<103, initial y-increment=1
