@@ -82,7 +82,7 @@ TheWarehouseLayout:
 	DEFW 30734	;Location in the screen buffer at 28672: (8,14)
 	DEFB 5	;Length
 	DEFB 2	;Border colour
-	DEFB 0	;Unused
+	DEFB 0	;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	DEFB 3	;Item 1 at (5,24)
 	DEFW 23736
 	DEFB 96

@@ -16,7 +16,7 @@
 ; TheColdRoomWillyPos          Size   7 Byte, Start Byte 616 (Offset 616)
 ; TheColdRoomConveyorData      Size   4 Byte, Start Byte 623 (Offset 623)
 ; TheColdRoomBorderColor       Size   1 Byte, Start Byte 627 (Offset 627)
-; TheColdRoomUnused1           Size   1 Byte, Start Byte 628 (Offset 628)
+; TheColdRoomApexPause         Size   1 Byte, Start Byte 628 (Offset 628)
 ; TheColdRoomItems             Size  26 Byte, Start Byte 629 (Offset 629)
 ; TheColdRoomPortal            Size  37 Byte, Start Byte 655 (Offset 655)
 ; TheColdRoomItemGraphic       Size   8 Byte, Start Byte 692 (Offset 692)
@@ -140,8 +140,8 @@ TheColdRoomConveyorData:
 TheColdRoomBorderColor:
 	DEFB 2			;Border Color	
 
-TheColdRoomUnused1:
-	DEFB 0			;Unused	
+TheColdRoomApexPause:
+	DEFB 0			;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	
 ;The next 25 bytes specify the location and initial colour of the items in the cavern.
 TheColdRoomItems:

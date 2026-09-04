@@ -141,7 +141,7 @@ Phys_ApplyGravity:
     ld   (jump_dir), a
     or   a
     jr   nz, .early_no_apex_pause
-    ld   a, VERTICAL_JUMP_APEX_PAUSE
+    ld   a, (room_apex_pause)
     ld   (jump_apex_pause_timer), a
     jr   .early_jump_done
 .early_no_apex_pause:
@@ -200,6 +200,15 @@ Phys_ApplyGravity:
     ld   (jump_start_y), a
     ld   a, (current_input_dir)
     ld   (jump_dir), a
+    or   a
+    jr   nz, .ramp_no_apex_pause
+    ld   a, (room_apex_pause)
+    ld   (jump_apex_pause_timer), a
+    jr   .ramp_jump_done
+.ramp_no_apex_pause:
+    xor  a
+    ld   (jump_apex_pause_timer), a
+.ramp_jump_done:
     jp   .in_air
     
 .not_on_ramp_walk:
@@ -425,7 +434,7 @@ Phys_ApplyGravity:
     ld   (jump_dir), a
     or   a
     jr   nz, .ground_no_apex_pause
-    ld   a, VERTICAL_JUMP_APEX_PAUSE
+    ld   a, (room_apex_pause)
     ld   (jump_apex_pause_timer), a
     jr   .ground_jump_done
 .ground_no_apex_pause:
@@ -1830,18 +1839,34 @@ GetRampY:
 
 ; -------------------------------------------------------------------
 ; Carica le impostazioni di salto e gravità specifiche per la stanza corrente
-; Legge il byte di configurazione ad offset OFFSET_PHYSICS_SETTINGS (239).
-; Se è 0, applica le impostazioni di default (Jump = 6, Gravity = 1).
-; Altrimenti, decodifica il formato %GGGGJJJJ (Jump = JJJJ, Gravity Preset = GGGG).
+; Legge il byte ad offset OFFSET_APEX_PAUSE (628).
+; Se è 0, applica l'impostazione di default VERTICAL_JUMP_APEX_PAUSE.
+; Se è valorizzato (> 0), applica quel valore come tempo di pausa all'apice.
 ; -------------------------------------------------------------------
 Phys_LoadRoomSettings:
     push af
+    push hl
+    push de
     ld   a, DEFAULT_JUMP_STRENGTH
     ld   (room_jump_strength), a
     ld   a, DEFAULT_GRAVITY_PRESET
     ld   (room_gravity_preset), a
     ld   a, DEFAULT_AIR_SPEED_PRESET
     ld   (player_air_speed), a
+
+    ; Carica pausa all'apice salto verticale da OFFSET_APEX_PAUSE (628)
+    ld   hl, (room_ptr)
+    ld   de, OFFSET_APEX_PAUSE
+    add  hl, de
+    ld   a, (hl)
+    or   a
+    jr   nz, .custom_apex_pause
+    ld   a, VERTICAL_JUMP_APEX_PAUSE
+.custom_apex_pause:
+    ld   (room_apex_pause), a
+
+    pop  de
+    pop  hl
     pop  af
     ret
 

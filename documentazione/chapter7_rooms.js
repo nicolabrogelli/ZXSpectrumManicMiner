@@ -1,4 +1,4 @@
-﻿function addChapter7(doc) {
+function addChapter7(doc) {
     doc.addPage("7. STRUTTURA DATI DELLE CAVERNE (1024 BYTE STANDARD)");
     doc.addSectionHeader("7", "STRUTTURA DATI DELLE CAVERNE (1024 BYTE STANDARD)");
 
@@ -14,7 +14,7 @@
         ["616..622", "7 B", "WillyAppearanceAndPos", "Posizione iniziale: Byte 0: Y*2, Byte 1: frame, Byte 2: dir, Byte 4-5: AttrAddr."],
         ["623..626", "4 B", "ConveyorData", "Nastro trasportatore: Byte 0: dir (0=SX, 1=DX), Byte 1-2: ScreenAddr, Byte 3: len."],
         ["627", "1 B", "BorderColor", "Colore del bordo video dello ZX Spectrum per la caverna (valore 0..7)."],
-        ["628", "1 B", "Unused1", "Byte di riserva non utilizzato (impostato a 0)."],
+        ["628", "1 B", "ApexPause", "Pausa all'apice salto verticale (0 = default da physics_config.asm, >0 = valore custom)."],
         ["629..654", "26 B", "LocationColorItems", "Fino a 5 oggetti (5 byte cad.: Attr, AttrAddr Low/High, Anim, Flag) + terminatore $FF."],
         ["655..691", "37 B", "PortalData", "Portale 16x16: Attributo, 32 byte bitmap (4 frame da 8 byte), AttrAddr Low/High."],
         ["692..699", "8 B", "ItemGraphic", "Bitmap 8x8 comune per tutti gli oggetti collezionabili della caverna."],

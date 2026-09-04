@@ -88,7 +88,7 @@ TheFinalBarrierLayout:
 
 	DEFB 2	;Border colour
 
-	DEFB 0	;Unused
+	DEFB 7	;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 
 	DEFB 3	;Item 1 at (5,23)
 	DEFW 23735

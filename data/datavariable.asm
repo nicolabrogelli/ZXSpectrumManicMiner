@@ -38,6 +38,7 @@ enter_key_prev: db $00
 digit_key_prev: db $ff
 room_jump_strength:  db DEFAULT_JUMP_STRENGTH
 room_gravity_preset: db DEFAULT_GRAVITY_PRESET
+room_apex_pause:     db VERTICAL_JUMP_APEX_PAUSE
 
 ; Buffer e contatori
 counter:        dw 0

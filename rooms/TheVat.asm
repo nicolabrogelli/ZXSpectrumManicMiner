@@ -88,7 +88,7 @@ TheVatLayout:
 	
 	DEFB 4	;Border colour
 	
-	DEFB 0	;Unused
+	DEFB 0	;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	
 	DEFB 3	;Item 1 at (3,30)
 	DEFW 23678

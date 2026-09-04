@@ -16,7 +16,7 @@
 ; CentralCavernWillyPos          Size   7 Byte, Start Byte 616 (Offset 616)
 ; CentralCavernConveyorData      Size   4 Byte, Start Byte 623 (Offset 623)
 ; CentralCavernBorderColor       Size   1 Byte, Start Byte 627 (Offset 627)
-; CentralCavernUnused1           Size   1 Byte, Start Byte 628 (Offset 628)
+; CentralCavernApexPause         Size   1 Byte, Start Byte 628 (Offset 628)
 ; CentralCavernItems             Size  26 Byte, Start Byte 629 (Offset 629)
 ; CentralCavernPortal            Size  37 Byte, Start Byte 655 (Offset 655)
 ; CentralCavernItemGraphic       Size   8 Byte, Start Byte 692 (Offset 692)
@@ -139,8 +139,8 @@ CentralCavernConveyorData:
 CentralCavernBorderColor:
 	DEFB 2			;Border Color	
 
-CentralCaverUnused1:
-	DEFB 0			;Unused	
+CentralCavernApexPause:
+	DEFB 0			;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	
 ;The next 25 bytes specify the location and initial colour of the items in the cavern.
 CentralCavernLocationColorItems:

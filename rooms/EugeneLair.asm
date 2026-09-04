@@ -16,7 +16,7 @@
 ; EugeneLairWillyPos          Size   7 Byte, Start Byte 616 (Offset 616)
 ; EugeneLairConveyorData      Size   4 Byte, Start Byte 623 (Offset 623)
 ; EugeneLairBorderColor       Size   1 Byte, Start Byte 627 (Offset 627)
-; EugeneLairUnused1           Size   1 Byte, Start Byte 628 (Offset 628)
+; EugeneLairApexPause         Size   1 Byte, Start Byte 628 (Offset 628)
 ; EugeneLairItems             Size  26 Byte, Start Byte 629 (Offset 629)
 ; EugeneLairPortal            Size  37 Byte, Start Byte 655 (Offset 655)
 ; EugeneLairItemGraphic       Size   8 Byte, Start Byte 692 (Offset 692)
@@ -139,8 +139,8 @@ EugeneLairConveyorData:
 EugeneLairBorderColor:
 	DEFB 1			;Border Color	
 
-EugeneLairUnused1:
-	DEFB 0			;Unused	
+EugeneLairApexPause:
+	DEFB 0			;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	
 ;The next 25 bytes specify the location and initial colour of the items in the cavern.
 EugeneLairItems:

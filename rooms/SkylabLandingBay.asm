@@ -82,7 +82,7 @@ SkylabLandingBayLayout:
 	DEFW 30831	;Location in the screen buffer at 28672: (11,15)
 	DEFB 6	;Length
 	DEFB 6	;Border colour
-	DEFB 0	;Unused
+	DEFB 0	;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	DEFB 11	;Item 1 at (2,23)
 	DEFW 23639
 	DEFB 96

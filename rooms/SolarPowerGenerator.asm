@@ -88,7 +88,7 @@ SolarPowerGeneratorLayout:
 
 	DEFB 3	; Border colour
 
-	DEFB 0	; Unused
+	DEFB 0	; Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 
 	DEFB 35	;Item 1 at (1,30)
 	DEFW 23614

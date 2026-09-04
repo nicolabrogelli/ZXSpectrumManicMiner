@@ -65,7 +65,8 @@ OFFSET_EXTRA_TILE:       EQU 607  ; Tile 7: Extra
 OFFSET_POS_WILLY:        EQU 616  ; 7 byte pos/aspetto iniziale Willy
 OFFSET_CONVEYOR_DATA:    EQU 623  ; 4 byte conveyor (dir, addr, len)
 OFFSET_BORDER_COLOR:     EQU 627  ; 1 byte colore bordo
-OFFSET_UNUSED1:          EQU 628  ; 1 byte non usato
+OFFSET_APEX_PAUSE:       EQU 628  ; 1 byte pausa all'apice salto verticale (0 = default VERTICAL_JUMP_APEX_PAUSE)
+OFFSET_UNUSED1:          EQU 628  ; Alias retrocompatibilità (1 byte non usato)
 OFFSET_ITEMS:            EQU 629  ; 26 byte item (fino a 5 x 5B + $FF)
 OFFSET_PORTAL:           EQU 655  ; 37 byte portale
 OFFSET_ITEM_GRAPHIC:     EQU 692  ; 8 byte bitmap grafica item

@@ -336,7 +336,7 @@ const offsetRows = [
     ["616..622", "7 B", "WillyAppearanceAndPos", "Posizione iniziale Y/X di Willy, direzione e frame"],
     ["623..626", "4 B", "ConveyorData", "Direzione, indirizzo schermo e lunghezza del nastro"],
     ["627", "1 B", "BorderColor", "Colore del bordo video dello Spectrum (0..7)"],
-    ["628", "1 B", "Unused1", "Byte di riserva / non utilizzato (0)"],
+    ["628", "1 B", "ApexPause", "Pausa all'apice salto vert. (0 = default VERTICAL_JUMP_APEX_PAUSE)"],
     ["629..654", "26 B", "LocationColorItems", "Tabella fino a 5 chiavi/oggetti + terminatore 255"],
     ["655..691", "37 B", "PortalData", "Attributo, 32 byte bitmap (4 frame), indirizzi video"],
     ["692..699", "8 B", "ItemGraphic", "Bitmap 8x8 dell'oggetto raccoglibile della stanza"],
@@ -605,7 +605,7 @@ doc.addCodeBlock([
     "                              DEFW 23970, 0               ; Addr Attributi (13,2), Jump Frame 0",
     "MyCustomCavernConveyorData:   DEFB 0, 0,0, 0              ; Dir 0, Addr Video 0, Len 0",
     "MyCustomCavernBorderColor:    DEFB 2                      ; Bordo Rosso",
-    "MyCustomCavernUnused1:        DEFB 0                      ; Riserva",
+    "MyCustomCavernApexPause:      DEFB 0                      ; Pausa apice (0 = default)",
     "",
     "MyCustomCavernItems:          DEFB 3, 23561, 96, 255      ; Item 1 a (Row 0, Col 9)",
     "                              DEFB 255                    ; Terminatore oggetti",
@@ -632,5 +632,5 @@ doc.addCodeBlock([
 doc.addParagraph("Per aggiungere la nuova caverna alla rotazione del gioco, e' sufficiente includere il file in manicminer.asm e registrare l'etichetta del layout nella tabella RoomsListTable.");
 
 // Output the file
-const outputPath = path.join(__dirname, 'Guida_Costruzione_Livelli_Manic_Miner.pdf');
+const outputPath = path.join(__dirname, 'documentazione', 'Guida_Costruzione_Livelli_Manic_Miner.pdf');
 doc.buildPDF(outputPath);

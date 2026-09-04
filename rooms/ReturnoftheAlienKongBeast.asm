@@ -83,7 +83,7 @@ ReturnoftheAlienKongBeastLayout:
 	DEFW 30898	;Location in the screen buffer at 28672: (13,18)
 	DEFB 11	;Length
 	DEFB 2	;Border colour
-	DEFB 0	;Unused
+	DEFB 0	;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	DEFB 3	;Item 1 at (3,15)
 	DEFW 23663
 	DEFB 96

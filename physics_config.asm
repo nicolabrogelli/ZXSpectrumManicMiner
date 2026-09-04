@@ -107,8 +107,10 @@ JUMP_BUFFER_FRAMES EQU 5
 ;   2 = Pausa di 2 frame (40 ms)
 ;   3 = Pausa di 3 frame (60 ms - valore frazionario consigliato)
 ;   5 = Pausa di 5 frame (100 ms)
+; Valore di default globale utilizzato se nella stanza corrente il byte
+; di configurazione (offset 628, OFFSET_APEX_PAUSE) è impostato a 0.
     IFNDEF VERTICAL_JUMP_APEX_PAUSE
-VERTICAL_JUMP_APEX_PAUSE EQU 7
+VERTICAL_JUMP_APEX_PAUSE EQU 3
     ENDIF
 
 

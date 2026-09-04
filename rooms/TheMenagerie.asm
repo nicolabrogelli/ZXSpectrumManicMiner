@@ -16,7 +16,7 @@
 ; TheMenagerieWillyPos          Size   7 Byte, Start Byte 616 (Offset 616)
 ; TheMenagerieConveyorData      Size   4 Byte, Start Byte 623 (Offset 623)
 ; TheMenagerieBorderColor       Size   1 Byte, Start Byte 627 (Offset 627)
-; TheMenagerieUnused1           Size   1 Byte, Start Byte 628 (Offset 628)
+; TheMenagerieApexPause         Size   1 Byte, Start Byte 628 (Offset 628)
 ; TheMenagerieItems             Size  26 Byte, Start Byte 629 (Offset 629)
 ; TheMenageriePortal            Size  37 Byte, Start Byte 655 (Offset 655)
 ; TheMenagerieItemGraphic       Size   8 Byte, Start Byte 692 (Offset 692)
@@ -139,8 +139,8 @@ TheMenagerieConveyorData:
 TheMenagerieBorderColor:
 	DEFB 2			;Border Color	
 
-TheMenagerieUnused1:
-	DEFB 0			;Unused	
+TheMenagerieApexPause:
+	DEFB 0			;Vertical Jump Apex Pause (0 = default VERTICAL_JUMP_APEX_PAUSE)
 	
 ;The next 25 bytes specify the location and initial colour of the items in the cavern.
 TheMenagerieItems:
