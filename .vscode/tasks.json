@@ -4,7 +4,8 @@
       {
         "label": "buildZXSpectrum",
         "type": "shell",
-        "command": "\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        //"command": "\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        "command": "\"C:\\Users\\87003101\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",        
         "args": [
           "-Wno-sna48",
           "--sld=${workspaceFolder}/manicminer.sld",
@@ -21,7 +22,8 @@
       {
         "label": "buildZXSpectrum (No Music)",
         "type": "shell",
-        "command": "\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        //"command": "\"C:\\Users\\nicol\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
+        "command": "\"C:\\Users\\87003101\\Documents\\Progetti\\asm\\sjasmplus\\sjasmplus.exe\"",
         "args": [
           "-Wno-sna48",
           "-DENABLE_MUSIC=0",
@@ -74,7 +76,8 @@
     {
       "label": "start fuse",
       "type": "shell",
-      "command": "C:\\Users\\nicol\\Documents\\BACKUP\\DOC - RETROCOMPUTER\\COMPUTER\\SINCLAIR\\EMULATORI\\ZX SPECTRUM\\fuse-1.6.0-win32\\fuse.exe",
+      //"command": "C:\\Users\\nicol\\Documents\\BACKUP\\DOC - RETROCOMPUTER\\COMPUTER\\SINCLAIR\\EMULATORI\\ZX SPECTRUM\\fuse-1.6.0-win32\\fuse.exe",
+      "command": "C:\\Users\\87003101\\Documents\\BACKUP\\DOC - RETROCOMPUTER\\COMPUTER\\SINCLAIR\\EMULATORI\\ZX SPECTRUM\\fuse-1.6.0-win32\\fuse.exe",
       "args": [
         "${workspaceFolder}/manicminer.sna"
       ],
